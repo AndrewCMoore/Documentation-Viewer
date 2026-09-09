@@ -11,6 +11,7 @@ today, just unreachable.
 Planner (home)
   ├─ list icon tap ──▶ Grocery List overlay ──▶ ‹ back ──▶ Planner
   └─ gear icon tap ──▶ Settings overlay      ──▶ ‹ back ──▶ Planner
+                          └─ + Add a rewards program ──▶ ‹ back ──▶ Settings
 ```
 
 Responsive (already in `app.css`, unchanged by this proposal):
@@ -25,12 +26,15 @@ matching the flow above.
 
 - **[Planner](./prototype.render.html#home)** — map + panel, panel sections
   grouped instead of one flat stack: Trip · origin & stops, Staples & deals,
-  Worth-it · route, Handoff.
+  Handoff.
 - **[Grocery List](./prototype.render.html#grocery-list)**
   (`GroceryListEditor.tsx`) — Shop/Edit modes, categories, per-item deal
   chips. Already built.
 - **[Settings](./prototype.render.html#settings)** (`SettingsScreen.tsx`) —
   vehicle/fuel presets, rewards editor. Already built.
+- **[Add a rewards program](./add-reward.render.html)** — new screen, not
+  built yet. Reached from Settings' `+ Add a rewards program` button;
+  search plus a popular-programs list.
 
 ## Status
 

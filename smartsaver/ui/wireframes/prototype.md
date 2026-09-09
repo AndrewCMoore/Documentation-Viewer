@@ -10,20 +10,22 @@ SmartSaver &nbsp;&nbsp;&nbsp; <a href="#grocery-list" class="wmd-button wmd-icon
 
 [Search a place__________]
 
-- [ ] Stop 1
-- [ ] Stop 2
+- [x] Stop 1
+- [x] Stop 2
 
 **Staples & deals**
-[Milk]{.chip} [Eggs]{.chip} [Bread]{.chip}
 
-**Worth-it · route**
-Net benefit +$0.00
-[Open in Maps]{.primary}
+::: card
+Milk — Save $0.60 [-15%]{.chip}
+:::
 
-### Map & navigator
-Saving $12.40 on this trip
+::: card
+Eggs — Save $0.90 [-20%]{.chip}
+:::
 
-(full-bleed map behind this — route polyline, origin + stop markers, grocer candidate pins)
+::: card
+Bread — Save $0.35 [-10%]{.chip}
+:::
 
 - [x] Round trip — include the drive back home
 
@@ -34,6 +36,9 @@ Saving $12.40 on this trip
 [Open in Google Maps]{.primary}
 
 [Apple Maps] [Waze]
+
+### Map & navigator
+![Fake map](./map-placeholder.svg)
 
 :::
 
@@ -64,7 +69,7 @@ Saving $12.40 on this trip
 [Compact]{.primary} [Sedan] [Truck]
 
 ### Region fuel price
-[US avg] [Custom]
+[Average]{.primary} [Custom]
 
 ### Manual overrides
 Fuel price ($ CAD)
@@ -76,4 +81,8 @@ Efficiency (L/100km)
 [____]{type:number value:8.0}
 
 ### Rewards
-[+ Add a rewards program]
+::: card
+PC Optimum — Real Canadian Superstore [Linked]{.chip}
+:::
+
+<a href="./add-reward.render.html" class="wmd-button">+ Add a rewards program</a>
