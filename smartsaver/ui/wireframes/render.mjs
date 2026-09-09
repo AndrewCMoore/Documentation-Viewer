@@ -65,6 +65,11 @@ for (const src of PAGES) {
       + 'body.wmd-root{width:390px;height:844px;margin:32px auto;box-sizing:border-box;overflow-y:auto;overflow-x:hidden;border:14px solid #000;border-radius:54px;}'
       + 'body.wmd-root::before{content:"";position:sticky;top:0;display:block;width:120px;height:26px;margin:0 auto;background:#000;border-radius:0 0 16px 16px;z-index:2;}'
       + 'body.wmd-root::after{content:"";position:sticky;bottom:0;display:block;width:134px;height:5px;margin:-13px auto 8px;background:#000;opacity:.6;border-radius:3px;z-index:2;}'
+      // Real actionable buttons get a ~44px touch target (the usual mobile
+      // minimum) and bigger type; chips are inline deal badges, not tap
+      // targets, so they're excluded and stay at their normal small size.
+      + '.wmd-button:not(.wmd-chip){min-height:44px;padding:12px 18px;margin:4px 8px 4px 0;font-size:14px;box-sizing:border-box;}'
+      + '.wmd-button.wmd-icon:not(.wmd-chip){min-width:44px;padding:10px;}'
       + '</style>';
     html = html.replace('</head>', `${frame}\n</head>`);
   }

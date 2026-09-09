@@ -10,20 +10,6 @@ SmartSaver
 - [x] Stop 1
 - [x] Stop 2
 
-**Staples & deals**
-
-::: card
-Milk — Save $0.60 [-15%]{.chip}
-:::
-
-::: card
-Eggs — Save $0.90 [-20%]{.chip}
-:::
-
-::: card
-Bread — Save $0.35 [-10%]{.chip}
-:::
-
 - [x] Round trip — include the drive back home
 
 **12.4 km** Distance

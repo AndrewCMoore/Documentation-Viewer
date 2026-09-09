@@ -4,6 +4,20 @@
 
 [Filter items_________________________]
 
+### Staples & deals
+
+::: card
+Milk — Save $0.60 [-15%]{.chip}
+:::
+
+::: card
+Eggs — Save $0.90 [-20%]{.chip}
+:::
+
+::: card
+Bread — Save $0.35 [-10%]{.chip}
+:::
+
 ### Produce
 - [ ] Bananas [-15%]{.chip}
 - [x] Spinach
