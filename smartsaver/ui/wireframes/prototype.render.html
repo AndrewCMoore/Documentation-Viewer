@@ -366,9 +366,96 @@ body.wmd-root {
 }
 
   </style>
+<style>.wmd-grid-2{grid-template-columns:404px 1fr !important;}</style>
 </head>
 <body class="wmd-root wmd-wireframe">
-  <p class="wmd-paragraph"><button class="wmd-button wmd-icon">‹</button> Settings</p>
+  <p class="wmd-paragraph"><a id="home"></a></p>
+<div class="wmd-container-grid-2">
+  <h3 class="wmd-h3">Panel</h3>
+  <p class="wmd-paragraph">SmartSaver     <a href="#grocery-list" class="wmd-button wmd-icon">≡</a> <a href="#settings" class="wmd-button wmd-icon">⚙</a></p>
+  <div class="wmd-container-form-group">
+  <strong>Trip · origin & stops</strong>
+
+  <button class="wmd-button wmd-primary">Use my location</button>
+</div>
+  <input type="text" class="wmd-input" placeholder="Search a place" />
+  <ul class="wmd-list">
+  <label class="wmd-checkbox">
+    <input type="checkbox" />
+    <span>Stop 1</span>
+  </label>
+  <label class="wmd-checkbox">
+    <input type="checkbox" />
+    <span>Stop 2</span>
+  </label>
+</ul>
+  <div class="wmd-container-form-group">
+  <strong>Staples & deals</strong>
+
+  <button class="wmd-button wmd-chip">Milk</button>
+   
+  <button class="wmd-button wmd-chip">Eggs</button>
+   
+  <button class="wmd-button wmd-chip">Bread</button>
+</div>
+  <div class="wmd-container-form-group">
+  <strong>Worth-it · route</strong>
+Net benefit +$0.00
+
+  <button class="wmd-button wmd-primary">Open in Maps</button>
+</div>
+  <h3 class="wmd-h3">Map &amp; navigator</h3>
+  <p class="wmd-paragraph">Saving $12.40 on this trip</p>
+  <p class="wmd-paragraph">(full-bleed map behind this — route polyline, origin + stop markers, grocer candidate pins)</p>
+  <ul class="wmd-list">
+  <label class="wmd-checkbox">
+    <input type="checkbox" checked />
+    <span>Round trip — include the drive back home</span>
+  </label>
+</ul>
+  <p class="wmd-paragraph"><strong>12.4 km</strong> Distance
+<strong>18 min</strong> Est. time
+<strong>$1.85</strong> Fuel</p>
+  <button class="wmd-button wmd-primary">Open in Google Maps</button>
+  <div class="wmd-container-button-group">
+  <button class="wmd-button">Apple Maps</button>
+  <button class="wmd-button">Waze</button>
+</div>
+</div>
+<hr class="wmd-separator" />
+<p class="wmd-paragraph"><a id="grocery-list"></a>
+<a href="#home" class="wmd-button wmd-icon">‹</a> Weekly list</p>
+<button class="wmd-button wmd-primary">Edit</button>
+<input type="text" class="wmd-input" placeholder="Filter items" />
+<h3 class="wmd-h3">Produce</h3>
+<ul class="wmd-list">
+  <label class="wmd-checkbox wmd-chip">
+    <input type="checkbox" />
+    <span>Bananas [-15%]</span>
+  </label>
+  <label class="wmd-checkbox">
+    <input type="checkbox" checked />
+    <span>Spinach</span>
+  </label>
+  <label class="wmd-checkbox wmd-chip">
+    <input type="checkbox" />
+    <span>Avocado [-20%]</span>
+  </label>
+</ul>
+<h3 class="wmd-h3">Dairy &amp; eggs</h3>
+<ul class="wmd-list">
+  <label class="wmd-checkbox">
+    <input type="checkbox" checked />
+    <span>Milk</span>
+  </label>
+  <label class="wmd-checkbox">
+    <input type="checkbox" />
+    <span>Eggs</span>
+  </label>
+</ul>
+<hr class="wmd-separator" />
+<p class="wmd-paragraph"><a id="settings"></a>
+<a href="#home" class="wmd-button wmd-icon">‹</a> Settings</p>
 <h3 class="wmd-h3">Vehicle</h3>
 <div class="wmd-container-button-group">
   <button class="wmd-button wmd-primary">Compact</button>
