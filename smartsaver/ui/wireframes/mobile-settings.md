@@ -1,4 +1,4 @@
-<a href="./mobile-planner.render.html" class="wmd-button wmd-icon">‹</a> Settings
+**Settings**
 
 ### Vehicle
 [Compact]{.primary} [Sedan] [Truck]
@@ -21,3 +21,5 @@ PC Optimum — Real Canadian Superstore [Linked]{.chip}
 :::
 
 <a href="./mobile-add-reward.render.html" class="wmd-button">+ Add a rewards program</a>
+
+<a href="./mobile-planner.render.html" class="wmd-button">Planner</a> <a href="./mobile-grocery-list.render.html" class="wmd-button">Grocery List</a> <a href="./mobile-settings.render.html" class="wmd-button wmd-primary">Settings</a>

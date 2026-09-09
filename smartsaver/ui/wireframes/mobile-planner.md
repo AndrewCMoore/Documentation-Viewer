@@ -1,6 +1,6 @@
 ![Fake map](./map-placeholder.svg)
 
-SmartSaver &nbsp;&nbsp;&nbsp; <a href="./mobile-grocery-list.render.html" class="wmd-button wmd-icon">≡</a> <a href="./mobile-settings.render.html" class="wmd-button wmd-icon">⚙</a>
+SmartSaver
 
 **Trip · origin & stops**
 [Use my location]{.primary}
@@ -31,3 +31,5 @@ Bread — Save $0.35 [-10%]{.chip}
 **$1.85** Fuel
 
 [Open in Google Maps]{.primary} [Apple Maps] [Waze]
+
+<a href="./mobile-planner.render.html" class="wmd-button wmd-primary">Planner</a> <a href="./mobile-grocery-list.render.html" class="wmd-button">Grocery List</a> <a href="./mobile-settings.render.html" class="wmd-button">Settings</a>

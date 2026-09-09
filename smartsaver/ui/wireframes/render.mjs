@@ -86,9 +86,29 @@ for (const src of PAGES) {
       + 'body.wmd-root>:nth-child(n+2){background:#f0f0f0;padding-left:20px;padding-right:20px;box-sizing:border-box;}'
       + 'body.wmd-root>:nth-child(2){position:relative;top:-16px;margin-top:0;padding-top:20px;border-top:3px solid #000;border-radius:16px 16px 0 0;box-shadow:0 -6px 14px rgba(0,0,0,.25);}'
       + 'body.wmd-root>:nth-child(2)::before{content:"";display:block;width:40px;height:4px;margin:0 auto 12px;background:#000;opacity:.3;border-radius:2px;}'
-      + 'body.wmd-root>:last-child{padding-bottom:24px;}'
       + '</style>';
     html = html.replace('</head>', `${sheet}\n</head>`);
+  }
+
+  // Planner/Grocery List/Settings are peer tabs, so each of their sources
+  // ends with the same 3-item tab-bar link row (the active tab marked
+  // wmd-primary) — pin it to the bottom of the frame. Add-reward is a
+  // pushed sub-screen under Settings (its own ‹ back), not a tab, so it's
+  // excluded.
+  //
+  // Targeted by a class marked onto its <p>, not :last-child/:nth-child —
+  // a browser extension (or anything else) appending its own node to
+  // <body> shifts what :last-child matches out from under it.
+  if (['mobile-planner.md', 'mobile-grocery-list.md', 'mobile-settings.md'].includes(src)) {
+    html = html.replace(
+      '<p class="wmd-paragraph"><a href="./mobile-planner.render.html"',
+      '<p class="wmd-paragraph wmd-tabbar"><a href="./mobile-planner.render.html"',
+    );
+    const tabbar = '<style>'
+      + '.wmd-tabbar{position:sticky;bottom:0;display:flex;gap:8px;margin:16px 0 -8px;padding:10px 0 6px;background:#f0f0f0;border-top:3px solid #000;z-index:3;}'
+      + '.wmd-tabbar a.wmd-button{flex:1;margin:0;text-align:center;}'
+      + '</style>';
+    html = html.replace('</head>', `${tabbar}\n</head>`);
   }
 
   const out = src.replace(/\.md$/, '.render.html');
