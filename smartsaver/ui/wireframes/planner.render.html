@@ -366,10 +366,14 @@ body.wmd-root {
 }
 
   </style>
-<style>body.wmd-root{display:grid;grid-template-columns:30% 70% !important;column-gap:20px;}body.wmd-root>*{grid-column:1;}body.wmd-root>h3:nth-of-type(2){grid-column:2;grid-row:1;}body.wmd-root>h3:nth-of-type(2)~*{grid-column:2;grid-row:2;}.wmd-image{display:block;width:100%;height:100%;object-fit:cover;}</style>
+<style>body.wmd-root>:nth-child(1),body.wmd-root>:nth-child(2){float:right;width:65%;box-sizing:border-box;}body.wmd-root>:nth-child(2){clear:right;}body.wmd-root>:nth-child(n+3){width:30%;box-sizing:border-box;}.wmd-image{display:block;width:100%;object-fit:cover;}</style>
 </head>
 <body class="wmd-root wmd-wireframe">
-  <h3 class="wmd-h3">Panel</h3>
+  <h3 class="wmd-h3">Map &amp; navigator</h3>
+<div class="wmd-container-form-group">
+  <img src="./map-placeholder.svg" alt="Fake map" class="wmd-image" />
+</div>
+<h3 class="wmd-h3">Panel</h3>
 <p class="wmd-paragraph">SmartSaver     <a href="./grocery-list.render.html" class="wmd-button wmd-icon">≡</a> <a href="./settings.render.html" class="wmd-button wmd-icon">⚙</a></p>
 <div class="wmd-container-form-group">
   <strong>Trip · origin & stops</strong>
@@ -410,10 +414,6 @@ body.wmd-root {
 <div class="wmd-container-button-group">
   <button class="wmd-button">Apple Maps</button>
   <button class="wmd-button">Waze</button>
-</div>
-<h3 class="wmd-h3">Map &amp; navigator</h3>
-<div class="wmd-container-form-group">
-  <img src="./map-placeholder.svg" alt="Fake map" class="wmd-image" />
 </div>
 </body>
 </html>

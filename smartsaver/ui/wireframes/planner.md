@@ -1,3 +1,6 @@
+### Map & navigator
+![Fake map](./map-placeholder.svg)
+
 ### Panel
 SmartSaver &nbsp;&nbsp;&nbsp; <a href="./grocery-list.render.html" class="wmd-button wmd-icon">≡</a> <a href="./settings.render.html" class="wmd-button wmd-icon">⚙</a>
 
@@ -32,6 +35,3 @@ Bread — Save $0.35 [-10%]{.chip}
 [Open in Google Maps]{.primary}
 
 [Apple Maps] [Waze]
-
-### Map & navigator
-![Fake map](./map-placeholder.svg)
