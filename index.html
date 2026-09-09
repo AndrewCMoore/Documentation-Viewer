@@ -124,6 +124,12 @@ const REPO = "Documentation-Viewer";
 const BRANCH = "main";
 const DIR = ""; // docs live at the repo root
 
+// Reached only via in-flow links from other screens/docs, not top-level menu items.
+const MENU_EXCLUDE = new Set([
+  "smartsaver/ui/wireframes/add-reward.md",
+  "smartsaver/ui/wireframes/v1-proposal.md",
+]);
+
 const listEl = document.getElementById("doc-list");
 const contentEl = document.getElementById("content");
 let files = []; // { relPath: "smartsaver/ui/wireframes/v1-proposal.md", section: "smartsaver"|null, label }
@@ -226,6 +232,7 @@ async function init() {
       data.tree.filter(entry => entry.type === "blob").map(entry => entry.path.slice(prefix.length)));
     files = data.tree
       .filter(entry => entry.type === "blob" && entry.path.startsWith(prefix) && entry.path.toLowerCase().endsWith(".md"))
+      .filter(entry => !MENU_EXCLUDE.has(entry.path))
       .map(entry => toFile(entry.path.slice(prefix.length)))
       .map(file => {
         const renderPath = file.relPath.replace(/\.md$/i, ".render.html");

@@ -1,4 +1,4 @@
-<a href="./prototype.render.html#settings" class="wmd-button wmd-icon">‹</a> Add a rewards program
+<a href="./settings.render.html" class="wmd-button wmd-icon">‹</a> Add a rewards program
 
 [Search a store or program__________]
 

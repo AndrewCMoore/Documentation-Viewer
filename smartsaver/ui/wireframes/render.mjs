@@ -2,13 +2,12 @@
 // Regenerates each *.render.html from its *.md source, using wiremd's
 // programmatic API (parse + renderToHTML).
 //
-// prototype.md is all three core screens (Home/Grocery List/Settings) in
-// one document, each anchored (`<a id="...">`) and linked to the others
-// via real `<a href="#...">` wired into the header icon-taps — see the
-// "Structure" diagram in v1-proposal.md. add-reward.md is a separate
-// screen, linked from Settings' "+ Add a rewards program" button.
+// Each screen (Planner/Grocery List/Settings/Add a rewards program) is its
+// own document, linked to the others via real `<a href="...">` wired into
+// the header icon-taps and each overlay's `‹` back — see the "Structure"
+// diagram in v1-proposal.md.
 //
-// prototype.md additionally gets a small CSS patch:
+// planner.md additionally gets a small CSS patch:
 // - wiremd's grid columns are always equal-fraction (repeat(N, 1fr)) with
 //   no span/width override, so this is the only way to show a 30% panel |
 //   70% map split.
@@ -22,14 +21,14 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const dir = dirname(fileURLToPath(import.meta.url));
-const PAGES = ['prototype.md', 'add-reward.md'];
+const PAGES = ['planner.md', 'grocery-list.md', 'settings.md', 'add-reward.md'];
 
 for (const src of PAGES) {
   const md = readFileSync(join(dir, src), 'utf8');
   const ast = parse(md);
   let html = renderToHTML(ast, { style: 'wireframe' });
 
-  if (src === 'prototype.md') {
+  if (src === 'planner.md') {
     const override = '<style>.wmd-container-grid-2{grid-template-columns:30% 70% !important;}'
       + '.wmd-image{display:block;width:100%;height:100%;object-fit:cover;}</style>';
     html = html.replace('</head>', `${override}\n</head>`);
