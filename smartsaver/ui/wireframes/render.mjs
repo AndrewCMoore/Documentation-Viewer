@@ -31,7 +31,10 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const dir = dirname(fileURLToPath(import.meta.url));
-const PAGES = ['planner.md', 'grocery-list.md', 'settings.md', 'add-reward.md'];
+const PAGES = [
+  'planner.md', 'grocery-list.md', 'settings.md', 'add-reward.md',
+  'mobile-planner.md', 'mobile-grocery-list.md', 'mobile-settings.md', 'mobile-add-reward.md',
+];
 
 for (const src of PAGES) {
   const md = readFileSync(join(dir, src), 'utf8');
@@ -46,6 +49,28 @@ for (const src of PAGES) {
       + '.wmd-image{display:block;width:100%;object-fit:cover;}'
       + '</style>';
     html = html.replace('</head>', `${override}\n</head>`);
+  }
+
+  // Every mobile-*.md screen renders inside a fixed phone-width frame so it
+  // reads as a mobile screen regardless of the viewer's own window width.
+  if (src.startsWith('mobile-')) {
+    const frame = '<style>'
+      + 'body.wmd-root{max-width:390px;margin:0 auto;min-height:100vh;box-sizing:border-box;border-left:10px solid #000;border-right:10px solid #000;}'
+      + '</style>';
+    html = html.replace('</head>', `${frame}\n</head>`);
+  }
+
+  // mobile-planner.md additionally gets the <861px behaviour described in
+  // v1-proposal.md: the map fills the screen and the panel becomes a
+  // bottom sheet, instead of the desktop panel|map column split above.
+  if (src === 'mobile-planner.md') {
+    const sheet = '<style>'
+      + '.wmd-image{display:block;width:100%;height:38vh;object-fit:cover;}'
+      + 'body.wmd-root>:nth-child(3){position:relative;top:-16px;margin-top:0;padding-top:20px;background:#f0f0f0;border-top:3px solid #000;border-radius:16px 16px 0 0;box-shadow:0 -6px 14px rgba(0,0,0,.25);}'
+      + 'body.wmd-root>:nth-child(3)::before{content:"";display:block;width:40px;height:4px;margin:0 auto 12px;background:#000;opacity:.3;border-radius:2px;}'
+      + 'body.wmd-root>:nth-child(n+3){background:#f0f0f0;}'
+      + '</style>';
+    html = html.replace('</head>', `${sheet}\n</head>`);
   }
 
   const out = src.replace(/\.md$/, '.render.html');
