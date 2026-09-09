@@ -1,7 +1,5 @@
-### Map & navigator
 ![Fake map](./map-placeholder.svg)
 
-### Panel
 SmartSaver &nbsp;&nbsp;&nbsp; <a href="./mobile-grocery-list.render.html" class="wmd-button wmd-icon">≡</a> <a href="./mobile-settings.render.html" class="wmd-button wmd-icon">⚙</a>
 
 **Trip · origin & stops**
