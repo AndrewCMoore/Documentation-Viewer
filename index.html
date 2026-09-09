@@ -100,29 +100,6 @@
   }
   main table { border-collapse: collapse; width: 100%; }
   main th, main td { border: 1px solid #2a2d35; padding: 0.4rem 0.6rem; text-align: left; }
-  /* wiremd bracket boxes: [label]{.class} */
-  main .wf-box {
-    display: inline-block;
-    padding: 0.15rem 0.55rem;
-    margin: 0 0.2rem 0.2rem 0;
-    border: 1px solid #2a2d35;
-    border-radius: 6px;
-    background: #171a21;
-    color: #c7cbd4;
-    font-size: 0.9em;
-  }
-  main .wf-box.icon {
-    width: 1.8em;
-    height: 1.8em;
-    padding: 0;
-    border-radius: 50%;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-  }
-  main .wf-box.primary { background: #5b8cff; border-color: #5b8cff; color: #0f1115; font-weight: 600; }
-  main .wf-box.chip { border-radius: 999px; border-color: transparent; background: #24304d; color: #7ea1ff; }
-  main .wf-box.wf-input { min-width: 8em; color: #6b7280; font-style: italic; }
   @media (max-width: 700px) {
     body { flex-direction: column; }
     nav { width: 100%; border-right: none; border-bottom: 1px solid #2a2d35; }
@@ -178,11 +155,18 @@ function renderList(filter) {
   const addItem = (file, nested) => {
     const li = document.createElement("li");
     const a = document.createElement("a");
-    a.href = "#" + encodeURIComponent(file.relPath);
+    if (file.renderPath) {
+      // wiremd screens ship a pre-rendered mockup alongside the source —
+      // link straight to that instead of re-rendering the raw wiremd
+      // syntax as plain markdown.
+      a.href = new URL((DIR ? DIR + "/" : "") + file.renderPath, location.href).href;
+    } else {
+      a.href = "#" + encodeURIComponent(file.relPath);
+      a.onclick = (e) => { e.preventDefault(); loadDoc(file); };
+    }
     a.textContent = file.label;
     if (nested) a.className = "nested";
     a.dataset.path = file.relPath;
-    a.onclick = (e) => { e.preventDefault(); loadDoc(file); };
     li.appendChild(a);
     listEl.appendChild(li);
   };
@@ -205,24 +189,6 @@ function renderList(filter) {
 // .html as raw text, not rendered) so both images and links to other pages
 // work — and this way it doesn't matter whether Pages serves the repo at
 // the domain root or under a /<repo>/ path.
-// wiremd wireframe notation: `[label]{.class ...}` (or bare `[label]`) marks
-// a UI element — icon/primary/chip/input — as a bracket "box"; plain markdown
-// links `[text](url)` and task-list checkboxes `[ ]`/`[x]` are left alone.
-function renderWiremd(md) {
-  return md
-    .replace(/^(#{1,6}\s+.+?)\s*\{[^}]*\}\s*$/gm, "$1")
-    .replace(/\[([^\[\]]+)\](?:\{([^}]*)\})?(?!\()/g, (match, inner, attrs) => {
-      const trimmed = inner.trim();
-      if (trimmed === "" || /^x$/i.test(trimmed)) return match; // task-list checkbox
-      const classes = ["wf-box"];
-      if (/_{2,}\s*$/.test(inner)) classes.push("wf-input");
-      (attrs || "").split(/\s+/).forEach(tok => {
-        if (tok.startsWith(".")) classes.push(tok.slice(1));
-      });
-      return `<span class="${classes.join(" ")}">${inner}</span>`;
-    });
-}
-
 function resolveRelativeUrls(root, docDir) {
   const base = new URL(docDir ? docDir + "/" : "", location.href).href;
   root.querySelectorAll("img[src], a[href]").forEach(el => {
@@ -242,7 +208,7 @@ async function loadDoc(file, pushHash = true) {
   try {
     const res = await fetch(`https://raw.githubusercontent.com/${OWNER}/${REPO}/${BRANCH}/${DIR ? DIR + "/" : ""}${file.relPath}`);
     const md = await res.text();
-    contentEl.innerHTML = marked.parse(renderWiremd(md));
+    contentEl.innerHTML = marked.parse(md);
     const docDir = file.relPath.includes("/") ? file.relPath.slice(0, file.relPath.lastIndexOf("/")) : "";
     resolveRelativeUrls(contentEl, docDir);
   } catch (err) {
@@ -256,9 +222,15 @@ async function init() {
     if (!res.ok) throw new Error(res.status);
     const data = await res.json();
     const prefix = DIR ? DIR + "/" : "";
+    const blobPaths = new Set(
+      data.tree.filter(entry => entry.type === "blob").map(entry => entry.path.slice(prefix.length)));
     files = data.tree
       .filter(entry => entry.type === "blob" && entry.path.startsWith(prefix) && entry.path.toLowerCase().endsWith(".md"))
       .map(entry => toFile(entry.path.slice(prefix.length)))
+      .map(file => {
+        const renderPath = file.relPath.replace(/\.md$/i, ".render.html");
+        return blobPaths.has(renderPath) ? { ...file, renderPath } : file;
+      })
       .sort((a, b) => a.label.localeCompare(b.label));
 
     if (files.length === 0) {
