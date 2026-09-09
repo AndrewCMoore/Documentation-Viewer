@@ -366,7 +366,7 @@ body.wmd-root {
 }
 
   </style>
-<style>body.wmd-root>:nth-child(1),body.wmd-root>:nth-child(2){float:right;width:65%;box-sizing:border-box;}body.wmd-root>:nth-child(2){clear:right;}body.wmd-root>:nth-child(n+3){width:30%;box-sizing:border-box;}.wmd-image{display:block;width:100%;object-fit:cover;}</style>
+<style>body.wmd-root>:nth-child(1),body.wmd-root>:nth-child(2){float:right;width:65%;box-sizing:border-box;}body.wmd-root>:nth-child(2){clear:right;}body.wmd-root>:nth-child(n+3):not(button){width:30%;box-sizing:border-box;}.wmd-image{display:block;width:100%;object-fit:cover;}</style>
 </head>
 <body class="wmd-root wmd-wireframe">
   <h3 class="wmd-h3">Map &amp; navigator</h3>
@@ -410,8 +410,8 @@ body.wmd-root {
 <p class="wmd-paragraph"><strong>12.4 km</strong> Distance
 <strong>18 min</strong> Est. time
 <strong>$1.85</strong> Fuel</p>
-<button class="wmd-button wmd-primary">Open in Google Maps</button>
 <div class="wmd-container-button-group">
+  <button class="wmd-button wmd-primary">Open in Google Maps</button>
   <button class="wmd-button">Apple Maps</button>
   <button class="wmd-button">Waze</button>
 </div>

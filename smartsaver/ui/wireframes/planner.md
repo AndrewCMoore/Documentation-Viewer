@@ -32,6 +32,4 @@ Bread — Save $0.35 [-10%]{.chip}
 **18 min** Est. time
 **$1.85** Fuel
 
-[Open in Google Maps]{.primary}
-
-[Apple Maps] [Waze]
+[Open in Google Maps]{.primary} [Apple Maps] [Waze]

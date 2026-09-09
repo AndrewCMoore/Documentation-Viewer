@@ -42,7 +42,7 @@ for (const src of PAGES) {
     const override = '<style>'
       + 'body.wmd-root>:nth-child(1),body.wmd-root>:nth-child(2){float:right;width:65%;box-sizing:border-box;}'
       + 'body.wmd-root>:nth-child(2){clear:right;}'
-      + 'body.wmd-root>:nth-child(n+3){width:30%;box-sizing:border-box;}'
+      + 'body.wmd-root>:nth-child(n+3):not(button){width:30%;box-sizing:border-box;}'
       + '.wmd-image{display:block;width:100%;object-fit:cover;}'
       + '</style>';
     html = html.replace('</head>', `${override}\n</head>`);
