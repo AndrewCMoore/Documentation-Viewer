@@ -228,8 +228,14 @@ async function init() {
     renderList();
     document.getElementById("search").addEventListener("input", e => renderList(e.target.value));
 
+    // Prefer a root doc (e.g. welcome.md) as the landing page — root and
+    // nested docs sort together alphabetically by label, so a section
+    // name earlier in the alphabet than every root doc (as "Ui / ..."
+    // sorts before "Welcome") would otherwise win by accident.
     const wanted = decodeURIComponent(location.hash.slice(1));
-    const initial = files.find(f => f.relPath === wanted) || files[0];
+    const initial = files.find(f => f.relPath === wanted)
+      || files.find(f => !f.section)
+      || files[0];
     loadDoc(initial, false);
   } catch (err) {
     listEl.innerHTML = "<li id='status' style='color:#e06c75'>Couldn't load doc list (rate limited or offline).</li>";
