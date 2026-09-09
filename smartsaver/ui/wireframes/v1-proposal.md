@@ -19,16 +19,21 @@ Responsive (already in `app.css`, unchanged by this proposal):
 
 ## Screens
 
-- **[Planner](./home.render.html)** — map + panel, panel sections grouped
-  instead of one flat stack: Trip · origin & stops, Staples & deals,
+All three screens live in one linked [prototype](./prototype.render.html) —
+the header icon-taps and each overlay's `‹` back are real links between them,
+matching the flow above.
+
+- **[Planner](./prototype.render.html#home)** — map + panel, panel sections
+  grouped instead of one flat stack: Trip · origin & stops, Staples & deals,
   Worth-it · route, Handoff.
-- **[Grocery List](./grocery-list.render.html)** (`GroceryListEditor.tsx`) —
-  Shop/Edit modes, categories, per-item deal chips. Already built.
-- **[Settings](./settings.render.html)** (`SettingsScreen.tsx`) —
+- **[Grocery List](./prototype.render.html#grocery-list)**
+  (`GroceryListEditor.tsx`) — Shop/Edit modes, categories, per-item deal
+  chips. Already built.
+- **[Settings](./prototype.render.html#settings)** (`SettingsScreen.tsx`) —
   vehicle/fuel presets, rewards editor. Already built.
 
 ## Status
 
-Static structural proposal, not a clickable prototype. Open questions for
-v2: where the two header icons actually sit in the brand row, and whether
-panel sections collapse by default or start expanded.
+Clickable prototype — the icon-taps navigate between screens. Open
+questions for v2: where the two header icons actually sit in the brand
+row, and whether panel sections collapse by default or start expanded.
