@@ -1,0 +1,42 @@
+name: Render wireframes
+
+on:
+  push:
+    paths:
+      - "smartsaver/ui/wireframes/*.md"
+      - "smartsaver/ui/wireframes/render.mjs"
+      - "smartsaver/ui/wireframes/package.json"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: smartsaver/ui/wireframes/package-lock.json
+
+      - name: Install
+        working-directory: smartsaver/ui/wireframes
+        run: npm ci
+
+      - name: Render
+        working-directory: smartsaver/ui/wireframes
+        run: npm run render
+
+      - name: Commit rendered output
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add smartsaver/ui/wireframes/*.render.html
+          git diff --cached --quiet || git commit -m "Render wireframes [skip ci]"
+          git push

@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Andrew Moore — Docs</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
+<style>
+  :root { color-scheme: light dark; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: #0f1115;
+    color: #e6e6e6;
+    display: flex;
+    min-height: 100vh;
+  }
+  nav {
+    width: 260px;
+    flex-shrink: 0;
+    background: #171a21;
+    border-right: 1px solid #2a2d35;
+    padding: 1.25rem 1rem;
+    overflow-y: auto;
+  }
+  nav a.home {
+    display: inline-block;
+    color: #9aa0ab;
+    text-decoration: none;
+    font-size: 0.8rem;
+    margin-bottom: 1rem;
+  }
+  nav a.home:hover { color: #5b8cff; }
+  nav h1 { font-size: 1rem; font-weight: 600; margin: 0 0 1rem; }
+  input#search {
+    width: 100%;
+    padding: 0.5rem 0.6rem;
+    margin-bottom: 0.75rem;
+    background: #0f1115;
+    border: 1px solid #2a2d35;
+    border-radius: 6px;
+    color: #e6e6e6;
+    font-size: 0.85rem;
+  }
+  input#search:focus { outline: none; border-color: #5b8cff; }
+  #doc-list { list-style: none; margin: 0; padding: 0; }
+  #doc-list li a {
+    display: block;
+    padding: 0.4rem 0.6rem;
+    border-radius: 6px;
+    color: #c7cbd4;
+    text-decoration: none;
+    font-size: 0.88rem;
+    margin-bottom: 2px;
+  }
+  #doc-list li a:hover { background: #1e222b; color: #fff; }
+  #doc-list li a.active { background: #24304d; color: #7ea1ff; }
+  .section-hdr {
+    font-size: 0.72rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #6b7280;
+    font-weight: 700;
+    padding: 0.9rem 0.6rem 0.3rem;
+  }
+  .section-hdr:first-child { padding-top: 0.2rem; }
+  #doc-list li a.nested { padding-left: 1.1rem; font-size: 0.84rem; }
+  #status { color: #9aa0ab; font-size: 0.8rem; padding: 0.4rem 0.6rem; }
+  main {
+    flex: 1;
+    padding: 3rem 4rem;
+    max-width: 900px;
+    overflow-y: auto;
+  }
+  main h1, main h2, main h3 { font-weight: 600; }
+  main h1 { font-size: 1.8rem; border-bottom: 1px solid #2a2d35; padding-bottom: 0.5rem; }
+  main a { color: #7ea1ff; }
+  main img { max-width: 100%; border-radius: 8px; border: 1px solid #2a2d35; }
+  main code {
+    background: #171a21;
+    border: 1px solid #2a2d35;
+    border-radius: 4px;
+    padding: 0.1rem 0.35rem;
+    font-size: 0.85em;
+  }
+  main pre {
+    background: #171a21;
+    border: 1px solid #2a2d35;
+    border-radius: 8px;
+    padding: 1rem;
+    overflow-x: auto;
+  }
+  main pre code { background: none; border: none; padding: 0; }
+  main blockquote {
+    border-left: 3px solid #2a2d35;
+    margin-left: 0;
+    padding-left: 1rem;
+    color: #9aa0ab;
+  }
+  main table { border-collapse: collapse; width: 100%; }
+  main th, main td { border: 1px solid #2a2d35; padding: 0.4rem 0.6rem; text-align: left; }
+  @media (max-width: 700px) {
+    body { flex-direction: column; }
+    nav { width: 100%; border-right: none; border-bottom: 1px solid #2a2d35; }
+    main { padding: 2rem 1.5rem; }
+  }
+</style>
+</head>
+<body>
+  <nav>
+    <a class="home" href="../">&larr; andrewcmoore.github.io</a>
+    <h1>Docs</h1>
+    <input id="search" type="text" placeholder="Filter...">
+    <ul id="doc-list"><li id="status">Loading...</li></ul>
+  </nav>
+  <main id="content">
+    <p style="color:#9aa0ab">Select a document.</p>
+  </main>
+
+<script>
+const OWNER = "andrewcmoore";
+const REPO = "Documentation-Viewer";
+const BRANCH = "main";
+const DIR = ""; // docs live at the repo root
+
+const listEl = document.getElementById("doc-list");
+const contentEl = document.getElementById("content");
+let files = []; // { relPath: "smartsaver/ui/wireframes/v1-proposal.md", section: "smartsaver"|null, label }
+
+function titleize(segment) {
+  return segment.replace(/\.md$/i, "").replace(/[-_]/g, " ")
+    .replace(/\b\w/g, c => c.toUpperCase());
+}
+
+// A doc's path is its path under DIR/, e.g. "welcome.md" (root, no section)
+// or "smartsaver/ui/wireframes/v1-proposal.md" (section "smartsaver", label
+// built from the remaining segments).
+function toFile(relPath) {
+  const parts = relPath.split("/");
+  const section = parts.length > 1 ? parts[0] : null;
+  const label = parts.slice(section ? 1 : 0).map(titleize).join(" / ");
+  return { relPath, section, label };
+}
+
+function renderList(filter) {
+  listEl.innerHTML = "";
+  const f = (filter || "").toLowerCase();
+  const visible = files.filter(file =>
+    ((file.section ? titleize(file.section) + " " : "") + file.label).toLowerCase().includes(f));
+
+  const root = visible.filter(file => !file.section);
+  const sections = [...new Set(visible.filter(file => file.section).map(file => file.section))].sort();
+
+  const addItem = (file, nested) => {
+    const li = document.createElement("li");
+    const a = document.createElement("a");
+    a.href = "#" + encodeURIComponent(file.relPath);
+    a.textContent = file.label;
+    if (nested) a.className = "nested";
+    a.dataset.path = file.relPath;
+    a.onclick = (e) => { e.preventDefault(); loadDoc(file); };
+    li.appendChild(a);
+    listEl.appendChild(li);
+  };
+
+  root.forEach(file => addItem(file, false));
+  sections.forEach(section => {
+    const hdr = document.createElement("li");
+    hdr.className = "section-hdr";
+    hdr.textContent = titleize(section);
+    listEl.appendChild(hdr);
+    visible.filter(file => file.section === section)
+      .sort((a, b) => a.label.localeCompare(b.label))
+      .forEach(file => addItem(file, true));
+  });
+}
+
+// Markdown image/link targets are written relative to the doc's own folder
+// (e.g. "./v1-structure.jpg" or "./v1-proposal.render.html"); resolve them
+// against this page's own URL (not raw.githubusercontent.com — that serves
+// .html as raw text, not rendered) so both images and links to other pages
+// work — and this way it doesn't matter whether Pages serves the repo at
+// the domain root or under a /<repo>/ path.
+function resolveRelativeUrls(root, docDir) {
+  const base = new URL(docDir ? docDir + "/" : "", location.href).href;
+  root.querySelectorAll("img[src], a[href]").forEach(el => {
+    const attr = el.tagName === "IMG" ? "src" : "href";
+    const val = el.getAttribute(attr);
+    if (val && !/^([a-z]+:)?\/\//i.test(val) && !val.startsWith("#")) {
+      el.setAttribute(attr, new URL(val, base).href);
+    }
+  });
+}
+
+async function loadDoc(file, pushHash = true) {
+  document.querySelectorAll("#doc-list a").forEach(a =>
+    a.classList.toggle("active", a.dataset.path === file.relPath));
+  contentEl.innerHTML = "<p style='color:#9aa0ab'>Loading...</p>";
+  if (pushHash) location.hash = encodeURIComponent(file.relPath);
+  try {
+    const res = await fetch(`https://raw.githubusercontent.com/${OWNER}/${REPO}/${BRANCH}/${DIR ? DIR + "/" : ""}${file.relPath}`);
+    const md = await res.text();
+    contentEl.innerHTML = marked.parse(md);
+    const docDir = file.relPath.includes("/") ? file.relPath.slice(0, file.relPath.lastIndexOf("/")) : "";
+    resolveRelativeUrls(contentEl, docDir);
+  } catch (err) {
+    contentEl.innerHTML = "<p style='color:#e06c75'>Failed to load document.</p>";
+  }
+}
+
+async function init() {
+  try {
+    const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/git/trees/${BRANCH}?recursive=1`);
+    if (!res.ok) throw new Error(res.status);
+    const data = await res.json();
+    const prefix = DIR ? DIR + "/" : "";
+    files = data.tree
+      .filter(entry => entry.type === "blob" && entry.path.startsWith(prefix) && entry.path.toLowerCase().endsWith(".md"))
+      .map(entry => toFile(entry.path.slice(prefix.length)))
+      .sort((a, b) => a.label.localeCompare(b.label));
+
+    if (files.length === 0) {
+      listEl.innerHTML = "<li id='status'>No docs yet. Add a .md file to the repo.</li>";
+      return;
+    }
+
+    renderList();
+    document.getElementById("search").addEventListener("input", e => renderList(e.target.value));
+
+    const wanted = decodeURIComponent(location.hash.slice(1));
+    const initial = files.find(f => f.relPath === wanted) || files[0];
+    loadDoc(initial, false);
+  } catch (err) {
+    listEl.innerHTML = "<li id='status' style='color:#e06c75'>Couldn't load doc list (rate limited or offline).</li>";
+  }
+}
+
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+{
+  "name": "smartsaver-wireframes",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "render": "node render.mjs"
+  },
+  "devDependencies": {
+    "wiremd": "0.1.5"
+  }
+}
