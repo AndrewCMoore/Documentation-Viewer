@@ -366,19 +366,18 @@ body.wmd-root {
 }
 
   </style>
-<style>.wmd-container-grid-2{grid-template-columns:30% 70% !important;}.wmd-image{display:block;width:100%;height:100%;object-fit:cover;}</style>
+<style>body.wmd-root{display:grid;grid-template-columns:30% 70% !important;column-gap:20px;}body.wmd-root>*{grid-column:1;}body.wmd-root>h3:nth-of-type(2){grid-column:2;grid-row:1;}body.wmd-root>h3:nth-of-type(2)~*{grid-column:2;grid-row:2;}.wmd-image{display:block;width:100%;height:100%;object-fit:cover;}</style>
 </head>
 <body class="wmd-root wmd-wireframe">
-  <div class="wmd-container-grid-2">
   <h3 class="wmd-h3">Panel</h3>
-  <p class="wmd-paragraph">SmartSaver     <a href="./grocery-list.render.html" class="wmd-button wmd-icon">≡</a> <a href="./settings.render.html" class="wmd-button wmd-icon">⚙</a></p>
-  <div class="wmd-container-form-group">
+<p class="wmd-paragraph">SmartSaver     <a href="./grocery-list.render.html" class="wmd-button wmd-icon">≡</a> <a href="./settings.render.html" class="wmd-button wmd-icon">⚙</a></p>
+<div class="wmd-container-form-group">
   <strong>Trip · origin & stops</strong>
 
   <button class="wmd-button wmd-primary">Use my location</button>
 </div>
-  <input type="text" class="wmd-input" placeholder="Search a place" />
-  <ul class="wmd-list">
+<input type="text" class="wmd-input" placeholder="Search a place" />
+<ul class="wmd-list">
   <label class="wmd-checkbox">
     <input type="checkbox" checked />
     <span>Stop 1</span>
@@ -388,8 +387,7 @@ body.wmd-root {
     <span>Stop 2</span>
   </label>
 </ul>
-  <p class="wmd-paragraph"><strong>Staples & deals</strong></p>
-</div>
+<p class="wmd-paragraph"><strong>Staples & deals</strong></p>
 <div class="wmd-container-card">
   <p class="wmd-paragraph">Milk — Save $0.60 <button class="wmd-button wmd-chip">-15%</button></p>
 </div>
@@ -416,9 +414,6 @@ body.wmd-root {
 <h3 class="wmd-h3">Map &amp; navigator</h3>
 <div class="wmd-container-form-group">
   <img src="./map-placeholder.svg" alt="Fake map" class="wmd-image" />
-</div>
-<div class="wmd-container-section">
-  
 </div>
 </body>
 </html>
