@@ -366,20 +366,22 @@ body.wmd-root {
 }
 
   </style>
-<style>.wmd-container-grid-2{grid-template-columns:30% 70% !important;}.wmd-image{display:block;width:100%;height:100%;object-fit:cover;}</style>
+<style>body.wmd-root>:nth-child(1),body.wmd-root>:nth-child(2){float:right;width:65%;box-sizing:border-box;}body.wmd-root>:nth-child(2){clear:right;}body.wmd-root>:nth-child(n+3):not(button){width:30%;box-sizing:border-box;}.wmd-image{display:block;width:100%;object-fit:cover;}</style>
 </head>
 <body class="wmd-root wmd-wireframe">
-  <p class="wmd-paragraph"><a id="home"></a></p>
-<div class="wmd-container-grid-2">
-  <h3 class="wmd-h3">Panel</h3>
-  <p class="wmd-paragraph">SmartSaver     <a href="#grocery-list" class="wmd-button wmd-icon">≡</a> <a href="#settings" class="wmd-button wmd-icon">⚙</a></p>
-  <div class="wmd-container-form-group">
+  <h3 class="wmd-h3">Map &amp; navigator</h3>
+<div class="wmd-container-form-group">
+  <img src="./map-placeholder.svg" alt="Fake map" class="wmd-image" />
+</div>
+<h3 class="wmd-h3">Panel</h3>
+<p class="wmd-paragraph">SmartSaver     <a href="./grocery-list.render.html" class="wmd-button wmd-icon">≡</a> <a href="./settings.render.html" class="wmd-button wmd-icon">⚙</a></p>
+<div class="wmd-container-form-group">
   <strong>Trip · origin & stops</strong>
 
   <button class="wmd-button wmd-primary">Use my location</button>
 </div>
-  <input type="text" class="wmd-input" placeholder="Search a place" />
-  <ul class="wmd-list">
+<input type="text" class="wmd-input" placeholder="Search a place" />
+<ul class="wmd-list">
   <label class="wmd-checkbox">
     <input type="checkbox" checked />
     <span>Stop 1</span>
@@ -389,8 +391,7 @@ body.wmd-root {
     <span>Stop 2</span>
   </label>
 </ul>
-  <p class="wmd-paragraph"><strong>Staples & deals</strong></p>
-</div>
+<p class="wmd-paragraph"><strong>Staples & deals</strong></p>
 <div class="wmd-container-card">
   <p class="wmd-paragraph">Milk — Save $0.60 <button class="wmd-button wmd-chip">-15%</button></p>
 </div>
@@ -409,72 +410,10 @@ body.wmd-root {
 <p class="wmd-paragraph"><strong>12.4 km</strong> Distance
 <strong>18 min</strong> Est. time
 <strong>$1.85</strong> Fuel</p>
-<button class="wmd-button wmd-primary">Open in Google Maps</button>
 <div class="wmd-container-button-group">
+  <button class="wmd-button wmd-primary">Open in Google Maps</button>
   <button class="wmd-button">Apple Maps</button>
   <button class="wmd-button">Waze</button>
 </div>
-<h3 class="wmd-h3">Map &amp; navigator</h3>
-<div class="wmd-container-form-group">
-  <img src="./map-placeholder.svg" alt="Fake map" class="wmd-image" />
-</div>
-<div class="wmd-container-section">
-  
-</div>
-<hr class="wmd-separator" />
-<p class="wmd-paragraph"><a id="grocery-list"></a>
-<a href="#home" class="wmd-button wmd-icon">‹</a> Weekly list</p>
-<button class="wmd-button wmd-primary">Edit</button>
-<input type="text" class="wmd-input" placeholder="Filter items" />
-<h3 class="wmd-h3">Produce</h3>
-<ul class="wmd-list">
-  <label class="wmd-checkbox wmd-chip">
-    <input type="checkbox" />
-    <span>Bananas [-15%]</span>
-  </label>
-  <label class="wmd-checkbox">
-    <input type="checkbox" checked />
-    <span>Spinach</span>
-  </label>
-  <label class="wmd-checkbox wmd-chip">
-    <input type="checkbox" />
-    <span>Avocado [-20%]</span>
-  </label>
-</ul>
-<h3 class="wmd-h3">Dairy &amp; eggs</h3>
-<ul class="wmd-list">
-  <label class="wmd-checkbox">
-    <input type="checkbox" checked />
-    <span>Milk</span>
-  </label>
-  <label class="wmd-checkbox">
-    <input type="checkbox" />
-    <span>Eggs</span>
-  </label>
-</ul>
-<hr class="wmd-separator" />
-<p class="wmd-paragraph"><a id="settings"></a>
-<a href="#home" class="wmd-button wmd-icon">‹</a> Settings</p>
-<h3 class="wmd-h3">Vehicle</h3>
-<div class="wmd-container-button-group">
-  <button class="wmd-button wmd-primary">Compact</button>
-  <button class="wmd-button">Sedan</button>
-  <button class="wmd-button">Truck</button>
-</div>
-<h3 class="wmd-h3">Region fuel price</h3>
-<div class="wmd-container-button-group">
-  <button class="wmd-button wmd-primary">Average</button>
-  <button class="wmd-button">Custom</button>
-</div>
-<h3 class="wmd-h3">Manual overrides</h3>
-<p class="wmd-paragraph">Fuel price ($ CAD)</p>
-<input type="number" class="wmd-input" value="1.50" />
-<p class="wmd-paragraph">Efficiency (L/100km)</p>
-<input type="number" class="wmd-input" value="8.0" />
-<h3 class="wmd-h3">Rewards</h3>
-<div class="wmd-container-card">
-  <p class="wmd-paragraph">PC Optimum — Real Canadian Superstore <button class="wmd-button wmd-chip">Linked</button></p>
-</div>
-<p class="wmd-paragraph"><a href="./add-reward.render.html" class="wmd-button">+ Add a rewards program</a></p>
 </body>
 </html>

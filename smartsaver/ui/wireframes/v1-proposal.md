@@ -20,17 +20,16 @@ Responsive (already in `app.css`, unchanged by this proposal):
 
 ## Screens
 
-All three screens live in one linked [prototype](./prototype.render.html) —
-the header icon-taps and each overlay's `‹` back are real links between them,
-matching the flow above.
+Each screen is its own page — the header icon-taps and each overlay's `‹`
+back are real links between them, matching the flow above.
 
-- **[Planner](./prototype.render.html#home)** — map + panel, panel sections
+- **[Planner](./planner.render.html)** — map + panel, panel sections
   grouped instead of one flat stack: Trip · origin & stops, Staples & deals,
   Handoff.
-- **[Grocery List](./prototype.render.html#grocery-list)**
+- **[Grocery List](./grocery-list.render.html)**
   (`GroceryListEditor.tsx`) — Shop/Edit modes, categories, per-item deal
   chips. Already built.
-- **[Settings](./prototype.render.html#settings)** (`SettingsScreen.tsx`) —
+- **[Settings](./settings.render.html)** (`SettingsScreen.tsx`) —
   vehicle/fuel presets, rewards editor. Already built.
 - **[Add a rewards program](./add-reward.render.html)** — new screen, not
   built yet. Reached from Settings' `+ Add a rewards program` button;
