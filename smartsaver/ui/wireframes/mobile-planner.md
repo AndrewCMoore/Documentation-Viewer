@@ -1,0 +1,21 @@
+![Fake map](./map-placeholder.svg)
+
+SmartSaver
+
+**Trip · origin & stops**
+[Use my location]{.primary}
+
+[Search a place__________]
+
+- [x] Stop 1
+- [x] Stop 2
+
+- [x] Round trip — include the drive back home
+
+**12.4 km** Distance
+**18 min** Est. time
+**$1.85** Fuel
+
+[Open in Google Maps]{.primary} [Apple Maps] [Waze]
+
+<a href="./mobile-planner.render.html" class="wmd-button wmd-primary">Planner</a> <a href="./mobile-grocery-list.render.html" class="wmd-button">Grocery List</a> <a href="./mobile-settings.render.html" class="wmd-button">Settings</a>
