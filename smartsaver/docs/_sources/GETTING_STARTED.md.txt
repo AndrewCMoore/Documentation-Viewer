@@ -1,0 +1,93 @@
+# Getting Started
+
+Covers what runs today. Planned design lives in [](ARCHITECTURE.md).
+
+## Prerequisites
+
+- Node >= 20 (`engines` in root `package.json`), npm.
+- `.npmrc` sets `legacy-peer-deps=true`; no extra flags needed.
+
+## Install
+
+```powershell
+npm install
+```
+
+## Scripts (repo root)
+
+| Script | Does |
+|---|---|
+| `npm run dev` | Builds `packages/core`, then runs API (`tsx watch`) and web (Vite) concurrently |
+| `npm run build` | Builds core, api, web (`tsc --noEmit && vite build`), then typechecks mobile |
+| `npm test` | Runs `test:api` then `test:core` |
+| `npm run test:api` | `vitest` in `packages/api` |
+| `npm run test:core` | `vitest` in `packages/core` (estimate, route, maplinks, stores, list, match, trip store; all mocked, no network) |
+| `npm run typecheck:mobile` | `tsc --noEmit` in `apps/mobile` |
+| `npm run docs:build` | Sphinx HTML build |
+| `npm run docs:screenshots` | Playwright screenshots of the running web app |
+
+Per-package builds: `build:core`, `build:api`, `build:web`.
+
+## Ports
+
+| Service | Port | Config |
+|---|---|---|
+| API (Express) | 8787 | `API_PORT` |
+| Web (Vite) | 5173 | Vite default |
+
+Vite proxies `/api` to `http://localhost:8787` (`apps/web/vite.config.ts`). The API allows CORS from `ALLOWED_ORIGIN` (default `http://localhost:5173`). Upstream flyer URL is overridable with `FLIPP_URL`. See [](API.md).
+
+## Mobile (Expo)
+
+```powershell
+npm run start -w apps/mobile      # expo start
+npm run android -w apps/mobile
+npm run ios -w apps/mobile
+```
+
+`apps/mobile` is a blank shell; see [](PACKAGES.md).
+
+## Smoke test (live network)
+
+```powershell
+npm run smoke:deal-options -w packages/api
+```
+
+Builds the API, then hits live Flipp for 15 Canadian postal codes and flags substring-only keyword matches.
+
+## CI and releases
+
+`.github/workflows/ci.yml`, triggered on push to `master` and on pull requests:
+
+- `build`: Node 20, `npm ci`, `npm run build`, `npm test` (api + core Vitest suites).
+- `docs`: Python 3.12, installs `docs/sphinx/requirements.txt`, builds Sphinx HTML, uploads it as the `docs-html` artifact. Build locally with `npm run docs:build` (output in `docs/sphinx/_build/html`).
+- `publish-docs`: push to `master` only, after `docs`. Syncs the HTML into `smartsaver/docs/` of the `AndrewCMoore/Documentation-Viewer` repo and pushes, so it is served at <https://andrewcmoore.github.io/Documentation-Viewer/smartsaver/docs/>. Authenticates with a write deploy key on that repo, stored here as the `DOCS_DEPLOY_KEY` secret.
+- `release`: push to `master` only, after `build`. Bumps the patch of the latest `vX.Y.Z` tag, commits `chore(release): vX.Y.Z [skip ci]`, tags, and creates a GitHub Release. Minor/major bumps are manual (push a `vX.Y.0` tag).
+
+Note: CI `build` does not run `npm test`.
+
+## Building these docs
+
+Requirements: `sphinx`, `myst-parser`, `furo`, `sphinxcontrib-mermaid`.
+
+Option A: use the venv in `docs/sphinx/.venv`. From repo root in PowerShell:
+
+```powershell
+$env:PATH = "$PWD\docs\sphinx\.venv\Scripts;$env:PATH"
+npm run docs:build
+```
+
+Option B: install into your own Python:
+
+```powershell
+pip install -r docs/sphinx/requirements.txt
+npm run docs:build
+```
+
+Output: `docs/sphinx/_build/html`.
+
+Screenshots: start `npm run dev`, then `npm run docs:screenshots`. Writes to `docs/_static/screenshots/`; base URL overridable with `WEB_URL`. Currently captures only `/` (`home`).
+
+```{seealso}
+[](ARCHITECTURE.md), [](WEBAPP.md), [](MOBILE.md), [](DEALS.md), [](DATABASE.md), [](PACKAGES.md), [](API.md), [](USER_STATES.md)
+```

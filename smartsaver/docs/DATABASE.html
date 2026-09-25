@@ -1,0 +1,431 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SmartSaver — Database (Addendum to ARCHITECTURE.md) &mdash; SmartSaver  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=3b126f1a" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="SmartSaver — Defensive Programming Rules" href="DEFENSIVE.html" />
+    <link rel="prev" title="SmartSaver — Cost-Model Settings (Addendum to WORTH_IT.md)" href="SETTINGS.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #1b1a3a" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            SmartSaver
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="GETTING_STARTED.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PACKAGES.html">Packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="API.html">API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Design</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="ARCHITECTURE.html">SmartSaver — Multi-Platform Architecture &amp; Planning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DIAGRAMS.html">SmartSaver — Architecture Diagrams (for audit)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DEALS.html">SmartSaver — Deals Layer (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="GROCERY_LIST.html">SmartSaver — Grocery List (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="GROCERY_EDITOR.html">SmartSaver — Grocery List Editor UI (Addendum to GROCERY_LIST.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LOCATION.html">SmartSaver — Location &amp; Store Discovery (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="WORTH_IT.html">SmartSaver — Worth-It Engine (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="REWARDS.html">SmartSaver — Rewards &amp; Grocer Preference (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SETTINGS.html">SmartSaver — Cost-Model Settings (Addendum to WORTH_IT.md)</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">SmartSaver — Database (Addendum to ARCHITECTURE.md)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#what-the-database-is-and-what-it-deliberately-is-not">1. What the database is (and what it deliberately is <em>not</em>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#scope-decisions">2. Scope decisions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-one-cross-cutting-dependency-the-owner-key">3. The one cross-cutting dependency: the owner key</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#datastore-one-engine-postgres">4. Datastore: one engine, Postgres</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#core-schema">5. Core schema</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#cluster-1-product-catalog-the-v2-matching-asset">Cluster 1 — Product catalog (the v2 matching asset)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#cluster-2-saved-trips-history">Cluster 2 — Saved trips / history</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#how-it-plugs-in-production-only-behind-existing-seams">6. How it plugs in (production-only, behind existing seams)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#key-flows">7. Key flows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#known-constraints-to-design-around">8. Known constraints to design around</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#proposed-folder-shape-additions">9. Proposed folder shape (additions)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#suggested-build-order-later">10. Suggested build order (later)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="DEFENSIVE.html">SmartSaver — Defensive Programming Rules</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Clients</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="WEBAPP.html">SmartSaver — Web App Build Plan (<code class="docutils literal notranslate"><span class="pre">apps/web</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MOBILE.html">SmartSaver — Mobile App Build Plan (<code class="docutils literal notranslate"><span class="pre">apps/mobile</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="STYLE_GUIDE.html">SmartSaver — Style Guide (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="USER_STATES.html">User States</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #1b1a3a" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">SmartSaver</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">SmartSaver — Database (Addendum to ARCHITECTURE.md)</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/DATABASE.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="smartsaver-database-addendum-to-architecture-md">
+<h1>SmartSaver — Database (Addendum to ARCHITECTURE.md)<a class="headerlink" href="#smartsaver-database-addendum-to-architecture-md" title="Link to this heading"></a></h1>
+<blockquote>
+<div><p>Planning document. No application code yet — this captures the design for the
+<strong>production persistence layer</strong> so we can build against it later. Read
+alongside <code class="docutils literal notranslate"><span class="pre">ARCHITECTURE.md</span></code>, <code class="docutils literal notranslate"><span class="pre">DEALS.md</span></code>, <code class="docutils literal notranslate"><span class="pre">GROCERY_LIST.md</span></code>, and <code class="docutils literal notranslate"><span class="pre">WORTH_IT.md</span></code>.
+This is the first piece of durable server state SmartSaver owns.</p>
+</div></blockquote>
+<section id="what-the-database-is-and-what-it-deliberately-is-not">
+<h2>1. What the database is (and what it deliberately is <em>not</em>)<a class="headerlink" href="#what-the-database-is-and-what-it-deliberately-is-not" title="Link to this heading"></a></h2>
+<p>The rest of SmartSaver is built to push state <strong>out</strong> of any server we own:
+routing/geo → OSRM + Nominatim, deals → a TTL’d cache, grocery list →
+<code class="docutils literal notranslate"><span class="pre">localStorage</span></code>. That is intentional (see the “prototype vs production” posture in
+every doc). This database does <strong>not</strong> undo that. It owns exactly the two things
+<code class="docutils literal notranslate"><span class="pre">localStorage</span></code> and an ephemeral cache genuinely cannot serve:</p>
+<ul class="simple">
+<li><p>a <strong>shared reference asset</strong> — the canonical product catalog that makes
+list↔deal matching reliable (<code class="docutils literal notranslate"><span class="pre">GROCERY_LIST.md</span> <span class="pre">§7</span></code>); and</p></li>
+<li><p>a <strong>durable record</strong> — saved trips / history (<code class="docutils literal notranslate"><span class="pre">ARCHITECTURE.md</span> <span class="pre">§5</span></code> +
+<code class="docutils literal notranslate"><span class="pre">WORTH_IT.md</span> <span class="pre">§8</span></code>).</p></li>
+</ul>
+<p>Everything else stays where the other docs put it. This is a <strong>production-only</strong>
+layer: the prototype keeps running on <code class="docutils literal notranslate"><span class="pre">localStorage</span></code> + cache with no database at
+all.</p>
+</section>
+<section id="scope-decisions">
+<h2>2. Scope decisions<a class="headerlink" href="#scope-decisions" title="Link to this heading"></a></h2>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Decision</p></th>
+<th class="head"><p>Choice</p></th>
+<th class="head"><p>Consequence</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>What the DB owns</p></td>
+<td><p><strong>Product catalog + saved trips only</strong></p></td>
+<td><p>Accounts, settings, lists, deals cache stay out of this DB</p></td>
+</tr>
+<tr class="row-odd"><td><p>When it enters</p></td>
+<td><p><strong>Production layer only</strong></p></td>
+<td><p>Prototype is unchanged; DB lands behind adapters the other docs already define</p></td>
+</tr>
+<tr class="row-even"><td><p>Deals cache</p></td>
+<td><p><strong>Not in this DB</strong></p></td>
+<td><p>Ephemeral/shared/weekly-TTL → Redis (or throwaway table), never durable rows (<code class="docutils literal notranslate"><span class="pre">DEALS.md</span> <span class="pre">§9</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Accounts / auth / settings</p></td>
+<td><p><strong>Out of scope</strong></p></td>
+<td><p>Trips need an <em>owner key</em> only; full identity is supplied externally (§3)</p></td>
+</tr>
+<tr class="row-even"><td><p>Engine</p></td>
+<td><p><strong>One Postgres</strong> (PostGIS + pgvector)</p></td>
+<td><p>Relational + geospatial + vector in a single system; no second datastore</p></td>
+</tr>
+<tr class="row-odd"><td><p>Worth-It breakdown storage</p></td>
+<td><p><strong>JSONB snapshot, not normalized</strong></p></td>
+<td><p>History is a frozen record read as a whole, never recomputed (§5)</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="the-one-cross-cutting-dependency-the-owner-key">
+<h2>3. The one cross-cutting dependency: the owner key<a class="headerlink" href="#the-one-cross-cutting-dependency-the-owner-key" title="Link to this heading"></a></h2>
+<p>Saved trips are inherently per-user, but this DB does <strong>not</strong> manage identity
+(accounts/auth/settings are out of scope). So the trip tables carry a plain
+<code class="docutils literal notranslate"><span class="pre">user_id</span></code> reference to whatever identity the app supplies:</p>
+<ul class="simple">
+<li><p><strong>Production-graduation phase:</strong> an anonymous device token is enough.</p></li>
+<li><p><strong>Later:</strong> a real auth subject, once accounts exist.</p></li>
+</ul>
+<p>When accounts arrive, a <code class="docutils literal notranslate"><span class="pre">user</span></code> (or <code class="docutils literal notranslate"><span class="pre">identity</span></code>) table slots in and <code class="docutils literal notranslate"><span class="pre">user_id</span></code>
+becomes a real foreign key — <strong>nothing in the two clusters below has to change.</strong></p>
+</section>
+<section id="datastore-one-engine-postgres">
+<h2>4. Datastore: one engine, Postgres<a class="headerlink" href="#datastore-one-engine-postgres" title="Link to this heading"></a></h2>
+<p>Everything scoped here is relational, geospatial, or vector — and Postgres does
+all three without a second system:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Need</p></th>
+<th class="head"><p>Handled by</p></th>
+<th class="head"><p>Used for</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Relational</p></td>
+<td><p>Postgres core</p></td>
+<td><p>trip → stops, product → aliases</p></td>
+</tr>
+<tr class="row-odd"><td><p>Geospatial</p></td>
+<td><p><strong>PostGIS</strong> (<code class="docutils literal notranslate"><span class="pre">geography</span></code> type)</p></td>
+<td><p>stop points, cached route lines; keeps “stores near a stop” a first-class query</p></td>
+</tr>
+<tr class="row-even"><td><p>Vector</p></td>
+<td><p><strong>pgvector</strong> (<code class="docutils literal notranslate"><span class="pre">vector</span></code> type)</p></td>
+<td><p>v2 catalog semantic matching (<code class="docutils literal notranslate"><span class="pre">GROCERY_LIST.md</span> <span class="pre">§7</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Ephemeral cache</p></td>
+<td><p><strong>Redis (separate)</strong></p></td>
+<td><p>deals cache — <em>not</em> this DB, so weekly churn never touches durable rows</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="core-schema">
+<h2>5. Core schema<a class="headerlink" href="#core-schema" title="Link to this heading"></a></h2>
+<section id="cluster-1-product-catalog-the-v2-matching-asset">
+<h3>Cluster 1 — Product catalog (the v2 matching asset)<a class="headerlink" href="#cluster-1-product-catalog-the-v2-matching-asset" title="Link to this heading"></a></h3>
+<p>The canonical layer both sides resolve <strong>through</strong>: a flyer’s “boneless skinless
+chicken breasts” and a list’s “chicken breast” both map to one <code class="docutils literal notranslate"><span class="pre">product</span></code>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>category                          -- the seeded taxonomy, GROCERY_LIST §4
+  id           smallint  PK
+  slug         text  UNIQUE        -- 'vegetables' | 'proteins' | …
+  label        text
+  sort_order   smallint            -- store-walk order
+
+product                           -- one canonical grocery item
+  id             bigint    PK
+  canonical_name text               -- 'chicken breast'
+  category_id    smallint  FK→category
+  embedding      vector(384)  NULL  -- pgvector; v2 semantic match only
+  created_at     timestamptz
+
+product_alias                     -- synonyms + matchTerms; BOTH sides resolve here
+  id           bigint    PK
+  product_id   bigint    FK→product
+  term         text                 -- normalized alt name
+  source       text                 -- 'seed' | 'user' | 'flyer' | 'learned'
+  UNIQUE (product_id, term)
+  -- trigram index on term for fuzzy lookup
+
+flyer_term_map                    -- learned: raw flyer string → product (matching cache)
+  raw_term     text      PK         -- normalized upstream item name
+  product_id   bigint    FK→product NULL   -- NULL = confirmed un-matchable
+  confidence   real
+  last_seen_at timestamptz
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">flyer_term_map</span></code> is the <strong>matching decision memoized</strong> — reference/learned data,
+not the ephemeral deals cache. It is what lets <code class="docutils literal notranslate"><span class="pre">lib/match</span></code> upgrade from v1
+keyword to v2 catalog <em>behind its stable <code class="docutils literal notranslate"><span class="pre">match()</span></code> interface</em> (<code class="docutils literal notranslate"><span class="pre">GROCERY_LIST.md</span> <span class="pre">§7</span></code>): the adapter starts reading the catalog instead of tokenizing strings, and
+the UI never learns.</p>
+</section>
+<section id="cluster-2-saved-trips-history">
+<h3>Cluster 2 — Saved trips / history<a class="headerlink" href="#cluster-2-saved-trips-history" title="Link to this heading"></a></h3>
+<p>A faithful snapshot of the <code class="docutils literal notranslate"><span class="pre">Trip</span></code> model (<code class="docutils literal notranslate"><span class="pre">ARCHITECTURE.md</span> <span class="pre">§5</span></code>) plus the Worth-It
+verdict (<code class="docutils literal notranslate"><span class="pre">WORTH_IT.md</span> <span class="pre">§8</span></code>), stored as a <strong>record</strong>, not a live object.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>trip
+  id           uuid       PK
+  user_id      uuid                     -- owner key (§3)
+  name         text  NULL
+  optimized    boolean                  -- was OSRM /trip reordering used
+  distance_m   integer                  -- route summary
+  duration_s   integer
+  fuel_litres  numeric  NULL            -- estimate (ARCHITECTURE §5)
+  fuel_cost    numeric  NULL
+  currency     text     NULL
+  worthit      jsonb    NULL            -- snapshot of WorthItResult summary + breakdown
+  geometry     geography(LineString,4326) NULL   -- optional cached route line
+  created_at   timestamptz
+  -- index (user_id, created_at DESC)
+
+trip_stop                              -- Trip.stops[] flattened, ordered
+  id           uuid       PK
+  trip_id      uuid       FK→trip  ON DELETE CASCADE
+  seq          smallint                 -- visiting order; 0 = origin
+  label        text
+  location     geography(Point,4326)
+  postal_code  text  NULL               -- the deals query key (DEALS §6)
+  role         text                     -- 'origin' | 'waypoint' | 'destination'
+  from_deal    boolean                  -- did this stop come from a deal store? (DEALS §8)
+  UNIQUE (trip_id, seq)
+</pre></div>
+</div>
+<p>Two deliberate calls:</p>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">worthit</span></code> as JSONB, not normalized tables.</strong> History is read as a whole for
+the “why we said keep/skip” panel (<code class="docutils literal notranslate"><span class="pre">WORTH_IT.md</span> <span class="pre">§9</span></code>), the breakdown is
+variable-shape, and we never recompute it after the fact. Normalizing it into
+savings/detour rows would over-engineer a frozen record — the same “estimates,
+not bills” pragmatism as the other docs.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">geometry</span></code> is optional.</strong> The polyline can be redrawn from stops via OSRM on
+demand; caching it costs a little space but keeps the record honest — the route
+as planned, immune to later OSM data drift. Recommended: store it.</p></li>
+</ul>
+</section>
+</section>
+<section id="how-it-plugs-in-production-only-behind-existing-seams">
+<h2>6. How it plugs in (production-only, behind existing seams)<a class="headerlink" href="#how-it-plugs-in-production-only-behind-existing-seams" title="Link to this heading"></a></h2>
+<p>Nothing here touches the prototype. It lands behind adapters the other docs
+already define, so the client contracts are unchanged:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Existing seam</p></th>
+<th class="head"><p>What the DB adds in production</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">lib/list</span></code> persistence adapter (<code class="docutils literal notranslate"><span class="pre">GROCERY_LIST.md</span> <span class="pre">§8</span></code>)</p></td>
+<td><p><em>unchanged</em> — lists stay client-side, out of this DB</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">lib/match</span></code> <code class="docutils literal notranslate"><span class="pre">match()</span></code> interface (<code class="docutils literal notranslate"><span class="pre">GROCERY_LIST.md</span> <span class="pre">§7</span></code>)</p></td>
+<td><p>v2 reads <code class="docutils literal notranslate"><span class="pre">product</span></code> / <code class="docutils literal notranslate"><span class="pre">product_alias</span></code> / <code class="docutils literal notranslate"><span class="pre">flyer_term_map</span></code> instead of tokenizing</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Trip.stops</span></code> + route flow (<code class="docutils literal notranslate"><span class="pre">ARCHITECTURE.md</span> <span class="pre">§5</span></code>)</p></td>
+<td><p>new <code class="docutils literal notranslate"><span class="pre">trip</span></code> + <code class="docutils literal notranslate"><span class="pre">trip_stop</span></code> write on “save trip”, read on “history”</p></td>
+</tr>
+<tr class="row-odd"><td><p>Deals cache (<code class="docutils literal notranslate"><span class="pre">DEALS.md</span> <span class="pre">§4</span></code>)</p></td>
+<td><p><em>unchanged</em> — stays in Redis, never this DB</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="key-flows">
+<h2>7. Key flows<a class="headerlink" href="#key-flows" title="Link to this heading"></a></h2>
+<p><strong>Save a trip</strong>
+<code class="docutils literal notranslate"><span class="pre">ready</span> <span class="pre">Trip</span> <span class="pre">→</span> <span class="pre">write</span> <span class="pre">trip</span> <span class="pre">row</span> <span class="pre">(summary</span> <span class="pre">+</span> <span class="pre">estimate</span> <span class="pre">+</span> <span class="pre">worthit</span> <span class="pre">snapshot</span> <span class="pre">+</span> <span class="pre">optional</span> <span class="pre">geometry)</span> <span class="pre">→</span> <span class="pre">write</span> <span class="pre">trip_stop</span> <span class="pre">rows</span> <span class="pre">in</span> <span class="pre">visiting</span> <span class="pre">order</span></code></p>
+<p><strong>Load history</strong>
+<code class="docutils literal notranslate"><span class="pre">user_id</span> <span class="pre">→</span> <span class="pre">SELECT</span> <span class="pre">trips</span> <span class="pre">ORDER</span> <span class="pre">BY</span> <span class="pre">created_at</span> <span class="pre">DESC</span> <span class="pre">→</span> <span class="pre">hydrate</span> <span class="pre">stops</span> <span class="pre">per</span> <span class="pre">trip</span> <span class="pre">→</span> <span class="pre">render</span></code></p>
+<p><strong>Resolve a name to a product (v2 matching)</strong>
+<code class="docutils literal notranslate"><span class="pre">normalized</span> <span class="pre">term</span> <span class="pre">→</span> <span class="pre">flyer_term_map</span> <span class="pre">hit?</span> <span class="pre">use</span> <span class="pre">it</span> <span class="pre">:</span> <span class="pre">product_alias</span> <span class="pre">exact/trigram</span> <span class="pre">:</span> <span class="pre">embedding</span> <span class="pre">nearest-neighbour</span> <span class="pre">→</span> <span class="pre">product_id</span> <span class="pre">→</span> <span class="pre">cache</span> <span class="pre">the</span> <span class="pre">decision</span> <span class="pre">back</span> <span class="pre">into</span> <span class="pre">flyer_term_map</span></code></p>
+<p><strong>Seed the catalog</strong>
+<code class="docutils literal notranslate"><span class="pre">category</span> <span class="pre">taxonomy</span> <span class="pre">(GROCERY_LIST</span> <span class="pre">§4)</span> <span class="pre">→</span> <span class="pre">seed</span> <span class="pre">products</span> <span class="pre">+</span> <span class="pre">aliases</span> <span class="pre">(source='seed')</span> <span class="pre">→</span> <span class="pre">grow</span> <span class="pre">product_alias/flyer_term_map</span> <span class="pre">from</span> <span class="pre">real</span> <span class="pre">flyer</span> <span class="pre">terms</span> <span class="pre">over</span> <span class="pre">time</span> <span class="pre">(source='flyer'|'learned')</span></code></p>
+</section>
+<section id="known-constraints-to-design-around">
+<h2>8. Known constraints to design around<a class="headerlink" href="#known-constraints-to-design-around" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>Owner key, not accounts (§3).</strong> <code class="docutils literal notranslate"><span class="pre">user_id</span></code> is an external reference; don’t
+build auth/settings into this DB. Keep trips retrievable by whatever identity
+the app supplies today (device token) and tomorrow (auth subject).</p></li>
+<li><p><strong>Catalog is never authoritative over price.</strong> The catalog identifies <em>what a
+product is</em>; prices live in the ephemeral deals cache, never here. Don’t
+denormalize a price onto <code class="docutils literal notranslate"><span class="pre">product</span></code>.</p></li>
+<li><p><strong>History is frozen.</strong> A saved trip records what was decided at the time
+(<code class="docutils literal notranslate"><span class="pre">worthit</span></code>, estimate, geometry). Never retro-fit it when fuel price, OSM data,
+or matching logic later changes — that would rewrite history.</p></li>
+<li><p><strong>Matching cache can go stale.</strong> <code class="docutils literal notranslate"><span class="pre">flyer_term_map</span></code> is learned; a wrong mapping
+should be correctable (re-point <code class="docutils literal notranslate"><span class="pre">product_id</span></code>, or NULL it). Treat <code class="docutils literal notranslate"><span class="pre">confidence</span></code>
+and <code class="docutils literal notranslate"><span class="pre">last_seen_at</span></code> as prune/repair signals, not gospel.</p></li>
+<li><p><strong>pgvector is v2 only.</strong> <code class="docutils literal notranslate"><span class="pre">embedding</span></code> stays NULL until semantic matching ships;
+v1 works purely on <code class="docutils literal notranslate"><span class="pre">product_alias</span></code> + trigram. The column existing early costs
+nothing and avoids a later migration.</p></li>
+<li><p><strong>Deals cache must stay out.</strong> The moment weekly flyer churn lands in durable
+tables, we’ve rebuilt the thing <code class="docutils literal notranslate"><span class="pre">DEALS.md</span></code> deliberately offloaded. Keep it in
+Redis.</p></li>
+</ul>
+</section>
+<section id="proposed-folder-shape-additions">
+<h2>9. Proposed folder shape (additions)<a class="headerlink" href="#proposed-folder-shape-additions" title="Link to this heading"></a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>smartsaver/
+├─ ARCHITECTURE.md
+├─ DEALS.md
+├─ GROCERY_LIST.md
+├─ WORTH_IT.md
+├─ DATABASE.md          ← this document
+└─ server/
+   ├─ db/
+   │  ├─ schema         ← migrations: category, product, product_alias,
+   │  │                    flyer_term_map, trip, trip_stop (PostGIS + pgvector)
+   │  ├─ seed           ← taxonomy + seed products/aliases (GROCERY_LIST §4)
+   │  └─ repo           ← trip read/write; catalog lookup (used by lib/match v2)
+   └─ (deals cache stays in Redis, not here — DEALS.md §4)
+</pre></div>
+</div>
+</section>
+<section id="suggested-build-order-later">
+<h2>10. Suggested build order (later)<a class="headerlink" href="#suggested-build-order-later" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p>Postgres + PostGIS + pgvector provisioned; migration tooling in place</p></li>
+<li><p>Catalog schema (<code class="docutils literal notranslate"><span class="pre">category</span></code>, <code class="docutils literal notranslate"><span class="pre">product</span></code>, <code class="docutils literal notranslate"><span class="pre">product_alias</span></code>) + taxonomy seed</p></li>
+<li><p>Catalog read path in <code class="docutils literal notranslate"><span class="pre">server/db/repo</span></code>; wire <code class="docutils literal notranslate"><span class="pre">lib/match</span></code> v2 to read it (behind
+the existing <code class="docutils literal notranslate"><span class="pre">match()</span></code> interface)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">flyer_term_map</span></code> learn/repair path — memoize matching decisions</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">trip</span></code> + <code class="docutils literal notranslate"><span class="pre">trip_stop</span></code> schema; “save trip” write path from a ready <code class="docutils literal notranslate"><span class="pre">Trip</span></code></p></li>
+<li><p>History read path (by <code class="docutils literal notranslate"><span class="pre">user_id</span></code>) → panel</p></li>
+<li><p>Optional cached route <code class="docutils literal notranslate"><span class="pre">geometry</span></code> on save</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">embedding</span></code> + pgvector nearest-neighbour for v2 semantic matching</p></li>
+<li><p>When accounts ship: add identity table, promote <code class="docutils literal notranslate"><span class="pre">user_id</span></code> to a real FK</p></li>
+</ol>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="SETTINGS.html" class="btn btn-neutral float-left" title="SmartSaver — Cost-Model Settings (Addendum to WORTH_IT.md)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="DEFENSIVE.html" class="btn btn-neutral float-right" title="SmartSaver — Defensive Programming Rules" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

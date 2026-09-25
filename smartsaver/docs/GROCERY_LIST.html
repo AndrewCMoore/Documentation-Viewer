@@ -1,0 +1,717 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SmartSaver — Grocery List (Addendum to ARCHITECTURE.md) &mdash; SmartSaver  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=3b126f1a" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.12.1/dist/mermaid.esm.min.mjs";
+
+
+
+
+
+const initStyles = () => {
+    const defaultStyle = document.createElement('style');
+    defaultStyle.textContent = "pre.mermaid {\n    /* Same as .mermaid-container > pre */\n    display: block;\n    width: 100%;\n}\n\npre.mermaid > svg {\n    /* Same as .mermaid-container > pre > svg */\n    height: 500px;\n    width: 100%;\n    max-width: 100% !important;\n}";
+    document.head.appendChild(defaultStyle);
+
+    const fullscreenStyle = document.createElement('style');
+    fullscreenStyle.textContent = ".mermaid-container {\n    position: relative;\n    display: flex;\n    flex-direction: row;\n    width: 100%;\n}\n\n.mermaid-container > pre {\n    display: block;\n    width: 100%;\n}\n\n.mermaid-container > pre > svg {\n    height: 500px;\n    width: 100%;\n    max-width: 100% !important;\n}\n\n.mermaid-fullscreen-btn {\n    position: absolute;\n    width: 28px;\n    height: 28px;\n    background: rgba(255, 255, 255, 0.95);\n    border: 1px solid rgba(0, 0, 0, 0.3);\n    border-radius: 4px;\n    cursor: pointer;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    transition: all 0.2s;\n    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);\n    font-size: 14px;\n    line-height: 1;\n    padding: 0;\n    color: #333;\n}\n\n.mermaid-fullscreen-btn:hover {\n    opacity: 100% !important;\n    background: rgba(255, 255, 255, 1);\n    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);\n    transform: scale(1.1);\n}\n\n.mermaid-fullscreen-btn.dark-theme {\n    background: rgba(50, 50, 50, 0.95);\n    border: 1px solid rgba(255, 255, 255, 0.3);\n    color: #e0e0e0;\n}\n\n.mermaid-fullscreen-btn.dark-theme:hover {\n    background: rgba(60, 60, 60, 1);\n    box-shadow: 0 3px 10px rgba(255, 255, 255, 0.2);\n}\n\n.mermaid-fullscreen-modal {\n    display: none;\n    position: fixed !important;\n    top: 0 !important;\n    left: 0 !important;\n    width: 95vw;\n    height: 100vh;\n    background: rgba(255, 255, 255, 0.98);\n    z-index: 9999;\n    padding: 20px;\n    overflow: auto;\n}\n\n.mermaid-fullscreen-modal.dark-theme {\n    background: rgba(0, 0, 0, 0.98);\n}\n\n.mermaid-fullscreen-modal.active {\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen {\n    position: relative;\n    width: 95vw;\n    height: 90vh;\n    max-width: 95vw;\n    max-height: 90vh;\n    background: white;\n    border-radius: 8px;\n    padding: 20px;\n    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);\n    overflow: auto;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen.dark-theme {\n    background: #1a1a1a;\n    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);\n}\n\n.mermaid-container-fullscreen pre.mermaid {\n    width: 100%;\n    height: 100%;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen .mermaid svg {\n    height: 100% !important;\n    width: 100% !important;\n    cursor: grab;\n}\n\n.mermaid-fullscreen-close {\n    position: fixed !important;\n    top: 20px !important;\n    right: 20px !important;\n    width: 40px;\n    height: 40px;\n    background: rgba(255, 255, 255, 0.95);\n    border: 1px solid rgba(0, 0, 0, 0.2);\n    border-radius: 50%;\n    cursor: pointer;\n    z-index: 10000;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);\n    transition: all 0.2s;\n    font-size: 24px;\n    line-height: 1;\n    color: #333;\n}\n\n.mermaid-fullscreen-close:hover {\n    background: white;\n    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);\n    transform: scale(1.1);\n}\n\n.mermaid-fullscreen-close.dark-theme {\n    background: rgba(50, 50, 50, 0.95);\n    border: 1px solid rgba(255, 255, 255, 0.2);\n    color: #e0e0e0;\n}\n\n.mermaid-fullscreen-close.dark-theme:hover {\n    background: rgba(60, 60, 60, 1);\n    box-shadow: 0 6px 16px rgba(255, 255, 255, 0.2);\n}\n\n.mermaid-fullscreen-modal .mermaid-fullscreen-btn {\n    display: none !important;\n}";
+    document.head.appendChild(fullscreenStyle);
+}
+
+// Detect if page has dark background
+const isDarkTheme = () => {
+    // We use a set of heuristics:
+    // 1. Check for common dark mode classes or attributes
+    // 2. Check computed background color brightness
+    if (document.documentElement.classList.contains('dark') ||
+        document.documentElement.getAttribute('data-theme') === 'dark' ||
+        document.body.classList.contains('dark') ||
+        document.body.getAttribute('data-theme') === 'dark') {
+        // console.log("Dark theme detected via class/attribute");
+        return true;
+    }
+    if (document.documentElement.classList.contains('light') ||
+        document.documentElement.getAttribute('data-theme') === 'light' ||
+        document.body.classList.contains('light') ||
+        document.body.getAttribute('data-theme') === 'light') {
+        // console.log("Light theme detected via class/attribute");
+        return false;
+    }
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        // console.log("Dark theme detected via prefers-color-scheme");
+        return true;
+    }
+    const bgColor = window.getComputedStyle(document.body).backgroundColor;
+    const match = bgColor.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/);
+    if (match) {
+        const r = parseInt(match[1]);
+        const g = parseInt(match[2]);
+        const b = parseInt(match[3]);
+        const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+        // console.log("Background color brightness:", brightness);
+        return brightness < 128;
+    }
+    // console.log("No dark or light theme detected, defaulting to light theme");
+    return false;
+};
+
+let darkTheme = isDarkTheme();
+let modal = null;
+let modalContent = null;
+let previousScrollOffset = [window.scrollX, window.scrollY];
+let _lazyObserver = null;
+let _renderQueue = Promise.resolve();
+let closeModal = () => {};
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal?.classList.contains('active')) {
+        closeModal();
+    }
+});
+
+// Apply d3 zoom to each SVG. Idempotent: an SVG already wrapped is skipped,
+// so this is safe to call both for the initial batch and for diagrams that
+// render lazily once they become visible.
+const addZoomToSvgs = (svgs) => {
+    svgs.each(function() {
+        if (this.getAttribute('data-zoom-applied') === 'true') return;
+        var svg = d3.select(this);
+        svg.html("<g class='wrapper'>" + svg.html() + "</g>");
+        var inner = svg.select("g");
+        var zoom = d3.zoom().on("zoom", function(event) {
+            inner.attr("transform", event.transform);
+        });
+        svg.call(zoom);
+        this.setAttribute('data-zoom-applied', 'true');
+    });
+};
+
+const runMermaid = async (rerun) => {
+    console.log("Running mermaid diagrams, rerun =", rerun);
+    // clear all existing mermaid charts
+    let all_mermaids = document.querySelectorAll(".mermaid");
+
+    if (rerun) {
+        // Disconnect any previous lazy rendering observer
+        if (_lazyObserver) {
+            _lazyObserver.disconnect();
+            _lazyObserver = null;
+        }
+
+        all_mermaids.forEach((el) => {
+            el.removeAttribute('data-mermaid-deferred');
+            el.removeAttribute('data-mermaid-render-failed');
+            if(!el.hasAttribute("data-original-code")) {
+                // store original code
+                // console.log(`Storing original code for first run: `, el.innerHTML);
+                el.setAttribute('data-original-code', el.innerHTML);
+            }
+            if(el.getAttribute("data-processed") === "true") {
+                // remove and restore original
+                el.removeAttribute("data-processed");
+                // console.log(`Restoring original code for re-run: `, el.getAttribute('data-original-code'));
+                el.innerHTML = el.getAttribute('data-original-code');
+            } else {
+                // store original code
+                // console.log(`Storing original code for re-run: `, el.innerHTML);
+                el.setAttribute('data-original-code', el.innerHTML);
+            }
+        });
+
+        // Separate visible and hidden elements. Mermaid's layout engine measures
+        // text dimensions via the DOM, which fails for elements hidden by a parent
+        // (e.g., Reveal.js non-active slides, sphinx-design unopened tabs),
+        // producing broken SVGs. Render visible elements now, defer hidden ones.
+        const visible = [];
+        const hidden = [];
+        all_mermaids.forEach((el) => {
+            // offsetParent is null for display:none ancestors.
+            // getClientRects().length > 0 catches position:fixed elements
+            // (which also have null offsetParent but are still visible).
+            if (el.offsetParent !== null || el.getClientRects().length > 0) {
+                visible.push(el);
+            } else {
+                hidden.push(el);
+                el.setAttribute('data-mermaid-deferred', 'true');
+            }
+        });
+
+        if (visible.length > 0) {
+            try {
+                await mermaid.run({ nodes: visible });
+            } catch (e) {
+                console.error("Mermaid rendering failed:", e);
+            }
+        }
+
+        // Lazily render hidden elements when they become visible.
+        // Uses a promise chain (_renderQueue) to serialize rendering,
+        // since IntersectionObserver may report multiple entries at once
+        // and mermaid.run() is not safe to call concurrently.
+        if (hidden.length > 0) {
+            if (typeof IntersectionObserver === 'undefined') {
+                console.warn("IntersectionObserver not available; hidden mermaid diagrams will not render.");
+            } else {
+                _renderQueue = Promise.resolve();
+                _lazyObserver = new IntersectionObserver((entries) => {
+                    for (const entry of entries) {
+                        if (entry.isIntersecting && entry.target.getAttribute("data-processed") !== "true") {
+                            _lazyObserver.unobserve(entry.target);
+                            const el = entry.target;
+                            _renderQueue = _renderQueue.then(async () => {
+                                try {
+                                    await mermaid.run({ nodes: [el] });
+                                    el.removeAttribute('data-mermaid-deferred');
+                                    // Apply zoom to the now-rendered diagram, matching
+                                    // the decoration visible diagrams receive.
+                                    if (false) {
+                                        addZoomToSvgs(d3.selectAll("").select(function() {
+                                            return this.querySelector("svg");
+                                        }));
+                                    }
+                                } catch (e) {
+                                    console.error("Mermaid deferred rendering failed:", e);
+                                    el.removeAttribute('data-mermaid-deferred');
+                                    el.setAttribute('data-mermaid-render-failed', 'true');
+                                }
+                            });
+                        }
+                    }
+                });
+                hidden.forEach((el) => _lazyObserver.observe(el));
+            }
+        }
+    }
+
+    all_mermaids = document.querySelectorAll(".mermaid");
+    // Exclude deferred (hidden) and render-failed elements from completion checks
+    const mermaids_active = document.querySelectorAll(".mermaid:not([data-mermaid-deferred]):not([data-mermaid-render-failed])");
+    const mermaids_processed = document.querySelectorAll(".mermaid:not([data-mermaid-deferred]):not([data-mermaid-render-failed])[data-processed='true']");
+
+    if (false) {
+        const mermaids_to_add_zoom = 0 === -1 ? mermaids_active.length : 0;
+        if(mermaids_to_add_zoom > 0) {
+            var svgs = d3.selectAll("").select(function() {
+                return this.querySelector("svg");
+            });
+            // Wait until every active (visible) diagram has rendered. Deferred
+            // diagrams are excluded, so a fixed d3_node_count that counts a
+            // hidden diagram no longer loops forever waiting for its SVG.
+            if(mermaids_active.length !== mermaids_processed.length) {
+                setTimeout(() => runMermaid(false), 200);
+                return;
+            }
+            addZoomToSvgs(svgs);
+        }
+    } else if(mermaids_active.length !== mermaids_processed.length) {
+        // Wait for mermaid to process all diagrams
+        setTimeout(() => runMermaid(false), 200);
+        return;
+    }
+
+    // Stop here if not adding fullscreen capability
+    if (!true) return;
+
+    if (modal !== null ) {
+        // Destroy existing modal
+        modal.remove();
+        modal = null;
+        modalContent = null;
+    }
+
+    modal = document.createElement('div');
+    modal.className = 'mermaid-fullscreen-modal' + (darkTheme ? ' dark-theme' : '');
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-label', 'Fullscreen diagram viewer');
+    modal.innerHTML = `
+        <button class="mermaid-fullscreen-close${darkTheme ? ' dark-theme' : ''}" aria-label="Close fullscreen">✕</button>
+        <div class="mermaid-container-fullscreen${darkTheme ? ' dark-theme' : ''}"></div>
+    `;
+    document.body.appendChild(modal);
+
+    modalContent = modal.querySelector('.mermaid-container-fullscreen');
+    const closeBtn = modal.querySelector('.mermaid-fullscreen-close');
+
+    closeModal = () => {
+        modal.classList.remove('active');
+        modalContent.innerHTML = '';
+        document.body.style.overflow = ''
+        window.scrollTo({left: previousScrollOffset[0], top: previousScrollOffset[1], behavior: 'instant'});
+    };
+
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+    });
+    document.querySelectorAll('.mermaid').forEach((mermaidDiv) => {
+        if (mermaidDiv.parentNode.classList.contains('mermaid-container') ||
+            mermaidDiv.closest('.mermaid-fullscreen-modal')) {
+            // Already processed, adjust button class if needed
+            const existingBtn = mermaidDiv.parentNode.querySelector('.mermaid-fullscreen-btn');
+            if (existingBtn) {
+                existingBtn.className = 'mermaid-fullscreen-btn' + (darkTheme ? ' dark-theme' : '');
+            }
+            return;
+        }
+
+        const container = document.createElement('div');
+        container.className = 'mermaid-container';
+        mermaidDiv.parentNode.insertBefore(container, mermaidDiv);
+        container.appendChild(mermaidDiv);
+
+        const fullscreenBtn = document.createElement('button');
+        fullscreenBtn.className = 'mermaid-fullscreen-btn' + (darkTheme ? ' dark-theme' : '');
+        fullscreenBtn.setAttribute('aria-label', 'View diagram in fullscreen');
+        fullscreenBtn.textContent = "\u26f6";
+        fullscreenBtn.style.opacity = "50%";
+
+        // Calculate dynamic position based on diagram's margin and padding
+        const diagramStyle = window.getComputedStyle(mermaidDiv);
+        const marginTop = parseFloat(diagramStyle.marginTop) || 0;
+        const marginRight = parseFloat(diagramStyle.marginRight) || 0;
+        const paddingTop = parseFloat(diagramStyle.paddingTop) || 0;
+        const paddingRight = parseFloat(diagramStyle.paddingRight) || 0;
+        fullscreenBtn.style.top = `${marginTop + paddingTop + 4}px`;
+        fullscreenBtn.style.right = `${marginRight + paddingRight + 4}px`;
+
+        fullscreenBtn.addEventListener('click', () => {
+            previousScrollOffset = [window.scrollX, window.scrollY];
+            const clone = mermaidDiv.cloneNode(true);
+            modalContent.innerHTML = '';
+            modalContent.appendChild(clone);
+
+            const svg = clone.querySelector('svg');
+            if (svg) {
+                svg.removeAttribute('width');
+                svg.removeAttribute('height');
+                svg.style.width = '100%';
+                svg.style.height = 'auto';
+                svg.style.maxWidth = '100%';
+                svg.style.display = 'block';
+
+                if (false) {
+                    setTimeout(() => {
+                        const g = svg.querySelector('g');
+                        if (g) {
+                            var svgD3 = d3.select(svg);
+                            svgD3.html("<g class='wrapper'>" + svgD3.html() + "</g>");
+                            var inner = svgD3.select("g");
+                            var zoom = d3.zoom().on("zoom", function(event) {
+                                inner.attr("transform", event.transform);
+                            });
+                            svgD3.call(zoom);
+                        }
+                    }, 100);
+                }
+            }
+
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+        container.appendChild(fullscreenBtn);
+    });
+};
+
+
+
+const load = async () => {
+    initStyles();
+
+
+    await runMermaid(true);
+
+    const reRunIfThemeChanges = async () => {
+        const newDarkTheme = isDarkTheme();
+        if (newDarkTheme !== darkTheme) {
+            darkTheme = newDarkTheme;
+            console.log("Theme change detected, re-running mermaid with", darkTheme ? "dark" : "default", "theme");
+            await mermaid.initialize(
+                {...{"startOnLoad": false},
+                ...{ darkMode: darkTheme, theme: darkTheme ? "dark" : "default" },
+                }
+            );
+            await runMermaid(true);
+        }
+    };
+
+    // Update theme classes when theme changes
+    const themeObserver = new MutationObserver(reRunIfThemeChanges);
+    themeObserver.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['class', 'style', 'data-theme']
+    });
+    themeObserver.observe(document.body, {
+        attributes: true,
+        attributeFilter: ['class', 'style', 'data-theme']
+    });
+};
+
+
+
+
+
+console.log("Initializing mermaid with", darkTheme ? "dark" : "default", "theme");
+mermaid.initialize(
+    {...{"startOnLoad": false},
+    ...{ darkMode: darkTheme, theme: darkTheme ? "dark" : "default" },
+    }
+);
+
+window.addEventListener("load", load);
+window.runMermaid = runMermaid;</script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="SmartSaver — Grocery List Editor UI (Addendum to GROCERY_LIST.md)" href="GROCERY_EDITOR.html" />
+    <link rel="prev" title="SmartSaver — Deals Layer (Addendum to ARCHITECTURE.md)" href="DEALS.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #1b1a3a" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            SmartSaver
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="GETTING_STARTED.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PACKAGES.html">Packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="API.html">API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Design</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="ARCHITECTURE.html">SmartSaver — Multi-Platform Architecture &amp; Planning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DIAGRAMS.html">SmartSaver — Architecture Diagrams (for audit)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DEALS.html">SmartSaver — Deals Layer (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">SmartSaver — Grocery List (Addendum to ARCHITECTURE.md)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#what-the-grocery-list-is">1. What the grocery list is</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#where-it-fits-the-full-data-flow">2. Where it fits (the full data flow)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#scope-decisions">3. Scope decisions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#default-category-taxonomy-seed">4. Default category taxonomy (seed)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#core-data-model">5. Core data model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#key-flows">6. Key flows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-matching-layer-the-hard-part">7. The matching layer (the hard part)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#persistence-posture-two-modes-same-code">8. Persistence posture (two modes, same code)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#known-constraints-to-design-around">9. Known constraints to design around</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#proposed-folder-shape-additions">10. Proposed folder shape (additions)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#suggested-build-order-later">11. Suggested build order (later)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="GROCERY_EDITOR.html">SmartSaver — Grocery List Editor UI (Addendum to GROCERY_LIST.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LOCATION.html">SmartSaver — Location &amp; Store Discovery (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="WORTH_IT.html">SmartSaver — Worth-It Engine (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="REWARDS.html">SmartSaver — Rewards &amp; Grocer Preference (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SETTINGS.html">SmartSaver — Cost-Model Settings (Addendum to WORTH_IT.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DATABASE.html">SmartSaver — Database (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DEFENSIVE.html">SmartSaver — Defensive Programming Rules</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Clients</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="WEBAPP.html">SmartSaver — Web App Build Plan (<code class="docutils literal notranslate"><span class="pre">apps/web</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MOBILE.html">SmartSaver — Mobile App Build Plan (<code class="docutils literal notranslate"><span class="pre">apps/mobile</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="STYLE_GUIDE.html">SmartSaver — Style Guide (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="USER_STATES.html">User States</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #1b1a3a" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">SmartSaver</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">SmartSaver — Grocery List (Addendum to ARCHITECTURE.md)</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/GROCERY_LIST.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="smartsaver-grocery-list-addendum-to-architecture-md">
+<h1>SmartSaver — Grocery List (Addendum to ARCHITECTURE.md)<a class="headerlink" href="#smartsaver-grocery-list-addendum-to-architecture-md" title="Link to this heading"></a></h1>
+<blockquote>
+<div><p>Planning document. No application code yet — this captures the design for the
+user’s grocery-list feature. Read alongside <code class="docutils literal notranslate"><span class="pre">ARCHITECTURE.md</span></code> and <code class="docutils literal notranslate"><span class="pre">DEALS.md</span></code>.
+The list is the <strong>demand</strong> side; deals are the <strong>supply</strong> side; a matching
+layer connects them and feeds store selection into the route optimizer.</p>
+</div></blockquote>
+<section id="what-the-grocery-list-is">
+<h2>1. What the grocery list is<a class="headerlink" href="#what-the-grocery-list-is" title="Link to this heading"></a></h2>
+<p>A saved, <strong>categorized list of the staples a user normally buys</strong> (“My Staples”),
+seeded with the food essentials — Vegetables, Fruits, Grains, Proteins, and so
+on. It persists between trips so the user doesn’t rebuild it every week; each
+trip starts from the staples and the user toggles what’s actually <strong>needed</strong> this
+time.</p>
+<p>The list is the input that makes the deals feature useful: instead of “here are
+random deals near you,” SmartSaver can answer <strong>“which nearby stores have <em>my</em>
+list on sale, and for how much?”</strong> — then turn the best stores into stops.</p>
+</section>
+<section id="where-it-fits-the-full-data-flow">
+<h2>2. Where it fits (the full data flow)<a class="headerlink" href="#where-it-fits-the-full-data-flow" title="Link to this heading"></a></h2>
+<pre  class="mermaid">
+        graph TD
+  GL[&quot;Grocery List (demand)&quot;] --&gt; M[&quot;Matching layer&lt;br/&gt;per-store: coverage + basket cost&quot;]
+  DL[&quot;Deals per store (supply)&quot;] --&gt; M
+  M --&gt; RS[&quot;ranked stores become Trip.stops → OSRM /trip optimize&quot;]
+  RS --&gt; OUT[&quot;route + fuel/time estimate + 'Open in Maps' handoff&quot;]
+    </pre><p>The list plugs into the existing pipeline: matched stores become <code class="docutils literal notranslate"><span class="pre">Trip.stops</span></code>
+(from <code class="docutils literal notranslate"><span class="pre">ARCHITECTURE.md</span></code> §5) and flow straight into OSRM optimization.</p>
+</section>
+<section id="scope-decisions">
+<h2>3. Scope decisions<a class="headerlink" href="#scope-decisions" title="Link to this heading"></a></h2>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Decision</p></th>
+<th class="head"><p>Choice</p></th>
+<th class="head"><p>Consequence</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>List lifetime</p></td>
+<td><p><strong>Persistent recurring staples</strong> + per-trip “needed” toggle</p></td>
+<td><p>User builds once, reuses weekly; no rebuild each trip</p></td>
+</tr>
+<tr class="row-odd"><td><p>Categories</p></td>
+<td><p><strong>Seeded default taxonomy, user-extensible</strong></p></td>
+<td><p>Start with the essentials; users can add custom categories</p></td>
+</tr>
+<tr class="row-even"><td><p>Item → category</p></td>
+<td><p><strong>Exactly one category per item</strong></p></td>
+<td><p>Simple grouping in the UI; no multi-tag complexity yet</p></td>
+</tr>
+<tr class="row-odd"><td><p>Persistence (prototype)</p></td>
+<td><p><strong>Client-side (localStorage)</strong></p></td>
+<td><p>Matches “web now”; no backend/account needed to start</p></td>
+</tr>
+<tr class="row-even"><td><p>List → deals matching</p></td>
+<td><p><strong>Own layer behind an adapter</strong></p></td>
+<td><p>Same seam philosophy as <code class="docutils literal notranslate"><span class="pre">DEALS.md</span></code>; swap keyword→catalog later</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="default-category-taxonomy-seed">
+<h2>4. Default category taxonomy (seed)<a class="headerlink" href="#default-category-taxonomy-seed" title="Link to this heading"></a></h2>
+<p>Ordered roughly by how a shopper walks a store. User-extensible; each is a simple
+label the UI groups items under.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Category</p></th>
+<th class="head"><p>Examples</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Vegetables</strong></p></td>
+<td><p>onions, carrots, lettuce, peppers</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Fruits</strong></p></td>
+<td><p>apples, bananas, berries</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Grains</strong></p></td>
+<td><p>bread, rice, pasta, cereal, oats</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Proteins</strong></p></td>
+<td><p>chicken, beef, fish, eggs, tofu, legumes</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Dairy</strong></p></td>
+<td><p>milk, cheese, yogurt, butter</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Pantry</strong></p></td>
+<td><p>canned goods, oils, sauces, spices, flour/sugar</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Frozen</strong></p></td>
+<td><p>frozen veg, frozen meals, ice cream</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Beverages</strong></p></td>
+<td><p>coffee, tea, juice, soft drinks</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Snacks</strong></p></td>
+<td><p>chips, crackers, nuts, cookies</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Household</strong></p></td>
+<td><p>paper goods, cleaning, toiletries <em>(non-food; optional)</em></p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Other</strong></p></td>
+<td><p>anything uncategorized</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="core-data-model">
+<h2>5. Core data model<a class="headerlink" href="#core-data-model" title="Link to this heading"></a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GroceryList
+ ├─ id
+ ├─ name              // "Weekly staples"
+ ├─ items: [ ListItem ]
+ └─ updatedAt
+
+ListItem
+ ├─ id
+ ├─ name              // "Chicken breast"
+ ├─ category          // one of the taxonomy labels (§4)
+ ├─ quantity?         // "2 lb", "1 dozen" — freeform, optional for now
+ ├─ needed: boolean   // included in THIS trip's active list
+ ├─ matchTerms?: [string]  // synonyms/keywords to help deal matching
+ └─ note?
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">matchTerms</span></code> is the hook that helps the matching layer bridge a generic list item
+(“chicken breast”) to a specific flyer item (“boneless skinless chicken
+breasts”) — see §7.</p>
+</section>
+<section id="key-flows">
+<h2>6. Key flows<a class="headerlink" href="#key-flows" title="Link to this heading"></a></h2>
+<p><strong>Build / edit the list</strong>
+<code class="docutils literal notranslate"><span class="pre">add</span> <span class="pre">item</span> <span class="pre">→</span> <span class="pre">suggest</span> <span class="pre">a</span> <span class="pre">category</span> <span class="pre">(default</span> <span class="pre">from</span> <span class="pre">a</span> <span class="pre">keyword</span> <span class="pre">map,</span> <span class="pre">user</span> <span class="pre">can</span> <span class="pre">override)</span> <span class="pre">→</span> <span class="pre">append</span> <span class="pre">to</span> <span class="pre">list</span> <span class="pre">→</span> <span class="pre">persist</span></code></p>
+<p><strong>Start a trip from staples</strong>
+<code class="docutils literal notranslate"><span class="pre">open</span> <span class="pre">trip</span> <span class="pre">→</span> <span class="pre">list</span> <span class="pre">loads</span> <span class="pre">from</span> <span class="pre">persistence</span> <span class="pre">→</span> <span class="pre">user</span> <span class="pre">toggles</span> <span class="pre">needed</span> <span class="pre">on</span> <span class="pre">items</span> <span class="pre">for</span> <span class="pre">this</span> <span class="pre">run</span></code></p>
+<p><strong>Match the list to deals</strong>
+<code class="docutils literal notranslate"><span class="pre">active</span> <span class="pre">(needed)</span> <span class="pre">items</span> <span class="pre">+</span> <span class="pre">trip-area</span> <span class="pre">postal</span> <span class="pre">codes</span> <span class="pre">→</span> <span class="pre">matching</span> <span class="pre">layer</span> <span class="pre">→</span> <span class="pre">each</span> <span class="pre">item</span> <span class="pre">gets</span> <span class="pre">Deal[]</span> <span class="pre">candidates</span> <span class="pre">from</span> <span class="pre">nearby</span> <span class="pre">stores</span></code> <em>(deals from <code class="docutils literal notranslate"><span class="pre">DEALS.md</span></code> §6)</em></p>
+<p><strong>Rank stores → suggest stops</strong>
+<code class="docutils literal notranslate"><span class="pre">aggregate</span> <span class="pre">matched</span> <span class="pre">deals</span> <span class="pre">per</span> <span class="pre">store</span> <span class="pre">→</span> <span class="pre">coverage</span> <span class="pre">(how</span> <span class="pre">many</span> <span class="pre">of</span> <span class="pre">my</span> <span class="pre">items</span> <span class="pre">are</span> <span class="pre">on</span> <span class="pre">sale</span> <span class="pre">here)</span> <span class="pre">+</span> <span class="pre">basket</span> <span class="pre">cost</span> <span class="pre">→</span> <span class="pre">rank</span> <span class="pre">stores</span> <span class="pre">→</span> <span class="pre">user</span> <span class="pre">adds</span> <span class="pre">top</span> <span class="pre">stores</span> <span class="pre">as</span> <span class="pre">Trip.stops</span> <span class="pre">→</span> <span class="pre">recompute</span> <span class="pre">route</span></code></p>
+</section>
+<section id="the-matching-layer-the-hard-part">
+<h2>7. The matching layer (the hard part)<a class="headerlink" href="#the-matching-layer-the-hard-part" title="Link to this heading"></a></h2>
+<p>Resolving a generic <strong>ListItem</strong> to concrete <strong>Deal</strong> rows is the crux — it’s the
+same normalization challenge flagged in <code class="docutils literal notranslate"><span class="pre">DEALS.md</span></code>. Kept behind an adapter so we
+can upgrade the strategy without touching the UI:</p>
+<ul class="simple">
+<li><p><strong>v1 — keyword + category (prototype).</strong> Normalize both sides (lowercase,
+singularize, strip packaging words like “pack/ea/lb”), match <code class="docutils literal notranslate"><span class="pre">ListItem.name</span></code> +
+<code class="docutils literal notranslate"><span class="pre">matchTerms</span></code> tokens against <code class="docutils literal notranslate"><span class="pre">Deal.name</span></code>, use <code class="docutils literal notranslate"><span class="pre">category</span></code> as a secondary filter to
+cut false positives. Cheap, good enough to demo.</p></li>
+<li><p><strong>v2 — canonical catalog / semantic match (later).</strong> Map flyer items and list
+items to a shared product catalog (or embeddings) so “chicken breast” reliably
+matches “boneless skinless chicken breasts.” Contained entirely within the
+adapter.</p></li>
+</ul>
+<p>Interface stays stable: <code class="docutils literal notranslate"><span class="pre">match(listItems,</span> <span class="pre">deals)</span> <span class="pre">→</span> <span class="pre">{</span> <span class="pre">itemId</span> <span class="pre">→</span> <span class="pre">Deal[]</span> <span class="pre">}</span></code>.</p>
+</section>
+<section id="persistence-posture-two-modes-same-code">
+<h2>8. Persistence posture (two modes, same code)<a class="headerlink" href="#persistence-posture-two-modes-same-code" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>Prototype:</strong> <code class="docutils literal notranslate"><span class="pre">localStorage</span></code> — the list lives in the browser, no backend, no
+login. Consistent with the “web now” stance in <code class="docutils literal notranslate"><span class="pre">ARCHITECTURE.md</span></code> §2.</p></li>
+<li><p><strong>Production:</strong> account-backed storage so the list follows the user across
+devices (and into a future mobile app). Access it through a <code class="docutils literal notranslate"><span class="pre">lib/list</span></code>
+persistence adapter so the swap is an implementation detail.</p></li>
+</ul>
+</section>
+<section id="known-constraints-to-design-around">
+<h2>9. Known constraints to design around<a class="headerlink" href="#known-constraints-to-design-around" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>Generic ↔ specific mismatch</strong> — the central risk; over-matching floods the
+user with irrelevant deals, under-matching hides real savings. Category filter +
+<code class="docutils literal notranslate"><span class="pre">matchTerms</span></code> mitigate v1; catalog/embeddings fix it in v2.</p></li>
+<li><p><strong>Not everything is on sale</strong> — many list items won’t have a matching deal any
+given week. Surface “N of your items on sale here” honestly; never imply the
+whole basket is discounted.</p></li>
+<li><p><strong>Quantity is freeform for now</strong> — no unit math in v1 (don’t compute true
+per-unit basket totals until units are structured). Present cost as a guide,
+consistent with <code class="docutils literal notranslate"><span class="pre">ARCHITECTURE.md</span></code> §10.</p></li>
+<li><p><strong>Category suggestion is a guess</strong> — keyword→category defaults will misfire;
+always let the user override, and remember overrides.</p></li>
+</ul>
+</section>
+<section id="proposed-folder-shape-additions">
+<h2>10. Proposed folder shape (additions)<a class="headerlink" href="#proposed-folder-shape-additions" title="Link to this heading"></a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>smartsaver/
+├─ ARCHITECTURE.md
+├─ DEALS.md
+├─ GROCERY_LIST.md      ← this document
+└─ src/
+   ├─ lib/list          ← list CRUD, category taxonomy, persistence adapter
+   ├─ lib/match         ← ListItem ↔ Deal matching (adapter: keyword v1 → catalog v2)
+   └─ components/       ← GroceryList, CategorySection, ItemRow, AddItem
+</pre></div>
+</div>
+</section>
+<section id="suggested-build-order-later">
+<h2>11. Suggested build order (later)<a class="headerlink" href="#suggested-build-order-later" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p>Category taxonomy + <code class="docutils literal notranslate"><span class="pre">GroceryList</span></code> / <code class="docutils literal notranslate"><span class="pre">ListItem</span></code> model</p></li>
+<li><p>Add / edit / remove items, grouped by category in the panel</p></li>
+<li><p>Persist the list (localStorage) + keyword→category auto-suggest</p></li>
+<li><p>Per-trip “needed” toggle → active list</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">lib/match</span></code> v1 (keyword + category) → item → <code class="docutils literal notranslate"><span class="pre">Deal[]</span></code></p></li>
+<li><p>Per-store coverage + basket-cost ranking</p></li>
+<li><p>Suggest top stores as stops → hand to OSRM optimizer</p></li>
+<li><p>Account-backed persistence + v2 matching (catalog / embeddings)</p></li>
+</ol>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="DEALS.html" class="btn btn-neutral float-left" title="SmartSaver — Deals Layer (Addendum to ARCHITECTURE.md)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="GROCERY_EDITOR.html" class="btn btn-neutral float-right" title="SmartSaver — Grocery List Editor UI (Addendum to GROCERY_LIST.md)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

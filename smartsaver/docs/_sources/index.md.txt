@@ -1,0 +1,37 @@
+﻿# SmartSaver
+
+```{toctree}
+:maxdepth: 2
+:caption: Guide
+
+GETTING_STARTED
+PACKAGES
+API
+```
+
+```{toctree}
+:maxdepth: 2
+:caption: Design
+
+ARCHITECTURE
+DIAGRAMS
+DEALS
+GROCERY_LIST
+GROCERY_EDITOR
+LOCATION
+WORTH_IT
+REWARDS
+SETTINGS
+DATABASE
+DEFENSIVE
+```
+
+```{toctree}
+:maxdepth: 2
+:caption: Clients
+
+WEBAPP
+MOBILE
+STYLE_GUIDE
+USER_STATES
+```

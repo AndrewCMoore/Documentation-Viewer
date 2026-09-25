@@ -1,0 +1,186 @@
+# SmartSaver — Cost-Model Settings (Addendum to WORTH_IT.md)
+
+> Planning document. No application code yet — this captures the design for the
+> **cost-model settings panel**, promoting the deferred follow-up in `WEBAPP.md §8`
+> ("ship defaults + minimal inline controls; full screen later") into a real spec.
+> Read alongside `WORTH_IT.md` (§5 fuel/time model, §8 `costModel`), `REWARDS.md`
+> (§5 rewards settings), and `GROCERY_EDITOR.md` (panel + auto-persist patterns).
+> This is the layer that turns the Worth-It engine's **hidden constants into
+> user-visible, editable inputs** — the "garbage in, garbage out" defence (`WORTH_IT §10`).
+
+## 1. What the settings layer is
+
+The **input surface for the cost model**. `WORTH_IT.md §5` declares that fuel
+price, efficiency, value of time, units, and the worth-it threshold are
+"user-supplied approximations, surfaced and editable — never hidden constants."
+Today they exist only as inline defaults baked into `decide()`. This layer is
+where those numbers actually become the user's to set, persist, and see reflected
+in every verdict.
+
+> One rule governs the whole panel: **every number that moves a keep/skip
+> decision is visible and editable here, with its default shown as a default.**
+> A wrong fuel price should be obvious and fixable, not buried inside a verdict.
+
+## 2. Where it fits (the data flow)
+
+```mermaid
+graph TD
+  SP["Settings panel (this doc)"] -->|"edits"| CMS["CostModelSettings (persisted, localStorage)"]
+  CMS -->|"read at decide-time, canonicalized §4"| CM["WorthItInputs.costModel (WORTH_IT §8)"]
+  CM --> DEC["decide()"] --> WR["WorthItResult"]
+  CM --> RS["RouteSummary fuel estimate (lib/estimate, ARCH §5)"]
+```
+
+Settings **own** the numbers; the Worth-It engine and the fuel estimate both
+**read** them. Nothing here changes `decide()`'s shape or the greedy loop — it
+only feeds the same `costModel` the engine already consumes.
+
+## 3. The settings (WORTH_IT §5, made concrete)
+
+| Setting | Field | Default (prototype) | Surfaced as |
+|---|---|---|---|
+| Fuel price | `fuelPrice` | region \$/L (or \$/gal) — editable, shown *as* a default | Inline (primary) |
+| Fuel efficiency | `efficiency` | 8.9 L/100km (≈26 mpg) | Inline (primary) |
+| Units | `units` | `metric` \| `imperial` — one toggle drives both above | Inline (primary) |
+| Value of time | `valueOfTime` | **\$0/hr** — opt-in above that (`WORTH_IT §4`) | Advanced |
+| Worth-it floor | `minWorthItThreshold` | **\$2** (`WORTH_IT §4`) | Advanced |
+| Rewards | `rewards: RewardsPrefs` | master **off** → \$0 term (`REWARDS §3,§5`) | Own section (REWARDS) |
+
+**Three primary knobs, the rest tucked away.** Fuel price, efficiency, and units
+are the numbers that actually swing a verdict and that a shopper knows off-hand —
+they get inline controls (§6). `valueOfTime` and the threshold have defensible
+defaults (\$0, \$2) most users never touch, so they live under an "Advanced"
+disclosure. Rewards keep their own section per `REWARDS.md` — this panel only
+hosts the entry point.
+
+## 4. Units: the one design decision that matters
+
+`units` is a **display + entry** preference; the engine works in one canonical
+unit internally (metric — metres/seconds from OSRM, \$/L, L/100km), exactly as
+`WORTH_IT §5` and the `lib/estimate` contract (`WEBAPP §4`) require.
+
+**Store canonical, convert at the edges — never relabel.** Flipping the toggle
+must preserve the *physical* value, not swap the number's meaning:
+
+```
+8.9 L/100km  ⇄  26.4 mpg          (efficiency)
+$1.55 / L    ⇄  $5.87 / gal        (fuel price, at $/L × 3.785)
+```
+
+So the toggle re-expresses the same car and the same gas price in the other
+system; it does **not** turn "8.9 L/100km" into "8.9 mpg." Conversions:
+
+```
+mpg          = 235.215 / litresPer100km
+pricePerGal  = pricePerLitre × 3.785411784
+```
+
+Canonical storage means `decide()` and `estimate()` see one unit regardless of
+what the user is looking at — the imperial/metric formulas in `WORTH_IT §5` are
+just two presentations of the persisted canonical value.
+
+## 5. Core data model
+
+Reuses `WorthItInputs.costModel` (`WORTH_IT §8`) — this is that object, persisted
+and unit-tagged. Additions only; no parallel shape.
+
+```
+CostModelSettings                    -- persisted; the user-facing cost model (§3)
+ ├─ fuelPrice                        // canonical: $ per litre (§4)
+ ├─ efficiency                       // canonical: litres per 100 km (§4)
+ ├─ units: 'metric' | 'imperial'     // display/entry only; drives §4 conversion
+ ├─ valueOfTime                      // $/hr, default 0        (WORTH_IT §4)
+ ├─ minWorthItThreshold              // $ floor, default 2     (WORTH_IT §4)
+ ├─ rewards: RewardsPrefs            // REWARDS §7; master off by default
+ └─ updatedAt                        // bumped on every edit, like GROCERY_EDITOR §3
+
+// Passed into the engine verbatim:
+//   WorthItInputs.costModel = CostModelSettings   (WORTH_IT §8 — same fields)
+// Presented in whatever `units` says; canonicalized once on read (§4).
+```
+
+Keeping the persisted settings and `WorthItInputs.costModel` the **same object**
+is the reuse rule from `WEBAPP §4` ("implement the doc interfaces — reuse, don't
+reinvent"): the panel edits it, the store holds it, the engine reads it.
+
+## 6. The panel (minimal now → full screen later)
+
+**Now (prototype, per `WEBAPP §8`):** a compact **inline control group** inside
+the existing planner panel — folded into `RouteSummary`/`WorthItCard` or a small
+"⚙ Cost model" disclosure, not a separate route. Three fields + a units toggle:
+
+```
+⚙ Cost model                                    [metric ▾]
+  Fuel price     [ 1.55 ] $/L
+  Efficiency     [ 8.9  ] L/100km
+  › Advanced     (value of time · worth-it floor)
+```
+
+- **Auto-persist every edit** (debounced) — no Save button, mirroring
+  `GROCERY_EDITOR §3`. `updatedAt` bumps; the open verdict recomputes.
+- Toggling units **converts the visible numbers in place** (§4); the stored
+  canonical value is unchanged.
+- Accent + money colours per the indigo mockup (`WEBAPP §1`): inputs neutral,
+  the fuel-cost figure they drive stays in the breakdown, not recoloured here.
+
+**Later:** a dedicated settings screen (vehicle presets, per-region fuel
+defaults, full rewards management from `REWARDS.md`). Same `CostModelSettings`
+behind it — the inline controls and the full screen are two editors over one
+persisted object, so the upgrade touches only `components/`.
+
+## 7. Persistence (localStorage, like the rest of the prototype)
+
+Cost-model settings persist client-side through the **same adapter seam** as the
+grocery list (`GROCERY_LIST §8`, `REWARDS §7`): localStorage in the prototype,
+account-backed later behind an unchanged interface. `DATABASE.md §3` explicitly
+keeps settings **out** of the production catalog/trips DB, so this stays a
+client concern indefinitely.
+
+```
+lib/settings   ← load()/save() CostModelSettings; region default seed;
+                 unit conversion helpers (§4); localStorage-backed
+store/trip.ts  ← already holds costModel (WEBAPP §3); this slice is its editor
+```
+
+`lib/settings` is framework-agnostic like the other `lib/` modules, so a future
+mobile app reuses it behind an `AsyncStorage` adapter (`MOBILE.md`, `WEBAPP §6`).
+
+## 8. Key flows
+
+**Edit a cost input**
+`type fuel price / efficiency → debounce → lib/settings.save() (persist, bump updatedAt) → store.costModel updated → open WorthItResult recomputes`
+
+**Switch units**
+`toggle metric⇄imperial → convert visible fields (§4) → persist units → canonical stored value unchanged → estimate/decide unaffected`
+
+**Seed the default**
+`first load → no stored settings → lib/settings seeds region fuel price + 8.9 L/100km + $0 time + $2 floor → shown as editable defaults (never as a bare constant)`
+
+## 9. Known constraints to design around
+
+- **Defaults are estimates, shown as such** — we can't ping a paid API for live
+  fuel price (`ARCHITECTURE §7` keeps the stack free); we seed a static regional
+  default and let the user correct it, mirroring "estimates, not bills"
+  everywhere else (`WORTH_IT §10`, `REWARDS §5`).
+- **Canonical-only math** — the single most common way to break this is
+  relabelling instead of converting on the units toggle (§4). Store one unit;
+  convert at entry and display; the engine never sees `units`-dependent numbers.
+- **Don't over-surface** — three primary knobs; `valueOfTime`/threshold stay
+  advanced with defensible defaults so the panel doesn't read as a form to fill
+  before the app is usable (`WORTH_IT §4`).
+- **Settings stay client-side** — out of the production DB by design
+  (`DATABASE.md §3`); the persistence adapter is the only seam that ever moves
+  them to an account.
+
+## 10. Suggested build order (later)
+
+1. `CostModelSettings` in `store/trip.ts` (reuse `costModel`, `WORTH_IT §8`) with
+   seeded defaults (§3).
+2. `lib/settings` — `load`/`save` (localStorage), region seed, unit conversion
+   helpers (§4), unit-tested metric⇄imperial round-trips (`WEBAPP §9`).
+3. Inline control group in the planner panel — fuel price / efficiency / units,
+   auto-persist + recompute (§6).
+4. "Advanced" disclosure — `valueOfTime`, `minWorthItThreshold`.
+5. Wire the rewards section entry point (`REWARDS.md`).
+6. (Later) dedicated settings screen + vehicle/region presets + account-backed
+   persistence behind the `lib/settings` adapter (§7).

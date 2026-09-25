@@ -1,0 +1,525 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SmartSaver — Grocery List Editor UI (Addendum to GROCERY_LIST.md) &mdash; SmartSaver  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=3b126f1a" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="SmartSaver — Location &amp; Store Discovery (Addendum to ARCHITECTURE.md)" href="LOCATION.html" />
+    <link rel="prev" title="SmartSaver — Grocery List (Addendum to ARCHITECTURE.md)" href="GROCERY_LIST.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #1b1a3a" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            SmartSaver
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="GETTING_STARTED.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PACKAGES.html">Packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="API.html">API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Design</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="ARCHITECTURE.html">SmartSaver — Multi-Platform Architecture &amp; Planning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DIAGRAMS.html">SmartSaver — Architecture Diagrams (for audit)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DEALS.html">SmartSaver — Deals Layer (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="GROCERY_LIST.html">SmartSaver — Grocery List (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">SmartSaver — Grocery List Editor UI (Addendum to GROCERY_LIST.md)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#what-the-editor-is">1. What the editor is</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#scope-decisions">2. Scope decisions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#data-model-additions-refines-grocery-list-5">3. Data-model additions (refines <code class="docutils literal notranslate"><span class="pre">GROCERY_LIST</span> <span class="pre">§5</span></code>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#screen-layout-desktop-panel-reference-render-style-guide-editor-html">4. Screen layout (desktop panel; reference render <code class="docutils literal notranslate"><span class="pre">style-guide/editor.html</span></code>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-two-modes-the-load-bearing-interaction">5. The two modes (the load-bearing interaction)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#category-suggestion-override-memory">6. Category suggestion &amp; override memory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#states">7. States</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#component-lib-contract-extends-grocery-list-10-webapp-34">8. Component &amp; <code class="docutils literal notranslate"><span class="pre">lib</span></code> contract (extends <code class="docutils literal notranslate"><span class="pre">GROCERY_LIST</span> <span class="pre">§10</span></code>, <code class="docutils literal notranslate"><span class="pre">WEBAPP</span> <span class="pre">§3–4</span></code>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#responsive-ties-to-style-guide-10-architecture-3">9. Responsive (ties to <code class="docutils literal notranslate"><span class="pre">STYLE_GUIDE</span> <span class="pre">§10</span></code>, <code class="docutils literal notranslate"><span class="pre">ARCHITECTURE</span> <span class="pre">§3</span></code>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#known-constraints-to-design-around">10. Known constraints to design around</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#proposed-build-order-later">11. Proposed build order (later)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="LOCATION.html">SmartSaver — Location &amp; Store Discovery (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="WORTH_IT.html">SmartSaver — Worth-It Engine (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="REWARDS.html">SmartSaver — Rewards &amp; Grocer Preference (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SETTINGS.html">SmartSaver — Cost-Model Settings (Addendum to WORTH_IT.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DATABASE.html">SmartSaver — Database (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DEFENSIVE.html">SmartSaver — Defensive Programming Rules</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Clients</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="WEBAPP.html">SmartSaver — Web App Build Plan (<code class="docutils literal notranslate"><span class="pre">apps/web</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MOBILE.html">SmartSaver — Mobile App Build Plan (<code class="docutils literal notranslate"><span class="pre">apps/mobile</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="STYLE_GUIDE.html">SmartSaver — Style Guide (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="USER_STATES.html">User States</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #1b1a3a" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">SmartSaver</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">SmartSaver — Grocery List Editor UI (Addendum to GROCERY_LIST.md)</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/GROCERY_EDITOR.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="smartsaver-grocery-list-editor-ui-addendum-to-grocery-list-md">
+<h1>SmartSaver — Grocery List Editor UI (Addendum to GROCERY_LIST.md)<a class="headerlink" href="#smartsaver-grocery-list-editor-ui-addendum-to-grocery-list-md" title="Link to this heading"></a></h1>
+<blockquote>
+<div><p>Planning document. No application code yet — this designs the <strong>editor UI +
+category management</strong> that <code class="docutils literal notranslate"><span class="pre">WEBAPP.md</span> <span class="pre">§8</span></code> deferred (“seed a starter list; defer
+the editor — <code class="docutils literal notranslate"><span class="pre">GROCERY_LIST</span> <span class="pre">§11</span></code>”). Read alongside <code class="docutils literal notranslate"><span class="pre">GROCERY_LIST.md</span></code> (the model
+and matching layer), <code class="docutils literal notranslate"><span class="pre">STYLE_GUIDE.md</span></code> (tokens + component specs), and
+<code class="docutils literal notranslate"><span class="pre">WEBAPP.md</span></code> (where it lives in the app shell). This doc turns <code class="docutils literal notranslate"><span class="pre">GROCERY_LIST</span></code>’s
+paper model into a concrete screen; it does <strong>not</strong> change the matching layer.</p>
+</div></blockquote>
+<section id="what-the-editor-is">
+<h2>1. What the editor is<a class="headerlink" href="#what-the-editor-is" title="Link to this heading"></a></h2>
+<p>The screen where a user <strong>builds and maintains “My Staples”</strong> — the persistent,
+categorized list of things they normally buy (<code class="docutils literal notranslate"><span class="pre">GROCERY_LIST</span> <span class="pre">§1</span></code>) — and, each
+trip, <strong>ticks what they actually need this run</strong>. It is the demand-side input the
+whole deals→worth-it pipeline depends on; if the list is empty or wrong, the
+matching layer has nothing good to match.</p>
+<p>It does two jobs on one list, and the design’s central move is to keep them from
+colliding (<code class="docutils literal notranslate"><span class="pre">§4</span></code>):</p>
+<ul class="simple">
+<li><p><strong>Shop this trip</strong> (the common, everyday action): tick / untick <code class="docutils literal notranslate"><span class="pre">needed</span></code>.</p></li>
+<li><p><strong>Manage staples</strong> (the occasional action): add / edit / remove items and
+<strong>manage categories</strong> — rename, reorder, add custom, delete.</p></li>
+</ul>
+</section>
+<section id="scope-decisions">
+<h2>2. Scope decisions<a class="headerlink" href="#scope-decisions" title="Link to this heading"></a></h2>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Decision</p></th>
+<th class="head"><p>Choice</p></th>
+<th class="head"><p>Consequence</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Surface</p></td>
+<td><p><strong>Dedicated panel view</strong>, not a modal</p></td>
+<td><p>The list gets long; a 404px modal would cramp it. Swaps the panel content; map stays put on desktop, full-screen on mobile (<code class="docutils literal notranslate"><span class="pre">§9</span></code>).</p></td>
+</tr>
+<tr class="row-odd"><td><p>Two intents, one list</p></td>
+<td><p><strong><code class="docutils literal notranslate"><span class="pre">needed</span></code> toggle always live; structural edits behind an “Edit” mode</strong></p></td>
+<td><p>Ticking needs is one tap; destructive affordances (delete, drag, category tools) only appear in Edit mode.</p></td>
+</tr>
+<tr class="row-even"><td><p>Saving</p></td>
+<td><p><strong>Auto-persist every change</strong> (debounced) through <code class="docutils literal notranslate"><span class="pre">lib/list</span></code> → localStorage</p></td>
+<td><p>No “Save” button; <code class="docutils literal notranslate"><span class="pre">updatedAt</span></code> bumps. Deletes get <strong>undo</strong> (snackbar), not a confirm dialog.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Category is first-class</p></td>
+<td><p><strong>Refine <code class="docutils literal notranslate"><span class="pre">GROCERY_LIST</span> <span class="pre">§5</span></code>: category becomes an ordered entity</strong> (id + label + order), item references it by id</p></td>
+<td><p>Enables rename/reorder/custom without rewriting every item. Back-compat note in <code class="docutils literal notranslate"><span class="pre">§3</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p>Category suggestion</p></td>
+<td><p><strong>Guess on add, editable chip, remember overrides</strong></p></td>
+<td><p>Honors <code class="docutils literal notranslate"><span class="pre">GROCERY_LIST</span> <span class="pre">§9</span></code> (“category suggestion is a guess; always let the user override, and remember overrides”).</p></td>
+</tr>
+<tr class="row-odd"><td><p>Empty-list posture</p></td>
+<td><p><strong>Seed starter staples on first run</strong> (<code class="docutils literal notranslate"><span class="pre">WEBAPP</span> <span class="pre">§8</span></code>)</p></td>
+<td><p>The editor is rarely fully empty; we still design empty-category + empty-search states (<code class="docutils literal notranslate"><span class="pre">§7</span></code>).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">matchTerms</span></code> / <code class="docutils literal notranslate"><span class="pre">note</span></code></p></td>
+<td><p><strong>Secondary, behind a per-item expander</strong></p></td>
+<td><p>Keeps the common row simple; power users improve deal matching without clutter.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="data-model-additions-refines-grocery-list-5">
+<h2>3. Data-model additions (refines <code class="docutils literal notranslate"><span class="pre">GROCERY_LIST</span> <span class="pre">§5</span></code>)<a class="headerlink" href="#data-model-additions-refines-grocery-list-5" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">GROCERY_LIST</span> <span class="pre">§5</span></code> modeled <code class="docutils literal notranslate"><span class="pre">category</span></code> as a bare label string. Rename / reorder /
+custom categories need a stable referent, so category becomes first-class:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GroceryList
+ ├─ id
+ ├─ name                 // "My Staples"
+ ├─ categories: [ Category ]   // NEW — ordered; defines section order (store-walk, §4)
+ ├─ items: [ ListItem ]
+ └─ updatedAt
+
+Category                 // NEW
+ ├─ id
+ ├─ label                // "Proteins" (renamable)
+ ├─ order                // store-walk position; drag to change
+ ├─ seeded: boolean      // from the §4 taxonomy vs. user-created
+ └─ collapsed?: boolean  // UI state, persisted for convenience
+
+ListItem                 // unchanged from GROCERY_LIST §5 except `category`
+ ├─ id
+ ├─ name
+ ├─ category             // now a Category.id (was: a taxonomy label)
+ ├─ quantity?            // freeform ("2 lb", "1 dozen")
+ ├─ needed: boolean
+ ├─ matchTerms?: [string]
+ └─ note?
+</pre></div>
+</div>
+<p>Plus one map owned by <code class="docutils literal notranslate"><span class="pre">lib/list</span></code>, not part of the exported list shape:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>categoryOverrides: { normalizedName → categoryId }   // NEW — learned corrections
+</pre></div>
+</div>
+<p><strong>Back-compat / migration:</strong> the seed loader creates the seeded <code class="docutils literal notranslate"><span class="pre">Category[]</span></code> from
+the <code class="docutils literal notranslate"><span class="pre">GROCERY_LIST</span> <span class="pre">§4</span></code> taxonomy (stable ids like <code class="docutils literal notranslate"><span class="pre">cat_proteins</span></code>) and maps seed
+items onto them. Anything reading <code class="docutils literal notranslate"><span class="pre">item.category</span></code> as a label resolves it through
+<code class="docutils literal notranslate"><span class="pre">categories</span></code> by id. This is the only place the §5 model changes; the matching
+layer (<code class="docutils literal notranslate"><span class="pre">lib/match</span></code>) still receives <code class="docutils literal notranslate"><span class="pre">ListItem</span></code>s and is unaffected.</p>
+</section>
+<section id="screen-layout-desktop-panel-reference-render-style-guide-editor-html">
+<h2>4. Screen layout (desktop panel; reference render <code class="docutils literal notranslate"><span class="pre">style-guide/editor.html</span></code>)<a class="headerlink" href="#screen-layout-desktop-panel-reference-render-style-guide-editor-html" title="Link to this heading"></a></h2>
+<p>The editor replaces the trip content inside the existing 404px panel
+(<code class="docutils literal notranslate"><span class="pre">WEBAPP</span> <span class="pre">§7</span></code> shell). Top to bottom:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>┌──────────────────────────────────────────────┐
+│ ‹ Back   My Staples            [ Edit ]       │  Header: back to trip, title, mode toggle
+│          34 items · 12 needed this trip       │
+├──────────────────────────────────────────────┤
+│ ⌕ Add an item…            → Proteins ▾   [+]  │  Add bar (sticky): input + guessed-category chip + qty
+├──────────────────────────────────────────────┤
+│ ⌕ Filter your list…                           │  Filter (appears once list is long)
+├──────────────────────────────────────────────┤
+│ VEGETABLES                      4 · 2 ▾        │  Category section header (count · needed · collapse)
+│  ☑ Onions              2 lb                    │  ItemRow: needed checkbox + name + qty
+│  ☐ Carrots                                     │
+│  ☑ Lettuce                          ⋯          │  ⋯ = row menu (edit / synonyms / delete)
+│ PROTEINS                        6 · 5 ▾        │
+│  ☑ Chicken breast      2 lb                    │
+│    ↳ also matches: boneless, skinless   (note) │  matchTerms shown when set (helps deal matching)
+│  ☐ Eggs                1 dozen                 │
+│ … more categories …                            │
+│  + New category                     (Edit mode)│
+├──────────────────────────────────────────────┤
+│ 12 needed · $— est. · Done                     │  Footer: trip summary + return
+└──────────────────────────────────────────────┘
+</pre></div>
+</div>
+<p><strong>Header.</strong> Back arrow returns to the trip/planner view. Title = list name
+(<code class="docutils literal notranslate"><span class="pre">My</span> <span class="pre">Staples</span></code>). Subline = total item count · “N needed this trip”. The <strong>Edit</strong>
+toggle (secondary/ghost button, <code class="docutils literal notranslate"><span class="pre">STYLE_GUIDE</span> <span class="pre">§7</span></code>) flips the whole view between
+<strong>Shop mode</strong> and <strong>Edit mode</strong> (<code class="docutils literal notranslate"><span class="pre">§5</span></code>).</p>
+<p><strong>Add bar (sticky, always visible).</strong> <code class="docutils literal notranslate"><span class="pre">Input</span> <span class="pre">/</span> <span class="pre">search</span></code> spec (<code class="docutils literal notranslate"><span class="pre">STYLE_GUIDE</span> <span class="pre">§7</span></code>):
+<code class="docutils literal notranslate"><span class="pre">--surface-2</span></code>, leading <code class="docutils literal notranslate"><span class="pre">+</span></code> icon, <code class="docutils literal notranslate"><span class="pre">--radius-sm</span></code>. As the user types, an inline
+<strong>category chip</strong> (<code class="docutils literal notranslate"><span class="pre">→</span> <span class="pre">Proteins</span> <span class="pre">▾</span></code>, pill, <code class="docutils literal notranslate"><span class="pre">--brand-weak</span></code>/<code class="docutils literal notranslate"><span class="pre">--brand-text</span></code>) shows the
+auto-guess (<code class="docutils literal notranslate"><span class="pre">§6</span></code>); tapping it opens the taxonomy to override. An optional compact
+quantity field sits before the <code class="docutils literal notranslate"><span class="pre">[+]</span></code> add button. Enter or <code class="docutils literal notranslate"><span class="pre">[+]</span></code> commits; the input
+clears and keeps focus for rapid entry.</p>
+<p><strong>Filter.</strong> A lightweight in-list text filter appears once the list exceeds ~1
+screen; it narrows visible rows without touching <code class="docutils literal notranslate"><span class="pre">needed</span></code>. Distinct from the add
+bar (that creates; this finds).</p>
+<p><strong>Category section.</strong> Header = category label (overline style, <code class="docutils literal notranslate"><span class="pre">STYLE_GUIDE</span> <span class="pre">§5</span></code>)</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">total</span> <span class="pre">·</span> <span class="pre">needed</span></code> counts + collapse chevron. Collapsed state persists
+(<code class="docutils literal notranslate"><span class="pre">Category.collapsed</span></code>). In <strong>Edit mode</strong> the header also carries a drag grip
+(reorder = store-walk order) and a <code class="docutils literal notranslate"><span class="pre">⋯</span></code> menu (Rename / Delete). A <code class="docutils literal notranslate"><span class="pre">+</span> <span class="pre">New</span> <span class="pre">category</span></code>
+row sits at the bottom of the list in Edit mode.</p></li>
+</ul>
+<p><strong>Item row.</strong> Reuses the <code class="docutils literal notranslate"><span class="pre">Stop</span> <span class="pre">row</span></code> rhythm (<code class="docutils literal notranslate"><span class="pre">STYLE_GUIDE</span> <span class="pre">§7</span></code>): 44px min height
+(<code class="docutils literal notranslate"><span class="pre">§15</span></code> hit-target bump), <code class="docutils literal notranslate"><span class="pre">--surface-2</span></code> on hover/press.</p>
+<ul class="simple">
+<li><p><strong>Shop mode:</strong> leading <strong><code class="docutils literal notranslate"><span class="pre">needed</span></code> checkbox</strong> (the primary tap), name, trailing
+quantity in <code class="docutils literal notranslate"><span class="pre">--text-2</span></code>; a <code class="docutils literal notranslate"><span class="pre">⋯</span></code> row menu reveals Edit / Synonyms / Delete.
+<code class="docutils literal notranslate"><span class="pre">matchTerms</span></code> and <code class="docutils literal notranslate"><span class="pre">note</span></code>, when present, render as a dim sub-line so power users
+see what’s tuned.</p></li>
+<li><p><strong>Edit mode:</strong> checkbox is replaced by a <strong>drag grip</strong>; a trailing delete (✕)
+appears; tapping the row opens the <strong>inline item editor</strong> (<code class="docutils literal notranslate"><span class="pre">§5</span></code>).</p></li>
+</ul>
+<p><strong>Footer.</strong> Persistent summary (“12 needed · est. $— once matched”) + <strong>Done</strong>
+(primary, returns to trip). No Save button — everything is already persisted.</p>
+</section>
+<section id="the-two-modes-the-load-bearing-interaction">
+<h2>5. The two modes (the load-bearing interaction)<a class="headerlink" href="#the-two-modes-the-load-bearing-interaction" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">GROCERY_LIST</span> <span class="pre">§6</span></code> names two flows on the same list — <em>build/edit</em> vs. <em>toggle
+needed for this trip</em>. Conflating them is the main UX risk, so the mode is
+<strong>explicit</strong>:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head"><p>Shop mode (default)</p></th>
+<th class="head"><p>Edit mode</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Row leading control</p></td>
+<td><p><strong><code class="docutils literal notranslate"><span class="pre">needed</span></code> checkbox</strong></p></td>
+<td><p><strong>drag grip</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p>Row tap</p></td>
+<td><p>toggles <code class="docutils literal notranslate"><span class="pre">needed</span></code></p></td>
+<td><p>opens <strong>inline item editor</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>Trailing</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">⋯</span></code> menu (edit/synonyms/delete)</p></td>
+<td><p>delete ✕</p></td>
+</tr>
+<tr class="row-odd"><td><p>Category headers</p></td>
+<td><p>count + collapse only</p></td>
+<td><p>+ drag grip + rename/delete menu</p></td>
+</tr>
+<tr class="row-even"><td><p>Extra affordances</p></td>
+<td><p>—</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">+</span> <span class="pre">New</span> <span class="pre">category</span></code>; reorder categories</p></td>
+</tr>
+<tr class="row-odd"><td><p>Add bar</p></td>
+<td><p>present in both modes (adding is always allowed)</p></td>
+<td><p>present</p></td>
+</tr>
+</tbody>
+</table>
+<p>Rationale: the everyday action (tick what I need) must be a single, undo-safe tap
+with no destructive controls in reach; structural change is deliberate. This
+mirrors the iOS “Edit” pattern and keeps <code class="docutils literal notranslate"><span class="pre">needed</span></code> toggling from ever sitting next
+to a delete.</p>
+<p><strong>Inline item editor</strong> (opens in Edit mode, or via row <code class="docutils literal notranslate"><span class="pre">⋯</span></code> → Edit in Shop mode):
+name, quantity (freeform, <code class="docutils literal notranslate"><span class="pre">GROCERY_LIST</span> <span class="pre">§5</span></code>), category (taxonomy picker), and an
+<strong>“Improve deal matching”</strong> expander for <code class="docutils literal notranslate"><span class="pre">matchTerms</span></code> (chip input) + <code class="docutils literal notranslate"><span class="pre">note</span></code>. Saves
+on blur/Enter; Cancel discards. Copy on the expander explains <em>why</em> it exists:
+“Add synonyms so more flyer deals match this item” (<code class="docutils literal notranslate"><span class="pre">GROCERY_LIST</span> <span class="pre">§7</span></code>).</p>
+</section>
+<section id="category-suggestion-override-memory">
+<h2>6. Category suggestion &amp; override memory<a class="headerlink" href="#category-suggestion-override-memory" title="Link to this heading"></a></h2>
+<p>On add, <code class="docutils literal notranslate"><span class="pre">lib/list</span></code> guesses the category from a <strong>keyword→category map</strong> over the
+normalized item name (<code class="docutils literal notranslate"><span class="pre">GROCERY_LIST</span> <span class="pre">§6</span></code>, <code class="docutils literal notranslate"><span class="pre">§9</span></code>). The guess is shown, never
+silently applied — the editable chip in the add bar. Two learning rules:</p>
+<ol class="arabic simple">
+<li><p><strong>Remember overrides.</strong> When the user changes the guessed category before
+adding (or re-categorizes later), write <code class="docutils literal notranslate"><span class="pre">normalizedName</span> <span class="pre">→</span> <span class="pre">categoryId</span></code> into
+<code class="docutils literal notranslate"><span class="pre">categoryOverrides</span></code>. Next time that name (or a near-normalization) is typed,
+the override wins over the keyword map. Directly satisfies <code class="docutils literal notranslate"><span class="pre">GROCERY_LIST</span> <span class="pre">§9</span></code>
+(“remember overrides”).</p></li>
+<li><p><strong>Unknown → Other.</strong> No keyword hit and no override → default to <strong>Other</strong>
+(<code class="docutils literal notranslate"><span class="pre">GROCERY_LIST</span> <span class="pre">§4</span></code>), still shown in the chip so the user can correct it in one
+tap (which then teaches rule 1).</p></li>
+</ol>
+<p>Suggestion is a convenience, not a gate: the user can always pick any category,
+including a custom one they just created.</p>
+</section>
+<section id="states">
+<h2>7. States<a class="headerlink" href="#states" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>First run:</strong> list is <strong>seeded</strong> with starter staples (<code class="docutils literal notranslate"><span class="pre">WEBAPP</span> <span class="pre">§8</span></code>), so the
+user lands on a populated, categorized list — not a blank slate. A one-line hint
+(“These are starter staples — tick what you need, edit anytime”) shows until the
+first edit.</p></li>
+<li><p><strong>Empty category:</strong> a seeded category with no items renders a faint
+“Nothing here yet” row (Edit mode offers delete). Keeps store-walk structure
+visible without shouting.</p></li>
+<li><p><strong>Empty filter result:</strong> “No items match ‘<query>’.” + a <code class="docutils literal notranslate"><span class="pre">+</span> <span class="pre">Add</span> <span class="pre">&quot;&lt;query&gt;&quot;</span></code>
+affordance that pipes straight into the add bar with the query prefilled.</p></li>
+<li><p><strong>Fully empty list</strong> (user deleted everything): friendly zero-state with
+<strong>Restore starter staples</strong> and an add bar. (Styled per <code class="docutils literal notranslate"><span class="pre">STYLE_GUIDE</span> <span class="pre">§16.2</span></code>
+zero-state: stroke icon, title, one explanatory line, one primary action.)</p></li>
+<li><p><strong>Delete → undo:</strong> deleting an item or category shows an undo snackbar
+(<code class="docutils literal notranslate"><span class="pre">lib/list</span></code> keeps a transient undo buffer, not persisted). Deleting a
+<strong>non-empty</strong> category asks once, inline, “Move N items to Other?” (never
+silently drops items).</p></li>
+<li><p><strong>Persist feedback:</strong> no spinner; a subtle “Saved” tick in the header settles
+after the debounce so the auto-save is legible (respects <code class="docutils literal notranslate"><span class="pre">prefers-reduced-motion</span></code>,
+<code class="docutils literal notranslate"><span class="pre">STYLE_GUIDE</span> <span class="pre">§9</span></code>).</p></li>
+</ul>
+</section>
+<section id="component-lib-contract-extends-grocery-list-10-webapp-34">
+<h2>8. Component &amp; <code class="docutils literal notranslate"><span class="pre">lib</span></code> contract (extends <code class="docutils literal notranslate"><span class="pre">GROCERY_LIST</span> <span class="pre">§10</span></code>, <code class="docutils literal notranslate"><span class="pre">WEBAPP</span> <span class="pre">§3–4</span></code>)<a class="headerlink" href="#component-lib-contract-extends-grocery-list-10-webapp-34" title="Link to this heading"></a></h2>
+<p><strong>Components</strong> (<code class="docutils literal notranslate"><span class="pre">src/components/</span></code>, re-implemented in RN later per <code class="docutils literal notranslate"><span class="pre">MOBILE.md</span> <span class="pre">§2</span></code>):</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Component</p></th>
+<th class="head"><p>Role</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">GroceryListEditor</span></code></p></td>
+<td><p>The panel view: header, mode state, footer; owns Shop↔Edit toggle.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">AddItemBar</span></code></p></td>
+<td><p>Input + guessed-category chip + quantity + add; drives <code class="docutils literal notranslate"><span class="pre">§6</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">CategorySection</span></code></p></td>
+<td><p>Section header (counts, collapse, Edit-mode drag/rename/delete) + its rows.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ItemRow</span></code></p></td>
+<td><p>Shop-mode row (checkbox/name/qty/<code class="docutils literal notranslate"><span class="pre">⋯</span></code>) and Edit-mode row (grip/delete).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ItemEditor</span></code></p></td>
+<td><p>Inline editor: name/qty/category + <code class="docutils literal notranslate"><span class="pre">matchTerms</span></code>/<code class="docutils literal notranslate"><span class="pre">note</span></code> expander (<code class="docutils literal notranslate"><span class="pre">§5</span></code>).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">CategoryEditor</span></code></p></td>
+<td><p>New/rename category input; delete-with-move prompt.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">UndoSnackbar</span></code></p></td>
+<td><p>Transient undo for deletes (<code class="docutils literal notranslate"><span class="pre">§7</span></code>).</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong><code class="docutils literal notranslate"><span class="pre">lib/list</span></code> additions</strong> (still pure TS, localStorage-backed, <code class="docutils literal notranslate"><span class="pre">GROCERY_LIST</span> <span class="pre">§8</span></code>):</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Function</p></th>
+<th class="head"><p>Contract</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">addItem({name,</span> <span class="pre">quantity?,</span> <span class="pre">category?})</span></code></p></td>
+<td><p>Guess category if omitted (<code class="docutils literal notranslate"><span class="pre">§6</span></code>); append; persist; return item.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">updateItem(id,</span> <span class="pre">patch)</span></code></p></td>
+<td><p>Patch name/qty/category/matchTerms/note; persist.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">removeItem(id)</span></code> → <code class="docutils literal notranslate"><span class="pre">undo()</span></code></p></td>
+<td><p>Remove; return an undo handle (transient buffer).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">toggleNeeded(id)</span></code></p></td>
+<td><p>Flip <code class="docutils literal notranslate"><span class="pre">needed</span></code>; persist (the Shop-mode common path).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">addCategory(label)</span></code> / <code class="docutils literal notranslate"><span class="pre">renameCategory(id,label)</span></code></p></td>
+<td><p>Custom category CRUD; append before “Other”; persist.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">reorderCategories(idOrder[])</span></code></p></td>
+<td><p>Set <code class="docutils literal notranslate"><span class="pre">order</span></code> (store-walk); persist.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">deleteCategory(id,</span> <span class="pre">{moveToId='cat_other'})</span></code></p></td>
+<td><p>Reassign items, then remove; persist.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">suggestCategory(name)</span></code></p></td>
+<td><p>keyword map + <code class="docutils literal notranslate"><span class="pre">categoryOverrides</span></code> → <code class="docutils literal notranslate"><span class="pre">categoryId</span></code> (<code class="docutils literal notranslate"><span class="pre">§6</span></code>).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">seed()</span></code> / <code class="docutils literal notranslate"><span class="pre">restoreStarter()</span></code></p></td>
+<td><p>Build seeded categories + starter items (<code class="docutils literal notranslate"><span class="pre">§7</span></code>).</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Correctness rules the code must honor:</strong> <code class="docutils literal notranslate"><span class="pre">needed</span></code> toggling never destroys data;
+deletes are reversible via the undo buffer; overrides persist and win over the
+keyword map; category delete <strong>moves</strong> items, never orphans them; every mutation
+bumps <code class="docutils literal notranslate"><span class="pre">updatedAt</span></code> and re-persists (debounced). The matching layer contract
+<code class="docutils literal notranslate"><span class="pre">match(listItems,</span> <span class="pre">deals)</span></code> (<code class="docutils literal notranslate"><span class="pre">GROCERY_LIST</span> <span class="pre">§7</span></code>) is untouched — the editor only
+produces cleaner <code class="docutils literal notranslate"><span class="pre">ListItem</span></code>s for it.</p>
+</section>
+<section id="responsive-ties-to-style-guide-10-architecture-3">
+<h2>9. Responsive (ties to <code class="docutils literal notranslate"><span class="pre">STYLE_GUIDE</span> <span class="pre">§10</span></code>, <code class="docutils literal notranslate"><span class="pre">ARCHITECTURE</span> <span class="pre">§3</span></code>)<a class="headerlink" href="#responsive-ties-to-style-guide-10-architecture-3" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>≥860px:</strong> editor is the panel content (404px); the map stays visible/dimmed
+(layout doesn’t jump). Header back arrow + Done both return to the trip view.</p></li>
+<li><p><strong>&lt;860px:</strong> editor is a <strong>full-screen view</strong> (not the bottom sheet — a long
+editable list needs full height). Add bar and mode toggle stick to the top;
+Done / back returns to the trip. Hit targets <strong>44px</strong> (<code class="docutils literal notranslate"><span class="pre">STYLE_GUIDE</span> <span class="pre">§15</span></code>).</p></li>
+<li><p>Hover lifts stay behind <code class="docutils literal notranslate"><span class="pre">&#64;media</span> <span class="pre">(hover:</span> <span class="pre">hover)</span></code>; touch uses the <strong>pressed</strong>
+states from <code class="docutils literal notranslate"><span class="pre">STYLE_GUIDE</span> <span class="pre">§15</span></code> (row → <code class="docutils literal notranslate"><span class="pre">--surface-2</span></code>, chip → <code class="docutils literal notranslate"><span class="pre">--brand-weak</span></code>).</p></li>
+</ul>
+</section>
+<section id="known-constraints-to-design-around">
+<h2>10. Known constraints to design around<a class="headerlink" href="#known-constraints-to-design-around" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>Two-intent confusion</strong> — the core risk (<code class="docutils literal notranslate"><span class="pre">§5</span></code>). Mitigated by the explicit
+Shop/Edit mode split; validate with users that “tick needed” never feels like
+editing the master list.</p></li>
+<li><p><strong>Category suggestion misfires</strong> — inevitable (<code class="docutils literal notranslate"><span class="pre">GROCERY_LIST</span> <span class="pre">§9</span></code>); the always-
+visible editable chip + override memory keep a wrong guess to a one-tap fix.</p></li>
+<li><p><strong>Quantity stays freeform</strong> — no unit math here (<code class="docutils literal notranslate"><span class="pre">GROCERY_LIST</span> <span class="pre">§9</span></code>); the editor
+captures the string only; basket-cost math remains the matching/worth-it layer’s
+problem, presented as a guide.</p></li>
+<li><p><strong>List can get long</strong> — filter, collapsible categories, and store-walk ordering
+keep it navigable; don’t paginate (breaks the “walk the store” mental model).</p></li>
+<li><p><strong>localStorage only (prototype)</strong> — no cross-device sync yet; the <code class="docutils literal notranslate"><span class="pre">lib/list</span></code>
+persistence adapter (<code class="docutils literal notranslate"><span class="pre">GROCERY_LIST</span> <span class="pre">§8</span></code>) is the seam where account-backed storage
+lands later. The editor never assumes a backend.</p></li>
+</ul>
+</section>
+<section id="proposed-build-order-later">
+<h2>11. Proposed build order (later)<a class="headerlink" href="#proposed-build-order-later" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p>Category-as-entity model refactor in <code class="docutils literal notranslate"><span class="pre">lib/list</span></code> + seed/migration (<code class="docutils literal notranslate"><span class="pre">§3</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">GroceryListEditor</span></code> shell + panel routing (Trip ↔ List) + header/footer.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">CategorySection</span></code> + <code class="docutils literal notranslate"><span class="pre">ItemRow</span></code> in <strong>Shop mode</strong>: render seeded list, toggle
+<code class="docutils literal notranslate"><span class="pre">needed</span></code>, collapse categories.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">AddItemBar</span></code> + <code class="docutils literal notranslate"><span class="pre">suggestCategory</span></code> + override memory (<code class="docutils literal notranslate"><span class="pre">§6</span></code>).</p></li>
+<li><p><strong>Edit mode:</strong> <code class="docutils literal notranslate"><span class="pre">ItemEditor</span></code>, delete + <code class="docutils literal notranslate"><span class="pre">UndoSnackbar</span></code>, drag-reorder rows.</p></li>
+<li><p><strong>Category management:</strong> add / rename / reorder / delete-with-move
+(<code class="docutils literal notranslate"><span class="pre">CategoryEditor</span></code>).</p></li>
+<li><p>Filter, empty/zero states, “Saved” feedback (<code class="docutils literal notranslate"><span class="pre">§7</span></code>).</p></li>
+<li><p>Responsive full-screen mobile pass + pressed states (<code class="docutils literal notranslate"><span class="pre">§9</span></code>).</p></li>
+<li><p>(Later) account-backed persistence via the <code class="docutils literal notranslate"><span class="pre">lib/list</span></code> adapter (<code class="docutils literal notranslate"><span class="pre">GROCERY_LIST</span> <span class="pre">§8</span></code>).</p></li>
+</ol>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="GROCERY_LIST.html" class="btn btn-neutral float-left" title="SmartSaver — Grocery List (Addendum to ARCHITECTURE.md)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="LOCATION.html" class="btn btn-neutral float-right" title="SmartSaver — Location &amp; Store Discovery (Addendum to ARCHITECTURE.md)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

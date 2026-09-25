@@ -1,0 +1,223 @@
+# SmartSaver — Database (Addendum to ARCHITECTURE.md)
+
+> Planning document. No application code yet — this captures the design for the
+> **production persistence layer** so we can build against it later. Read
+> alongside `ARCHITECTURE.md`, `DEALS.md`, `GROCERY_LIST.md`, and `WORTH_IT.md`.
+> This is the first piece of durable server state SmartSaver owns.
+
+## 1. What the database is (and what it deliberately is *not*)
+
+The rest of SmartSaver is built to push state **out** of any server we own:
+routing/geo → OSRM + Nominatim, deals → a TTL'd cache, grocery list →
+`localStorage`. That is intentional (see the "prototype vs production" posture in
+every doc). This database does **not** undo that. It owns exactly the two things
+`localStorage` and an ephemeral cache genuinely cannot serve:
+
+- a **shared reference asset** — the canonical product catalog that makes
+  list↔deal matching reliable (`GROCERY_LIST.md §7`); and
+- a **durable record** — saved trips / history (`ARCHITECTURE.md §5` +
+  `WORTH_IT.md §8`).
+
+Everything else stays where the other docs put it. This is a **production-only**
+layer: the prototype keeps running on `localStorage` + cache with no database at
+all.
+
+## 2. Scope decisions
+
+| Decision | Choice | Consequence |
+|---|---|---|
+| What the DB owns | **Product catalog + saved trips only** | Accounts, settings, lists, deals cache stay out of this DB |
+| When it enters | **Production layer only** | Prototype is unchanged; DB lands behind adapters the other docs already define |
+| Deals cache | **Not in this DB** | Ephemeral/shared/weekly-TTL → Redis (or throwaway table), never durable rows (`DEALS.md §9`) |
+| Accounts / auth / settings | **Out of scope** | Trips need an *owner key* only; full identity is supplied externally (§3) |
+| Engine | **One Postgres** (PostGIS + pgvector) | Relational + geospatial + vector in a single system; no second datastore |
+| Worth-It breakdown storage | **JSONB snapshot, not normalized** | History is a frozen record read as a whole, never recomputed (§5) |
+
+## 3. The one cross-cutting dependency: the owner key
+
+Saved trips are inherently per-user, but this DB does **not** manage identity
+(accounts/auth/settings are out of scope). So the trip tables carry a plain
+`user_id` reference to whatever identity the app supplies:
+
+- **Production-graduation phase:** an anonymous device token is enough.
+- **Later:** a real auth subject, once accounts exist.
+
+When accounts arrive, a `user` (or `identity`) table slots in and `user_id`
+becomes a real foreign key — **nothing in the two clusters below has to change.**
+
+## 4. Datastore: one engine, Postgres
+
+Everything scoped here is relational, geospatial, or vector — and Postgres does
+all three without a second system:
+
+| Need | Handled by | Used for |
+|---|---|---|
+| Relational | Postgres core | trip → stops, product → aliases |
+| Geospatial | **PostGIS** (`geography` type) | stop points, cached route lines; keeps "stores near a stop" a first-class query |
+| Vector | **pgvector** (`vector` type) | v2 catalog semantic matching (`GROCERY_LIST.md §7`) |
+| Ephemeral cache | **Redis (separate)** | deals cache — *not* this DB, so weekly churn never touches durable rows |
+
+## 5. Core schema
+
+### Cluster 1 — Product catalog (the v2 matching asset)
+
+The canonical layer both sides resolve **through**: a flyer's "boneless skinless
+chicken breasts" and a list's "chicken breast" both map to one `product`.
+
+```
+category                          -- the seeded taxonomy, GROCERY_LIST §4
+  id           smallint  PK
+  slug         text  UNIQUE        -- 'vegetables' | 'proteins' | …
+  label        text
+  sort_order   smallint            -- store-walk order
+
+product                           -- one canonical grocery item
+  id             bigint    PK
+  canonical_name text               -- 'chicken breast'
+  category_id    smallint  FK→category
+  embedding      vector(384)  NULL  -- pgvector; v2 semantic match only
+  created_at     timestamptz
+
+product_alias                     -- synonyms + matchTerms; BOTH sides resolve here
+  id           bigint    PK
+  product_id   bigint    FK→product
+  term         text                 -- normalized alt name
+  source       text                 -- 'seed' | 'user' | 'flyer' | 'learned'
+  UNIQUE (product_id, term)
+  -- trigram index on term for fuzzy lookup
+
+flyer_term_map                    -- learned: raw flyer string → product (matching cache)
+  raw_term     text      PK         -- normalized upstream item name
+  product_id   bigint    FK→product NULL   -- NULL = confirmed un-matchable
+  confidence   real
+  last_seen_at timestamptz
+```
+
+`flyer_term_map` is the **matching decision memoized** — reference/learned data,
+not the ephemeral deals cache. It is what lets `lib/match` upgrade from v1
+keyword to v2 catalog *behind its stable `match()` interface* (`GROCERY_LIST.md
+§7`): the adapter starts reading the catalog instead of tokenizing strings, and
+the UI never learns.
+
+### Cluster 2 — Saved trips / history
+
+A faithful snapshot of the `Trip` model (`ARCHITECTURE.md §5`) plus the Worth-It
+verdict (`WORTH_IT.md §8`), stored as a **record**, not a live object.
+
+```
+trip
+  id           uuid       PK
+  user_id      uuid                     -- owner key (§3)
+  name         text  NULL
+  optimized    boolean                  -- was OSRM /trip reordering used
+  distance_m   integer                  -- route summary
+  duration_s   integer
+  fuel_litres  numeric  NULL            -- estimate (ARCHITECTURE §5)
+  fuel_cost    numeric  NULL
+  currency     text     NULL
+  worthit      jsonb    NULL            -- snapshot of WorthItResult summary + breakdown
+  geometry     geography(LineString,4326) NULL   -- optional cached route line
+  created_at   timestamptz
+  -- index (user_id, created_at DESC)
+
+trip_stop                              -- Trip.stops[] flattened, ordered
+  id           uuid       PK
+  trip_id      uuid       FK→trip  ON DELETE CASCADE
+  seq          smallint                 -- visiting order; 0 = origin
+  label        text
+  location     geography(Point,4326)
+  postal_code  text  NULL               -- the deals query key (DEALS §6)
+  role         text                     -- 'origin' | 'waypoint' | 'destination'
+  from_deal    boolean                  -- did this stop come from a deal store? (DEALS §8)
+  UNIQUE (trip_id, seq)
+```
+
+Two deliberate calls:
+
+- **`worthit` as JSONB, not normalized tables.** History is read as a whole for
+  the "why we said keep/skip" panel (`WORTH_IT.md §9`), the breakdown is
+  variable-shape, and we never recompute it after the fact. Normalizing it into
+  savings/detour rows would over-engineer a frozen record — the same "estimates,
+  not bills" pragmatism as the other docs.
+- **`geometry` is optional.** The polyline can be redrawn from stops via OSRM on
+  demand; caching it costs a little space but keeps the record honest — the route
+  as planned, immune to later OSM data drift. Recommended: store it.
+
+## 6. How it plugs in (production-only, behind existing seams)
+
+Nothing here touches the prototype. It lands behind adapters the other docs
+already define, so the client contracts are unchanged:
+
+| Existing seam | What the DB adds in production |
+|---|---|
+| `lib/list` persistence adapter (`GROCERY_LIST.md §8`) | *unchanged* — lists stay client-side, out of this DB |
+| `lib/match` `match()` interface (`GROCERY_LIST.md §7`) | v2 reads `product` / `product_alias` / `flyer_term_map` instead of tokenizing |
+| `Trip.stops` + route flow (`ARCHITECTURE.md §5`) | new `trip` + `trip_stop` write on "save trip", read on "history" |
+| Deals cache (`DEALS.md §4`) | *unchanged* — stays in Redis, never this DB |
+
+## 7. Key flows
+
+**Save a trip**
+`ready Trip → write trip row (summary + estimate + worthit snapshot + optional geometry) → write trip_stop rows in visiting order`
+
+**Load history**
+`user_id → SELECT trips ORDER BY created_at DESC → hydrate stops per trip → render`
+
+**Resolve a name to a product (v2 matching)**
+`normalized term → flyer_term_map hit? use it : product_alias exact/trigram : embedding nearest-neighbour → product_id → cache the decision back into flyer_term_map`
+
+**Seed the catalog**
+`category taxonomy (GROCERY_LIST §4) → seed products + aliases (source='seed') → grow product_alias/flyer_term_map from real flyer terms over time (source='flyer'|'learned')`
+
+## 8. Known constraints to design around
+
+- **Owner key, not accounts (§3).** `user_id` is an external reference; don't
+  build auth/settings into this DB. Keep trips retrievable by whatever identity
+  the app supplies today (device token) and tomorrow (auth subject).
+- **Catalog is never authoritative over price.** The catalog identifies *what a
+  product is*; prices live in the ephemeral deals cache, never here. Don't
+  denormalize a price onto `product`.
+- **History is frozen.** A saved trip records what was decided at the time
+  (`worthit`, estimate, geometry). Never retro-fit it when fuel price, OSM data,
+  or matching logic later changes — that would rewrite history.
+- **Matching cache can go stale.** `flyer_term_map` is learned; a wrong mapping
+  should be correctable (re-point `product_id`, or NULL it). Treat `confidence`
+  and `last_seen_at` as prune/repair signals, not gospel.
+- **pgvector is v2 only.** `embedding` stays NULL until semantic matching ships;
+  v1 works purely on `product_alias` + trigram. The column existing early costs
+  nothing and avoids a later migration.
+- **Deals cache must stay out.** The moment weekly flyer churn lands in durable
+  tables, we've rebuilt the thing `DEALS.md` deliberately offloaded. Keep it in
+  Redis.
+
+## 9. Proposed folder shape (additions)
+
+```
+smartsaver/
+├─ ARCHITECTURE.md
+├─ DEALS.md
+├─ GROCERY_LIST.md
+├─ WORTH_IT.md
+├─ DATABASE.md          ← this document
+└─ server/
+   ├─ db/
+   │  ├─ schema         ← migrations: category, product, product_alias,
+   │  │                    flyer_term_map, trip, trip_stop (PostGIS + pgvector)
+   │  ├─ seed           ← taxonomy + seed products/aliases (GROCERY_LIST §4)
+   │  └─ repo           ← trip read/write; catalog lookup (used by lib/match v2)
+   └─ (deals cache stays in Redis, not here — DEALS.md §4)
+```
+
+## 10. Suggested build order (later)
+
+1. Postgres + PostGIS + pgvector provisioned; migration tooling in place
+2. Catalog schema (`category`, `product`, `product_alias`) + taxonomy seed
+3. Catalog read path in `server/db/repo`; wire `lib/match` v2 to read it (behind
+   the existing `match()` interface)
+4. `flyer_term_map` learn/repair path — memoize matching decisions
+5. `trip` + `trip_stop` schema; "save trip" write path from a ready `Trip`
+6. History read path (by `user_id`) → panel
+7. Optional cached route `geometry` on save
+8. `embedding` + pgvector nearest-neighbour for v2 semantic matching
+9. When accounts ship: add identity table, promote `user_id` to a real FK
+```

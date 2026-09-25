@@ -1,0 +1,82 @@
+# Packages
+
+npm workspaces: `packages/*`, `apps/*`. All packages are `private`.
+
+| Package | Name | Status |
+|---|---|---|
+| `packages/core` | `@smartsaver/core` | Skeleton |
+| `packages/api` | `@smartsaver/api` | Deals, categorization and nearby stores implemented |
+| `apps/web` | `@smartsaver/web` | Panel + deals search + map (no routing yet) |
+| `apps/mobile` | `@smartsaver/mobile` | Blank shell |
+
+## packages/core
+
+Framework-agnostic logic shared by clients. Builds with `tsc` to `dist/`; rebuild (`npm run build:core`) after changing it, since the web app consumes `dist/`. Planned modules: [](ARCHITECTURE.md).
+
+| Export | File | Role |
+|---|---|---|
+| `CORE_VERSION` | `src/index.ts` | Package version constant |
+| `LatLng`, `Place`, `Stop`, `RouteResult`, `Estimate`, `CostModel`, `StoreRef`, `CandidateStore`, `Deal`, `Category`, `ListItem`, `GroceryList`, `TripStatus` | `src/types.ts` | Data model. `Place = {label, lat, lng}`; `Stop` adds an `id` |
+| `Result<T>`, `search(q, signal?, near?)` | `src/geocode.ts` | Nominatim place search (up to 10 validated hits); `near` bounds results to a ~30 km box around a point. Returns `{ok, value}` or `{ok: false, reason}`; an abort is an empty success |
+| `currentLocation()` | `src/location.ts` | Browser Geolocation to a `Place`; rejects if denied or unavailable |
+| `postalPlace(query)`, `normalizeCaPostal(query)` | `src/location.ts` | Postal code or address to a `Place` (`Result`). Canadian postals are sent to Nominatim spaced (`K2K 0P7`); if Nominatim has no entry, falls back to the Zippopotam FSA centroid, labelled `(approximate)` |
+| `route(stops)`, `trip(stops)`, `withReturn(stops, roundTrip)`, `MAX_STOPS` | `src/route.ts` | OSRM `/route` and `/trip` (optimized order), each response validated; 2 to 25 stops; `withReturn` appends a return leg to the origin |
+| `estimate(meters, costModel)`, `toKm`, `toMiles` | `src/estimate.ts` | Fuel litres and cost in canonical metric units (m, $/L, L/100km) |
+| `google`, `apple`, `waze`, `MAX_WAYPOINTS` | `src/maplinks.ts` | `https://` deep links for pre-ordered stops. Google takes origin, destination and up to 9 waypoints; Apple takes origin and destination only; Waze takes the destination only |
+| `tripStore`, `DEFAULT_COST_MODEL` | `src/store/trip.ts` | Zustand vanilla store: `stops` (index 0 is the origin), `optimize`, `roundTrip` (both default on), `route`, `estimate`, `status`, `error`, `list`. Actions `toggleItem` (persists the list), `setOrigin`, `addStop` (dedupes, max 25), `removeStop`, `moveStop`, `reorderStop`, `setOptimize`, `setRoundTrip`, `computeRoute`. Every stop change recomputes the route; a superseded request is aborted and its result dropped |
+| `deals({ postalCode, q? }, signal?)` | `src/deals.ts` | `/api/deals` client. Returns `Result`; keeps at most 100 rows and drops rows without a string `id`/`name`/`merchant`, a finite `price` (and `wasPrice` if present), or a 3-letter currency code |
+| `nearby(point, signal?)`, `findStore(merchant, candidates)` | `src/stores.ts` | `/api/stores` client (validates rows, returns `Result`); nearest candidate whose name matches a merchant, ignoring case, accents and punctuation |
+| `seedList`, `loadList(storage?)`, `saveList(list, storage?)`, `toggleNeeded`, `CATEGORIES`, `categoryId` | `src/list.ts` | Seeded "My Staples" list (11 categories, ~65 items, each with `matchTerms`, none needed by default), persisted under `smartsaver.list.v2`; corrupted storage reseeds |
+| `match(items, deals)` | `src/match.ts` | Map of item id to matching deals, cheapest first. Keyword match with plural, diacritic, descriptor and store-brand normalization; rejects derived products ("chicken broth" is not chicken) unless asked for |
+| `safeStorage()`, `StorageLike` | `src/storage.ts` | `localStorage` when available, else an in-memory fallback. List functions take a `StorageLike`, so mobile can pass its own adapter |
+| `assert`, `assertLatLng`, `isFiniteNumber` | `src/assert.ts` | Invariant helpers ([](DEFENSIVE.md)) |
+
+Ported from the original `smartsaver` repo's `lib/` and `store/trip.ts`, trimmed to what exists so far. Nominatim and OSRM use the public demo servers (constants in `geocode.ts` and `route.ts`; not yet env-configurable). Tests are colocated `src/*.test.ts` (Vitest, fetch mocked).
+
+## packages/api
+
+Express server (ESM, `tsx watch` in dev, `tsc` to `dist/`). Tests: Vitest, colocated `src/*.test.ts`.
+
+| File | Role |
+|---|---|
+| `src/server.ts` | Express app; routes `GET /api/deals`, `GET /api/deal-options`, `GET /api/stores`; CORS; `API_PORT` (8787) |
+| `src/deals.ts` | `handleDeals(postalCode, q)`: validation, cache, aggregator |
+| `src/dealOptions.ts` | `handleDealOptions(postalCode, q)`: same, plus categorization |
+| `src/savingsDealAggregator.ts` | `fetchDeals(postalCode, term)`: fetches and normalizes upstream (Flipp) flyer items |
+| `src/dealCategorizer.ts` | `categorizeDeals`, `matchCategory`, taxonomy |
+| `src/stores.ts` | `handleStores(lat, lng, radius)`: Overpass grocers, OSRM reachability gate, Nominatim postal codes, cache |
+| `src/_cache.ts` | In-memory TTL cache (`cacheGet`, `cacheSet`), max 500 entries |
+| `src/index.ts` | Re-exports `API_VERSION`, `handleDeals`, `fetchDeals`, `AggregatorResult`, `handleDealOptions`, `categorizeDeals`, `CategoryGroup`, `handleStores` |
+| `scripts/smoke-deal-options.mjs` | Live smoke test across 15 cities (uses `dist/`) |
+
+Not implemented: persistent cache. Details: [](API.md); planned design: [](DEALS.md).
+
+## apps/web
+
+React 18 + Vite 5 SPA. Vite dev server proxies `/api` to `localhost:8787`. Zustand (via `packages/core`) holds trip state; Vitest is installed but has no web tests yet. Build steps 1–7 of [](WEBAPP.md) are implemented: a 404px side panel (bottom sheet below 860px) beside a MapLibre map on OpenFreeMap tiles. The panel has "Use my location", a place search (Nominatim, debounced 400 ms, 3+ characters) that adds stops, a stop list (up/down buttons or drag to reorder, remove; the first stop is the origin, shown as `A` and kept first), a route summary (distance, time, fuel, with round-trip and optimize toggles), an "Open in Google Maps" button (Apple Maps and Waze as secondary) that hands off the stops in optimized order, a collapsible "My Staples" grocery list (tap items to mark them needed), and a postal-code/query search that calls `GET /api/deals` (through the core `deals` client) and lists the results. Each deal has an "Add stop" button: deals carry only a merchant name, so the app asks `/api/stores` for grocers near the origin (or near the searched postal code, resolved with `postalPlace`, when there is no origin) and adds the nearest one whose name matches the merchant. If none match, it falls back to geocoding the merchant name within ~30 km. Above the deals, "On sale from your list" shows each needed item found in the loaded deals with its cheapest deal, and counts the misses ("2 of 3"). If nothing matches, the card says so and points to the stop search. The map shows a marker per stop, the route polyline, and fits its view to the stops (Toronto until the first stop). The tile style is set by `VITE_MAP_STYLE_URL` (see `.env.example`). `vite.config.ts` excludes `maplibre-gl` from dependency pre-bundling so its worker loads in dev. Screens: [](USER_STATES.md).
+
+| File | Role |
+|---|---|
+| `src/App.tsx` | Layout and search state (`idle`, `searching`, `ready`, `error`) |
+| `src/components/GroceryList.tsx` | Collapsible staples list by category; toggles `needed` |
+| `src/components/ListMatches.tsx` | Needed items on sale in the loaded deals, cheapest deal each |
+| `src/components/Map.tsx` | `react-map-gl` map with zoom controls, OpenFreeMap style, stop markers, fit-to-stops |
+| `src/components/PlaceSearch.tsx` | Debounced place search; a chosen result is added as a stop |
+| `src/components/StopList.tsx` | Ordered stops with up/down, remove and drag-to-reorder |
+| `src/components/OpenInMaps.tsx` | Nav-app handoff; orders stops by `route.order` and adds the return leg on round trips; opens in a new tab |
+| `src/components/RouteSummary.tsx` | Round-trip and optimize toggles; distance, time and fuel; route error block |
+| `src/components/UseMyLocation.tsx` | Sets the origin from browser geolocation; falls back to a hint to search |
+| `src/components/SearchBox.tsx` | Postal code (`^[A-Z0-9]{3,10}$`) + optional query form |
+| `src/components/DealList.tsx` | Deal cards: sale price (green), struck was-price, "Add stop" with adding/added/failed states |
+| `src/styles/tokens.css` | Light/dark design tokens from [](STYLE_GUIDE.md) |
+| `src/styles/app.css` | Layout and component styles (tokens only) |
+
+Not implemented: grocery list editor (add/rename items and categories; out of scope per [](WEBAPP.md)), catalog aliases in matching, Worth-It, grocer pins on the map, skeleton loading, imperial units, editable cost model.
+
+## apps/mobile
+
+Expo ~51 / React Native 0.74 app. `App.tsx` renders a title and `CORE_VERSION`. Only `typecheck` is run in CI. Planned: [](MOBILE.md).
+
+```{seealso}
+[](GETTING_STARTED.md), [](API.md), [](ARCHITECTURE.md), [](DEALS.md), [](WEBAPP.md), [](MOBILE.md), [](DATABASE.md)
+```

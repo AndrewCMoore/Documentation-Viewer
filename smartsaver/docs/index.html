@@ -1,0 +1,373 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SmartSaver &mdash; SmartSaver  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=3b126f1a" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Getting Started" href="GETTING_STARTED.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #1b1a3a" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            SmartSaver
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="GETTING_STARTED.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PACKAGES.html">Packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="API.html">API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Design</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="ARCHITECTURE.html">SmartSaver — Multi-Platform Architecture &amp; Planning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DIAGRAMS.html">SmartSaver — Architecture Diagrams (for audit)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DEALS.html">SmartSaver — Deals Layer (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="GROCERY_LIST.html">SmartSaver — Grocery List (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="GROCERY_EDITOR.html">SmartSaver — Grocery List Editor UI (Addendum to GROCERY_LIST.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LOCATION.html">SmartSaver — Location &amp; Store Discovery (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="WORTH_IT.html">SmartSaver — Worth-It Engine (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="REWARDS.html">SmartSaver — Rewards &amp; Grocer Preference (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SETTINGS.html">SmartSaver — Cost-Model Settings (Addendum to WORTH_IT.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DATABASE.html">SmartSaver — Database (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DEFENSIVE.html">SmartSaver — Defensive Programming Rules</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Clients</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="WEBAPP.html">SmartSaver — Web App Build Plan (<code class="docutils literal notranslate"><span class="pre">apps/web</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MOBILE.html">SmartSaver — Mobile App Build Plan (<code class="docutils literal notranslate"><span class="pre">apps/mobile</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="STYLE_GUIDE.html">SmartSaver — Style Guide (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="USER_STATES.html">User States</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #1b1a3a" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">SmartSaver</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">SmartSaver</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="smartsaver">
+<h1>SmartSaver<a class="headerlink" href="#smartsaver" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="GETTING_STARTED.html">Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="GETTING_STARTED.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GETTING_STARTED.html#install">Install</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GETTING_STARTED.html#scripts-repo-root">Scripts (repo root)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GETTING_STARTED.html#ports">Ports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GETTING_STARTED.html#mobile-expo">Mobile (Expo)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GETTING_STARTED.html#smoke-test-live-network">Smoke test (live network)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GETTING_STARTED.html#ci-and-releases">CI and releases</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GETTING_STARTED.html#building-these-docs">Building these docs</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="PACKAGES.html">Packages</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="PACKAGES.html#packages-core">packages/core</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PACKAGES.html#packages-api">packages/api</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PACKAGES.html#apps-web">apps/web</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PACKAGES.html#apps-mobile">apps/mobile</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="API.html">API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="API.html#endpoints">Endpoints</a></li>
+<li class="toctree-l2"><a class="reference internal" href="API.html#caching">Caching</a></li>
+<li class="toctree-l2"><a class="reference internal" href="API.html#aggregator-flow">Aggregator flow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="API.html#categorization">Categorization</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Design</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="ARCHITECTURE.html">SmartSaver — Multi-Platform Architecture &amp; Planning</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ARCHITECTURE.html#what-smartsaver-is">1. What SmartSaver is</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ARCHITECTURE.html#scope-decision-one-backend-three-front-ends">2. Scope decision: one backend, three front ends</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ARCHITECTURE.html#architecture-at-a-glance">3. Architecture at a glance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ARCHITECTURE.html#component-responsibilities">4. Component responsibilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ARCHITECTURE.html#core-data-model">5. Core data model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ARCHITECTURE.html#reuse-contract-what-s-shared-vs-re-implemented-per-platform">6. Reuse contract (what’s shared vs. re-implemented, per platform)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ARCHITECTURE.html#monorepo-folder-shape">7. Monorepo folder shape</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ARCHITECTURE.html#deployment-posture-three-deployables-one-backend">8. Deployment posture (three deployables, one backend)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ARCHITECTURE.html#known-constraints-to-design-around">9. Known constraints to design around</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ARCHITECTURE.html#suggested-build-order-later">10. Suggested build order (later)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="DIAGRAMS.html">SmartSaver — Architecture Diagrams (for audit)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="DIAGRAMS.html#system-context-components">1. System context &amp; components</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DIAGRAMS.html#end-to-end-data-pipeline-demand-supply-decision-route">2. End-to-end data pipeline (demand + supply → decision → route)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DIAGRAMS.html#packages-core-module-dependencies-the-reuse-boundary-shared-web-mobile">3. <code class="docutils literal notranslate"><span class="pre">packages/core</span></code> module dependencies (the reuse boundary — shared web+mobile)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DIAGRAMS.html#trip-state-machine-architecture-md-5-zustand-packages-core">4. Trip state machine (<code class="docutils literal notranslate"><span class="pre">ARCHITECTURE.md</span> <span class="pre">§5</span></code> — Zustand, <code class="docutils literal notranslate"><span class="pre">packages/core</span></code>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DIAGRAMS.html#deployment-topology-three-deployables-one-backend">5. Deployment topology (three deployables, one backend)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DIAGRAMS.html#production-persistence-data-model-database-md-production-only">6. Production persistence — data model (<code class="docutils literal notranslate"><span class="pre">DATABASE.md</span></code>, production-only)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DIAGRAMS.html#deals-fetch-cache-hit-miss-same-shape-for-api-stores-same-for-both-clients">7. Deals fetch (cache hit/miss — same shape for <code class="docutils literal notranslate"><span class="pre">/api/stores</span></code>, same for both clients)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DIAGRAMS.html#worth-it-decision-greedy-marginal-selection-worth-it-md-4-7">8. Worth-It decision — greedy marginal selection (<code class="docutils literal notranslate"><span class="pre">WORTH_IT.md</span> <span class="pre">§4,§7</span></code>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DIAGRAMS.html#mobile-build-release-pipeline-mobile-md-4-7-new-vs-the-original-design">9. Mobile build &amp; release pipeline (<code class="docutils literal notranslate"><span class="pre">MOBILE.md</span> <span class="pre">§4,§7</span></code> — new vs. the original design)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="DEALS.html">SmartSaver — Deals Layer (Addendum to ARCHITECTURE.md)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="DEALS.html#what-the-deals-layer-is">1. What the deals layer is</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DEALS.html#scope-decisions">2. Scope decisions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DEALS.html#why-an-aggregator-not-per-grocer-scraping">3. Why an aggregator, not per-grocer scraping</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DEALS.html#architecture-at-a-glance">4. Architecture at a glance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DEALS.html#component-responsibilities">5. Component responsibilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DEALS.html#core-data-model">6. Core data model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DEALS.html#upstream-reference-prototype-source">7. Upstream reference (prototype source)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DEALS.html#key-flows">8. Key flows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DEALS.html#the-cost-split-why-this-stays-cheap">9. The cost split (why this stays cheap)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DEALS.html#known-constraints-to-design-around">10. Known constraints to design around</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DEALS.html#proposed-folder-shape-for-when-we-build">11. Proposed folder shape (for when we build)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DEALS.html#suggested-build-order-later">12. Suggested build order (later)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="GROCERY_LIST.html">SmartSaver — Grocery List (Addendum to ARCHITECTURE.md)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="GROCERY_LIST.html#what-the-grocery-list-is">1. What the grocery list is</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GROCERY_LIST.html#where-it-fits-the-full-data-flow">2. Where it fits (the full data flow)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GROCERY_LIST.html#scope-decisions">3. Scope decisions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GROCERY_LIST.html#default-category-taxonomy-seed">4. Default category taxonomy (seed)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GROCERY_LIST.html#core-data-model">5. Core data model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GROCERY_LIST.html#key-flows">6. Key flows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GROCERY_LIST.html#the-matching-layer-the-hard-part">7. The matching layer (the hard part)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GROCERY_LIST.html#persistence-posture-two-modes-same-code">8. Persistence posture (two modes, same code)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GROCERY_LIST.html#known-constraints-to-design-around">9. Known constraints to design around</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GROCERY_LIST.html#proposed-folder-shape-additions">10. Proposed folder shape (additions)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GROCERY_LIST.html#suggested-build-order-later">11. Suggested build order (later)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="GROCERY_EDITOR.html">SmartSaver — Grocery List Editor UI (Addendum to GROCERY_LIST.md)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="GROCERY_EDITOR.html#what-the-editor-is">1. What the editor is</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GROCERY_EDITOR.html#scope-decisions">2. Scope decisions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GROCERY_EDITOR.html#data-model-additions-refines-grocery-list-5">3. Data-model additions (refines <code class="docutils literal notranslate"><span class="pre">GROCERY_LIST</span> <span class="pre">§5</span></code>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GROCERY_EDITOR.html#screen-layout-desktop-panel-reference-render-style-guide-editor-html">4. Screen layout (desktop panel; reference render <code class="docutils literal notranslate"><span class="pre">style-guide/editor.html</span></code>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GROCERY_EDITOR.html#the-two-modes-the-load-bearing-interaction">5. The two modes (the load-bearing interaction)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GROCERY_EDITOR.html#category-suggestion-override-memory">6. Category suggestion &amp; override memory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GROCERY_EDITOR.html#states">7. States</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GROCERY_EDITOR.html#component-lib-contract-extends-grocery-list-10-webapp-34">8. Component &amp; <code class="docutils literal notranslate"><span class="pre">lib</span></code> contract (extends <code class="docutils literal notranslate"><span class="pre">GROCERY_LIST</span> <span class="pre">§10</span></code>, <code class="docutils literal notranslate"><span class="pre">WEBAPP</span> <span class="pre">§3–4</span></code>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GROCERY_EDITOR.html#responsive-ties-to-style-guide-10-architecture-3">9. Responsive (ties to <code class="docutils literal notranslate"><span class="pre">STYLE_GUIDE</span> <span class="pre">§10</span></code>, <code class="docutils literal notranslate"><span class="pre">ARCHITECTURE</span> <span class="pre">§3</span></code>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GROCERY_EDITOR.html#known-constraints-to-design-around">10. Known constraints to design around</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GROCERY_EDITOR.html#proposed-build-order-later">11. Proposed build order (later)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="LOCATION.html">SmartSaver — Location &amp; Store Discovery (Addendum to ARCHITECTURE.md)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="LOCATION.html#what-this-layer-is">1. What this layer is</a></li>
+<li class="toctree-l2"><a class="reference internal" href="LOCATION.html#where-it-fits-the-full-data-flow">2. Where it fits (the full data flow)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="LOCATION.html#scope-decisions">3. Scope decisions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="LOCATION.html#architecture-at-a-glance">4. Architecture at a glance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="LOCATION.html#component-responsibilities">5. Component responsibilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="LOCATION.html#core-data-model">6. Core data model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="LOCATION.html#upstream-reference-prototype-source">7. Upstream reference (prototype source)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="LOCATION.html#key-flows">8. Key flows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="LOCATION.html#the-cost-split-why-this-stays-free">9. The cost split (why this stays free)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="LOCATION.html#known-constraints-to-design-around">10. Known constraints to design around</a></li>
+<li class="toctree-l2"><a class="reference internal" href="LOCATION.html#proposed-folder-shape-additions">11. Proposed folder shape (additions)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="LOCATION.html#suggested-build-order-later">12. Suggested build order (later)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="WORTH_IT.html">SmartSaver — Worth-It Engine (Addendum to ARCHITECTURE.md)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="WORTH_IT.html#what-the-worth-it-engine-is">1. What the Worth-It Engine is</a></li>
+<li class="toctree-l2"><a class="reference internal" href="WORTH_IT.html#where-it-fits-the-full-data-flow">2. Where it fits (the full data flow)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="WORTH_IT.html#the-core-idea-marginal-not-absolute">3. The core idea: marginal, not absolute</a></li>
+<li class="toctree-l2"><a class="reference internal" href="WORTH_IT.html#the-decision-in-one-line">4. The decision, in one line</a></li>
+<li class="toctree-l2"><a class="reference internal" href="WORTH_IT.html#fuel-time-model-the-assumptions-we-make-explicit">5. Fuel &amp; time model (the assumptions we make explicit)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="WORTH_IT.html#getting-distance-and-duration-the-routing-seam">6. Getting Δdistance and Δduration (the routing seam)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="WORTH_IT.html#one-store-vs-many-the-cherry-picking-tradeoff">7. One store vs. many: the cherry-picking tradeoff</a></li>
+<li class="toctree-l2"><a class="reference internal" href="WORTH_IT.html#core-data-model">8. Core data model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="WORTH_IT.html#key-flows">9. Key flows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="WORTH_IT.html#known-constraints-to-design-around">10. Known constraints to design around</a></li>
+<li class="toctree-l2"><a class="reference internal" href="WORTH_IT.html#proposed-folder-shape-additions">11. Proposed folder shape (additions)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="WORTH_IT.html#suggested-build-order-later">12. Suggested build order (later)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="REWARDS.html">SmartSaver — Rewards &amp; Grocer Preference (Addendum to ARCHITECTURE.md)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="REWARDS.html#what-the-rewards-layer-is">1. What the rewards layer is</a></li>
+<li class="toctree-l2"><a class="reference internal" href="REWARDS.html#where-it-fits-the-full-data-flow">2. Where it fits (the full data flow)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="REWARDS.html#the-core-idea-rewards-are-earned-dollars-opt-in-and-marginal">3. The core idea: rewards are earned dollars, opt-in and marginal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="REWARDS.html#the-decision-extended-one-new-term">4. The decision, extended (one new term)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="REWARDS.html#rewards-model-settings-explicit-like-the-fuel-model">5. Rewards model &amp; settings (explicit, like the fuel model)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="REWARDS.html#merchant-loyalty-program-the-join-behind-an-adapter">6. Merchant → loyalty program (the join, behind an adapter)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="REWARDS.html#core-data-model">7. Core data model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="REWARDS.html#key-flows">8. Key flows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="REWARDS.html#known-constraints-to-design-around">9. Known constraints to design around</a></li>
+<li class="toctree-l2"><a class="reference internal" href="REWARDS.html#how-it-plugs-in-behind-existing-seams">10. How it plugs in (behind existing seams)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="REWARDS.html#proposed-folder-shape-additions">11. Proposed folder shape (additions)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="REWARDS.html#suggested-build-order-later">12. Suggested build order (later)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="SETTINGS.html">SmartSaver — Cost-Model Settings (Addendum to WORTH_IT.md)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="SETTINGS.html#what-the-settings-layer-is">1. What the settings layer is</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SETTINGS.html#where-it-fits-the-data-flow">2. Where it fits (the data flow)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SETTINGS.html#the-settings-worth-it-5-made-concrete">3. The settings (WORTH_IT §5, made concrete)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SETTINGS.html#units-the-one-design-decision-that-matters">4. Units: the one design decision that matters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SETTINGS.html#core-data-model">5. Core data model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SETTINGS.html#the-panel-minimal-now-full-screen-later">6. The panel (minimal now → full screen later)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SETTINGS.html#persistence-localstorage-like-the-rest-of-the-prototype">7. Persistence (localStorage, like the rest of the prototype)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SETTINGS.html#key-flows">8. Key flows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SETTINGS.html#known-constraints-to-design-around">9. Known constraints to design around</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SETTINGS.html#suggested-build-order-later">10. Suggested build order (later)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="DATABASE.html">SmartSaver — Database (Addendum to ARCHITECTURE.md)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="DATABASE.html#what-the-database-is-and-what-it-deliberately-is-not">1. What the database is (and what it deliberately is <em>not</em>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DATABASE.html#scope-decisions">2. Scope decisions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DATABASE.html#the-one-cross-cutting-dependency-the-owner-key">3. The one cross-cutting dependency: the owner key</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DATABASE.html#datastore-one-engine-postgres">4. Datastore: one engine, Postgres</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DATABASE.html#core-schema">5. Core schema</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DATABASE.html#how-it-plugs-in-production-only-behind-existing-seams">6. How it plugs in (production-only, behind existing seams)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DATABASE.html#key-flows">7. Key flows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DATABASE.html#known-constraints-to-design-around">8. Known constraints to design around</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DATABASE.html#proposed-folder-shape-additions">9. Proposed folder shape (additions)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DATABASE.html#suggested-build-order-later">10. Suggested build order (later)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="DEFENSIVE.html">SmartSaver — Defensive Programming Rules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="DEFENSIVE.html#simple-control-flow-no-recursion-no-goto-a">1. Simple control flow — no recursion, no <code class="docutils literal notranslate"><span class="pre">goto</span></code> <strong>(A)</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="DEFENSIVE.html#all-loops-need-a-fixed-upper-bound-t">2. All loops need a fixed upper bound <strong>(T)</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="DEFENSIVE.html#no-unbounded-allocation-after-init-t">3. No unbounded allocation after init <strong>(T)</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="DEFENSIVE.html#keep-functions-short-60-lines-a">4. Keep functions short (~≤ 60 lines) <strong>(A)</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="DEFENSIVE.html#at-least-two-assertions-per-function-average-t">5. At least two assertions per function (average) <strong>(T)</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="DEFENSIVE.html#declare-data-at-the-smallest-scope-a">6. Declare data at the smallest scope <strong>(A)</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="DEFENSIVE.html#check-every-return-value-validate-every-parameter-a-the-big-one">7. Check every return value; validate every parameter <strong>(A — the big one)</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="DEFENSIVE.html#limited-preprocessor-use-n-a">8. Limited preprocessor use <strong>(N/A)</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="DEFENSIVE.html#restrict-pointers-indirection-n-a-limit-indirection-mutation">9. Restrict pointers / indirection <strong>(N/A → limit indirection &amp; mutation)</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="DEFENSIVE.html#zero-warnings-static-analysis-from-day-one-a">10. Zero warnings; static analysis from day one <strong>(A)</strong></a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Clients</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="WEBAPP.html">SmartSaver — Web App Build Plan (<code class="docutils literal notranslate"><span class="pre">apps/web</span></code>)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="WEBAPP.html#what-we-are-building">1. What we are building</a></li>
+<li class="toctree-l2"><a class="reference internal" href="WEBAPP.html#stack">2. Stack</a></li>
+<li class="toctree-l2"><a class="reference internal" href="WEBAPP.html#folder-shape-this-app-s-slice-of-the-monorepo-see-architecture-md-7-for-the-whole-tree">3. Folder shape (this app’s slice of the monorepo — see <code class="docutils literal notranslate"><span class="pre">ARCHITECTURE.md</span> <span class="pre">§7</span></code> for the whole tree)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="WEBAPP.html#packages-core-module-contracts-implement-the-doc-interfaces-reuse-don-t-reinvent">4. <code class="docutils literal notranslate"><span class="pre">packages/core</span></code> module contracts (implement the doc interfaces — reuse, don’t reinvent)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="WEBAPP.html#runtime-deployment">5. Runtime &amp; deployment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="WEBAPP.html#build-order">6. Build order</a></li>
+<li class="toctree-l2"><a class="reference internal" href="WEBAPP.html#out-of-scope-explicit-follow-ups-not-built-now">7. Out of scope (explicit follow-ups, not built now)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="WEBAPP.html#verification-end-to-end">8. Verification (end-to-end)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="MOBILE.html">SmartSaver — Mobile App Build Plan (<code class="docutils literal notranslate"><span class="pre">apps/mobile</span></code>)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="MOBILE.html#what-we-are-building">1. What we are building</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MOBILE.html#stack">2. Stack</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MOBILE.html#folder-shape">3. Folder shape</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MOBILE.html#what-s-genuinely-mobile-specific-the-only-new-design-surface">4. What’s genuinely mobile-specific (the only new design surface)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MOBILE.html#build-order">5. Build order</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MOBILE.html#verification-end-to-end-mirrors-webapp-md-9">6. Verification (end-to-end, mirrors <code class="docutils literal notranslate"><span class="pre">WEBAPP.md</span> <span class="pre">§9</span></code>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MOBILE.html#out-of-scope-explicit-follow-ups-not-built-now">7. Out of scope (explicit follow-ups, not built now)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="STYLE_GUIDE.html">SmartSaver — Style Guide (Addendum to ARCHITECTURE.md)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="STYLE_GUIDE.html#design-intent-the-four-brand-synthesis">1. Design intent — the four-brand synthesis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="STYLE_GUIDE.html#core-color-decisions-locked">2. Core color decisions (locked)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="STYLE_GUIDE.html#theme-posture">3. Theme posture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="STYLE_GUIDE.html#color-tokens">4. Color tokens</a></li>
+<li class="toctree-l2"><a class="reference internal" href="STYLE_GUIDE.html#typography">5. Typography</a></li>
+<li class="toctree-l2"><a class="reference internal" href="STYLE_GUIDE.html#spacing-radius-elevation">6. Spacing, radius, elevation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="STYLE_GUIDE.html#component-specs">7. Component specs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="STYLE_GUIDE.html#focus-states-accessibility">8. Focus, states, accessibility</a></li>
+<li class="toctree-l2"><a class="reference internal" href="STYLE_GUIDE.html#motion">9. Motion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="STYLE_GUIDE.html#responsive-ties-to-architecture-md-3">10. Responsive (ties to ARCHITECTURE.md §3)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="STYLE_GUIDE.html#using-the-tokens-integration">11. Using the tokens (integration)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="STYLE_GUIDE.html#do-don-t">12. Do / Don’t</a></li>
+<li class="toctree-l2"><a class="reference internal" href="STYLE_GUIDE.html#files-in-this-system">13. Files in this system</a></li>
+<li class="toctree-l2"><a class="reference internal" href="STYLE_GUIDE.html#open-follow-ups-not-yet-decided">14. Open follow-ups (not yet decided)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="STYLE_GUIDE.html#cross-platform-notes-web-react-native">15. Cross-platform notes (web ↔ React Native)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="STYLE_GUIDE.html#empty-error-loading-states">16. Empty, error &amp; loading states</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="USER_STATES.html">User States</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="USER_STATES.html#home">Home</a></li>
+<li class="toctree-l2"><a class="reference internal" href="USER_STATES.html#stops-and-route">Stops and route</a></li>
+<li class="toctree-l2"><a class="reference internal" href="USER_STATES.html#route-error">Route error</a></li>
+<li class="toctree-l2"><a class="reference internal" href="USER_STATES.html#deals">Deals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="USER_STATES.html#list-matches">List matches</a></li>
+<li class="toctree-l2"><a class="reference internal" href="USER_STATES.html#deal-added-as-a-stop">Deal added as a stop</a></li>
+<li class="toctree-l2"><a class="reference internal" href="USER_STATES.html#deals-error">Deals error</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="GETTING_STARTED.html" class="btn btn-neutral float-right" title="Getting Started" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

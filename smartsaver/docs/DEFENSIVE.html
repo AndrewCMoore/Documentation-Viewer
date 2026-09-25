@@ -1,0 +1,324 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SmartSaver — Defensive Programming Rules &mdash; SmartSaver  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=3b126f1a" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="SmartSaver — Web App Build Plan (apps/web)" href="WEBAPP.html" />
+    <link rel="prev" title="SmartSaver — Database (Addendum to ARCHITECTURE.md)" href="DATABASE.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #1b1a3a" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            SmartSaver
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="GETTING_STARTED.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PACKAGES.html">Packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="API.html">API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Design</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="ARCHITECTURE.html">SmartSaver — Multi-Platform Architecture &amp; Planning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DIAGRAMS.html">SmartSaver — Architecture Diagrams (for audit)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DEALS.html">SmartSaver — Deals Layer (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="GROCERY_LIST.html">SmartSaver — Grocery List (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="GROCERY_EDITOR.html">SmartSaver — Grocery List Editor UI (Addendum to GROCERY_LIST.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LOCATION.html">SmartSaver — Location &amp; Store Discovery (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="WORTH_IT.html">SmartSaver — Worth-It Engine (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="REWARDS.html">SmartSaver — Rewards &amp; Grocer Preference (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SETTINGS.html">SmartSaver — Cost-Model Settings (Addendum to WORTH_IT.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DATABASE.html">SmartSaver — Database (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">SmartSaver — Defensive Programming Rules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#simple-control-flow-no-recursion-no-goto-a">1. Simple control flow — no recursion, no <code class="docutils literal notranslate"><span class="pre">goto</span></code> <strong>(A)</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#all-loops-need-a-fixed-upper-bound-t">2. All loops need a fixed upper bound <strong>(T)</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#no-unbounded-allocation-after-init-t">3. No unbounded allocation after init <strong>(T)</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#keep-functions-short-60-lines-a">4. Keep functions short (~≤ 60 lines) <strong>(A)</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#at-least-two-assertions-per-function-average-t">5. At least two assertions per function (average) <strong>(T)</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#declare-data-at-the-smallest-scope-a">6. Declare data at the smallest scope <strong>(A)</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#check-every-return-value-validate-every-parameter-a-the-big-one">7. Check every return value; validate every parameter <strong>(A — the big one)</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#limited-preprocessor-use-n-a">8. Limited preprocessor use <strong>(N/A)</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#restrict-pointers-indirection-n-a-limit-indirection-mutation">9. Restrict pointers / indirection <strong>(N/A → limit indirection &amp; mutation)</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#zero-warnings-static-analysis-from-day-one-a">10. Zero warnings; static analysis from day one <strong>(A)</strong></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#priority-for-smartsaver">Priority for SmartSaver</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Clients</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="WEBAPP.html">SmartSaver — Web App Build Plan (<code class="docutils literal notranslate"><span class="pre">apps/web</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MOBILE.html">SmartSaver — Mobile App Build Plan (<code class="docutils literal notranslate"><span class="pre">apps/mobile</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="STYLE_GUIDE.html">SmartSaver — Style Guide (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="USER_STATES.html">User States</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #1b1a3a" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">SmartSaver</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">SmartSaver — Defensive Programming Rules</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/DEFENSIVE.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="smartsaver-defensive-programming-rules">
+<h1>SmartSaver — Defensive Programming Rules<a class="headerlink" href="#smartsaver-defensive-programming-rules" title="Link to this heading"></a></h1>
+<blockquote>
+<div><p>How we write code here. Adapted from NASA/JPL’s <strong>“Power of Ten”</strong> rules for
+safety-critical software (Holzmann, 2006). Those rules target C; SmartSaver is
+JavaScript/TypeScript talking to flaky public APIs (Nominatim, OSRM) and
+handing coordinates to external nav apps. The <em>spirit</em> — provable bounds,
+checked inputs, no silent failure — is what keeps a route planner from sending
+someone to the wrong hemisphere. This document is the JS translation, with the
+concrete SmartSaver rules under each.</p>
+<p>Reference implementation today: <code class="docutils literal notranslate"><span class="pre">style-guide/build-tokens.mjs</span></code>
+already follows all of the applicable rules; use it as the worked example.</p>
+</div></blockquote>
+<p>Legend: <strong>A</strong> = adopt as-is · <strong>T</strong> = translated to JS · <strong>N/A</strong> = C-specific.</p>
+<hr class="docutils" />
+<section id="simple-control-flow-no-recursion-no-goto-a">
+<h2>1. Simple control flow — no recursion, no <code class="docutils literal notranslate"><span class="pre">goto</span></code> <strong>(A)</strong><a class="headerlink" href="#simple-control-flow-no-recursion-no-goto-a" title="Link to this heading"></a></h2>
+<p>Restrict to simple, statically analysable control flow. In JS that means:</p>
+<ul class="simple">
+<li><p><strong>No recursion</strong> for data-driven work (walking stops, legs, geocode results).
+Recursion depth is an unbounded loop in disguise — use iteration with a bound
+(Rule 2). <em>Exception:</em> recursion over statically-fixed structures is fine, but
+prefer iteration.</p></li>
+<li><p>No <code class="docutils literal notranslate"><span class="pre">eval</span></code>, no dynamically-built control flow, no throwing across module
+boundaries as a way of jumping (throw only for genuine invariant violations).</p></li>
+<li><p>One clear success path and one error path per operation.</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="all-loops-need-a-fixed-upper-bound-t">
+<h2>2. All loops need a fixed upper bound <strong>(T)</strong><a class="headerlink" href="#all-loops-need-a-fixed-upper-bound-t" title="Link to this heading"></a></h2>
+<p>Every loop must have a bound a reader can prove terminates.</p>
+<ul>
+<li><p>Loops over <strong>untrusted external data</strong> (OSRM legs, Nominatim hits) get an
+explicit cap. Never <code class="docutils literal notranslate"><span class="pre">for</span> <span class="pre">(const</span> <span class="pre">hit</span> <span class="pre">of</span> <span class="pre">response.results)</span></code> with no ceiling —
+a malformed or hostile response could be enormous.</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">const</span><span class="w"> </span><span class="nx">MAX_GEOCODE_RESULTS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">10</span><span class="p">;</span><span class="w">   </span><span class="c1">// we only ever show a short pick-list</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">MAX_STOPS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">25</span><span class="p">;</span><span class="w">             </span><span class="c1">// UI + deep-link limits (see below)</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">MAX_ROUTE_LEGS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">MAX_STOPS</span><span class="p">;</span><span class="w"> </span><span class="c1">// one leg between consecutive stops</span>
+</pre></div>
+</div>
+</li>
+<li><p>Iterate with <code class="docutils literal notranslate"><span class="pre">boundedEntries()</span></code> / an explicit slice, exactly as
+<code class="docutils literal notranslate"><span class="pre">build-tokens.mjs</span></code> does with <code class="docutils literal notranslate"><span class="pre">MAX_TOKENS</span></code>.</p></li>
+<li><p><strong>No unbounded retry loops.</strong> Network retries use a fixed count with backoff,
+never <code class="docutils literal notranslate"><span class="pre">while</span> <span class="pre">(!ok)</span></code>.</p></li>
+<li><p>Waypoint fan-out for deep links is capped at <strong>9</strong> (Google’s reliable limit,
+per <code class="docutils literal notranslate"><span class="pre">ARCHITECTURE.md</span></code> §8/§10) — enforce it in code, don’t just hope.</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="no-unbounded-allocation-after-init-t">
+<h2>3. No unbounded allocation after init <strong>(T)</strong><a class="headerlink" href="#no-unbounded-allocation-after-init-t" title="Link to this heading"></a></h2>
+<p>The C rule bans <code class="docutils literal notranslate"><span class="pre">malloc</span></code> after startup. In a GC language the real hazards are
+<em>unbounded growth</em> and <em>hidden reallocation</em>:</p>
+<ul class="simple">
+<li><p>Bound anything that grows from user or network input (stop list, geocode
+cache, route history). Enforce <code class="docutils literal notranslate"><span class="pre">MAX_STOPS</span></code> when adding, not when rendering.</p></li>
+<li><p>Debounced search must <strong>cancel/replace</strong> in-flight requests, not accumulate
+them (<code class="docutils literal notranslate"><span class="pre">ARCHITECTURE.md</span></code> §10). Use an <code class="docutils literal notranslate"><span class="pre">AbortController</span></code> per query.</p></li>
+<li><p>Treat fetched payloads as bounded: reject responses over a sane byte size
+before parsing.</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="keep-functions-short-60-lines-a">
+<h2>4. Keep functions short (~≤ 60 lines) <strong>(A)</strong><a class="headerlink" href="#keep-functions-short-60-lines-a" title="Link to this heading"></a></h2>
+<p>One screen, one job. If a function needs a section comment, it’s two functions.
+<code class="docutils literal notranslate"><span class="pre">build-tokens.mjs</span></code> was split into ~20 single-purpose builders/validators for
+exactly this reason. Route optimization, geocoding, and deep-link building each
+decompose into: <strong>validate input → call → validate output → map to model.</strong></p>
+</section>
+<hr class="docutils" />
+<section id="at-least-two-assertions-per-function-average-t">
+<h2>5. At least two assertions per function (average) <strong>(T)</strong><a class="headerlink" href="#at-least-two-assertions-per-function-average-t" title="Link to this heading"></a></h2>
+<p>Assert on the invariants that must hold, not on things the type checker already
+guarantees. The high-value assertions in SmartSaver are on the <strong>data model</strong>:</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span><span class="w"> </span><span class="nx">assertLatLng</span><span class="p">(</span><span class="nx">p</span><span class="p">,</span><span class="w"> </span><span class="nx">where</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">assert</span><span class="p">(</span><span class="nb">Number</span><span class="p">.</span><span class="nb">isFinite</span><span class="p">(</span><span class="nx">p</span><span class="o">?</span><span class="p">.</span><span class="nx">lat</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nx">p</span><span class="p">.</span><span class="nx">lat</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="o">-</span><span class="mf">90</span><span class="w">  </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nx">p</span><span class="p">.</span><span class="nx">lat</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mf">90</span><span class="p">,</span><span class="w">  </span><span class="sb">`</span><span class="si">${</span><span class="nx">where</span><span class="si">}</span><span class="sb">.lat out of range`</span><span class="p">);</span>
+<span class="w">  </span><span class="nx">assert</span><span class="p">(</span><span class="nb">Number</span><span class="p">.</span><span class="nb">isFinite</span><span class="p">(</span><span class="nx">p</span><span class="o">?</span><span class="p">.</span><span class="nx">lng</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nx">p</span><span class="p">.</span><span class="nx">lng</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="o">-</span><span class="mf">180</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nx">p</span><span class="p">.</span><span class="nx">lng</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mf">180</span><span class="p">,</span><span class="w"> </span><span class="sb">`</span><span class="si">${</span><span class="nx">where</span><span class="si">}</span><span class="sb">.lng out of range`</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Validate coordinates from <strong>every</strong> source (geocode result, saved trip, URL
+param) before they touch the map or a routing request. A NaN lat silently
+breaks OSRM and deep links.</p></li>
+<li><p>Assertions are for <em>programmer errors / broken invariants</em>. Bad <strong>user or
+network</strong> input is expected — handle it with validation-and-recover (Rule 7),
+not an assert that crashes the app.</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="declare-data-at-the-smallest-scope-a">
+<h2>6. Declare data at the smallest scope <strong>(A)</strong><a class="headerlink" href="#declare-data-at-the-smallest-scope-a" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">const</span></code> by default; <code class="docutils literal notranslate"><span class="pre">let</span></code> only when reassigned; never <code class="docutils literal notranslate"><span class="pre">var</span></code>.</p></li>
+<li><p>No shared mutable module state. Trip state lives in one owned store; <code class="docutils literal notranslate"><span class="pre">lib/</span></code>
+functions are pure (<code class="docutils literal notranslate"><span class="pre">ARCHITECTURE.md</span></code> §11 — framework-agnostic, reusable for
+React Native).</p></li>
+<li><p>Don’t hoist a variable to a wider scope just to reuse the name.</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="check-every-return-value-validate-every-parameter-a-the-big-one">
+<h2>7. Check every return value; validate every parameter <strong>(A — the big one)</strong><a class="headerlink" href="#check-every-return-value-validate-every-parameter-a-the-big-one" title="Link to this heading"></a></h2>
+<p>This is where a route planner lives or dies, because Nominatim and OSRM are
+external and imperfect.</p>
+<ul>
+<li><p><strong>Check the HTTP result before the body:</strong> <code class="docutils literal notranslate"><span class="pre">res.ok</span></code>, status, <code class="docutils literal notranslate"><span class="pre">content-type</span></code>.
+Then validate the parsed shape before use — never trust <code class="docutils literal notranslate"><span class="pre">json.routes[0]</span></code>.</p></li>
+<li><p><strong>Validate at the boundary:</strong> wrap each external call in <code class="docutils literal notranslate"><span class="pre">lib/</span></code> behind a
+function that returns a typed, validated result or a typed error:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>// returns { ok: true, route } | { ok: false, reason }
+async function fetchRoute(stops, signal) { … }
+</pre></div>
+</div>
+</li>
+<li><p><strong>Never ignore a non-void return.</strong> No floating promises — every <code class="docutils literal notranslate"><span class="pre">fetch</span></code>/async
+call is awaited or explicitly <code class="docutils literal notranslate"><span class="pre">.catch()</span></code>-handled.</p></li>
+<li><p><strong>OSRM <code class="docutils literal notranslate"><span class="pre">code</span> <span class="pre">!==</span> <span class="pre">&quot;Ok&quot;</span></code>, empty <code class="docutils literal notranslate"><span class="pre">routes</span></code>, zero-distance, missing geometry</strong> are
+all expected failure modes — surface them as <code class="docutils literal notranslate"><span class="pre">status:</span> <span class="pre">error</span></code> (data model §5),
+don’t render a broken map.</p></li>
+<li><p>Deep-link builders validate stop count and coordinate ranges and
+<code class="docutils literal notranslate"><span class="pre">encodeURIComponent</span></code> every value before assembling the URL.</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">build-tokens.mjs</span></code> models this: all <code class="docutils literal notranslate"><span class="pre">fs</span></code> I/O is wrapped, its return checked, and
+the whole token model is validated before a byte is generated.</p>
+</section>
+<hr class="docutils" />
+<section id="limited-preprocessor-use-n-a">
+<h2>8. Limited preprocessor use <strong>(N/A)</strong><a class="headerlink" href="#limited-preprocessor-use-n-a" title="Link to this heading"></a></h2>
+<p>No C preprocessor in JS. The equivalent discipline: <strong>no code generation or
+metaprogramming in app logic.</strong> Build-time codegen (like <code class="docutils literal notranslate"><span class="pre">tokens.mjs</span> <span class="pre">→</span> <span class="pre">tokens.css</span></code>)
+is fine because it’s isolated, deterministic, and diffable — but it must
+validate its inputs and be reproducible (it is; run <code class="docutils literal notranslate"><span class="pre">--check</span></code> in CI).</p>
+</section>
+<hr class="docutils" />
+<section id="restrict-pointers-indirection-n-a-limit-indirection-mutation">
+<h2>9. Restrict pointers / indirection <strong>(N/A → limit indirection &amp; mutation)</strong><a class="headerlink" href="#restrict-pointers-indirection-n-a-limit-indirection-mutation" title="Link to this heading"></a></h2>
+<p>No raw pointers in JS. The translated rule:</p>
+<ul class="simple">
+<li><p><strong>Don’t mutate inputs.</strong> <code class="docutils literal notranslate"><span class="pre">lib/</span></code> functions never mutate the <code class="docutils literal notranslate"><span class="pre">stops</span></code> array or a
+fetched response; they return new values. (<code class="docutils literal notranslate"><span class="pre">build-tokens.mjs</span></code> treats the
+imported token objects as read-only.)</p></li>
+<li><p>Avoid deep property chains on unvalidated data (<code class="docutils literal notranslate"><span class="pre">a.b.c.d</span></code>) — validate the
+shape first, or use guarded access with an assertion.</p></li>
+<li><p>Prefer plain data + explicit functions over clever dynamic dispatch.</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="zero-warnings-static-analysis-from-day-one-a">
+<h2>10. Zero warnings; static analysis from day one <strong>(A)</strong><a class="headerlink" href="#zero-warnings-static-analysis-from-day-one-a" title="Link to this heading"></a></h2>
+<ul>
+<li><p><strong>TypeScript <code class="docutils literal notranslate"><span class="pre">strict:</span> <span class="pre">true</span></code></strong> for app code (<code class="docutils literal notranslate"><span class="pre">src/</span></code>). <code class="docutils literal notranslate"><span class="pre">noUncheckedIndexedAccess</span></code>
+on — indexing <code class="docutils literal notranslate"><span class="pre">routes[0]</span></code> should be <code class="docutils literal notranslate"><span class="pre">T</span> <span class="pre">|</span> <span class="pre">undefined</span></code>, forcing a check (Rule 7).</p></li>
+<li><p><strong>ESLint</strong> with <code class="docutils literal notranslate"><span class="pre">no-floating-promises</span></code>, <code class="docutils literal notranslate"><span class="pre">no-unused-vars</span></code>, <code class="docutils literal notranslate"><span class="pre">eqeqeq</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">no-restricted-globals</span></code>; <strong>treat warnings as errors</strong> in CI.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">build-tokens.mjs</span></code> (plain ESM) carries JSDoc types so <code class="docutils literal notranslate"><span class="pre">tsc</span> <span class="pre">--noEmit</span></code> and
+eslint both lint it clean.</p></li>
+<li><p><strong>CI gate</strong> (add when tooling lands):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">node</span> <span class="o">--</span><span class="n">check</span> <span class="n">style</span><span class="o">-</span><span class="n">guide</span><span class="o">/</span><span class="n">build</span><span class="o">-</span><span class="n">tokens</span><span class="o">.</span><span class="n">mjs</span>
+<span class="n">node</span> <span class="n">style</span><span class="o">-</span><span class="n">guide</span><span class="o">/</span><span class="n">build</span><span class="o">-</span><span class="n">tokens</span><span class="o">.</span><span class="n">mjs</span> <span class="o">--</span><span class="n">check</span>   <span class="c1"># tokens.css not stale</span>
+<span class="n">tsc</span> <span class="o">--</span><span class="n">noEmit</span>
+<span class="n">eslint</span> <span class="o">.</span> <span class="o">--</span><span class="nb">max</span><span class="o">-</span><span class="n">warnings</span> <span class="mi">0</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<hr class="docutils" />
+<section id="priority-for-smartsaver">
+<h3>Priority for SmartSaver<a class="headerlink" href="#priority-for-smartsaver" title="Link to this heading"></a></h3>
+<p>Rules <strong>2, 5, 7, 10</strong> carry the most weight here: a route planner’s failures are
+almost all <em>bad external data</em> (out-of-range coords, empty routes, oversized
+responses) and <em>unchecked results</em>. Bound the loops, validate the coordinates,
+check every response, and let the type checker and linter catch the rest.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="DATABASE.html" class="btn btn-neutral float-left" title="SmartSaver — Database (Addendum to ARCHITECTURE.md)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="WEBAPP.html" class="btn btn-neutral float-right" title="SmartSaver — Web App Build Plan (apps/web)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

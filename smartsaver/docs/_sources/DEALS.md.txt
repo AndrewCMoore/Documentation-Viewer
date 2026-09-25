@@ -1,0 +1,162 @@
+# SmartSaver — Deals Layer (Addendum to ARCHITECTURE.md)
+> **Implemented in:** the [API](API.md) and [Packages](PACKAGES.md) guide pages (what runs today).
+
+> Planning document. No application code yet — this captures the design for the
+> grocery-deals feature so we can build against it later. Read alongside
+> `ARCHITECTURE.md`; this reuses its geocode → stops → route pipeline.
+
+## 1. What the deals layer is
+
+A layer that makes SmartSaver **deal-aware**: for grocers near the user's stops,
+pull each store's active weekly-flyer items, surface the deals in the panel, and
+let deal locations *become* candidate stops the OSRM optimizer can order. This
+turns a route planner into a **shop-the-deals route planner** — optimizing a
+trip for distance/fuel *and* savings.
+
+**We do not collect flyer data ourselves.** Just as we offload live navigation to
+the user's nav app and map data to OSM, we offload flyer collection to an
+aggregator that retailers already feed. We own only the layer that serves that
+data well.
+
+## 2. Scope decisions
+
+| Decision | Choice | Consequence |
+|---|---|---|
+| Data source | **Aggregator (Flipp), not per-grocer scraping** | One integration covers ~1000+ stores; no per-chain OCR/parser treadmill |
+| Where source lives | **Behind our own thin backend, never in the client** | Hides the unofficial endpoint; enables caching + source-swap with zero frontend change |
+| Build our own data collection? | **No** | Rebuilding Flipp is off-mission cost (always-on ingest, OCR, normalization) |
+| Deal → stop | **Deals can become candidate stops** | Reuses existing stop model + OSRM `/trip` optimization |
+
+## 3. Why an aggregator, not per-grocer scraping
+
+| Concern | Per-grocer scraping | Aggregator (Flipp/reebee) |
+|---|---|---|
+| Coverage | One custom parser per chain | ~1000+ stores from one source |
+| Data quality | Often flyer **images** → OCR needed | Structured item data (retailers feed it) |
+| Maintenance | Breaks on every site redesign | Single upstream contract |
+| Fit with mission | Always-on ingest infra ($$) | Offload the expensive part, like nav/tiles |
+
+Building our own data-collection pipeline only makes sense if deal data becomes
+the *core* business (i.e. we become a Flipp competitor) — not for a feature on a
+route planner.
+
+## 4. Architecture at a glance
+
+```mermaid
+graph TB
+  FE["FRONTEND (browser / mobile web)<br/>Panel: deal list per nearby store, 'add as stop'"]
+  API["SmartSaver Deals API (our thin backend)<br/>normalize to Deal model<br/>cache per postal_code (weekly TTL)<br/>hide upstream source / handle CORS"]
+  UP["Aggregator upstream (Flipp backflipp)<br/>https://backflipp.wishabi.com/flipp"]
+  FE -->|"GET /deals?postal_code=...&q=..."| API
+  API -->|"cache miss only"| UP
+```
+
+The frontend never calls the aggregator directly — browsers can't reliably call
+`backflipp` (CORS), and keeping it server-side lets us swap sources later.
+
+## 5. Component responsibilities
+
+| Concern | Choice | Role |
+|---|---|---|
+| Deal source (prototype) | Flipp `backflipp.wishabi.com` JSON | Item name, price, merchant, dates, image — keyed by postal code |
+| Deal source (aggregator sibling) | reebee | Same data pool (owned by Flipp's parent); interchangeable |
+| Our deals backend | Thin server (adapter + cache) | Normalize to `Deal`, cache, hide upstream, serve CORS-clean JSON |
+| Client integration | `lib/deals` | Framework-agnostic fetch of our `/deals` endpoint (reusable for mobile) |
+| Deal → stop | Existing stop model | A chosen deal's store becomes a stop; OSRM reorders |
+
+## 6. Core data model
+
+```
+Deal
+ ├─ id
+ ├─ name              // "Chicken breast, boneless"
+ ├─ merchant          // "No Frills"
+ ├─ price             // number
+ ├─ currency          // "CAD"
+ ├─ validFrom, validTo
+ ├─ imageUrl
+ └─ store: { label, lat, lng, postalCode }   // geocoded → can become a Trip stop
+
+DealQuery
+ ├─ postalCode        // derived from a stop (we already geocode via Nominatim)
+ └─ q                 // optional search term (e.g. "coffee")
+```
+
+This is **our** shape, not Flipp's. The adapter maps upstream fields → `Deal`, so
+the frontend and a future React Native app share one contract regardless of
+source.
+
+## 7. Upstream reference (prototype source)
+
+Flipp's undocumented-but-stable JSON backend, keyed by postal code — which maps
+directly onto our geocoded stops:
+
+```
+Search:  https://backflipp.wishabi.com/flipp/items/search?q=<term>&postal_code=<code>
+Item:    https://backflipp.wishabi.com/flipp/items/<item_id>
+```
+
+Search returns item name, sale price, merchant, valid dates, image. Item endpoint
+adds detail. Retailers supply this data to Flipp (not scraped OCR), so it's clean.
+
+## 8. Key flows
+
+**Show deals for a stop**
+`stop has postalCode → GET /deals?postal_code=… → (cache hit? serve) : (fetch upstream → normalize → cache → serve) → render deal list in panel`
+
+**Turn a deal into a stop**
+`user taps "add as stop" on a deal → append deal.store to Trip.stops → recompute route (existing OSRM /route + /trip flow)`
+
+**Search deals across the trip area**
+`GET /deals?postal_code=…&q=coffee → normalized Deal[] → panel`
+
+## 9. The cost split (why this stays cheap)
+
+| Job | Handled by | Cost |
+|---|---|---|
+| Flyer collection + retailer relationships | Aggregator (Flipp) | $0 to us |
+| Normalize, cache, serve | SmartSaver deals backend | Low (weekly TTL → few upstream calls) |
+| Route + optimize with deal stops | Existing OSRM stack | $0 |
+
+Caching is what keeps this cheap **and** polite: flyers change weekly, so we
+cache per postal code and serve many users from a handful of upstream calls.
+
+## 10. Known constraints to design around
+
+- **Unofficial endpoint** — `backflipp` has no SLA or ToS blessing. Fine for
+  prototype; for production, pursue an official/licensed Flipp source or accept
+  the breakage/legal risk. Same "demo vs self-hosted" posture as OSRM/Nominatim.
+- **Rate limits / politeness** — cache aggressively; only fetch on cache miss.
+  Mirror the existing "only re-route when stops actually change" discipline.
+- **Postal-code granularity** — deals are localized by postal code; a stop's
+  postal code is our query key. Fuzziness in geocoding flows through here too.
+- **Data freshness** — weekly flyer cadence; set TTL to match (don't refetch
+  per request).
+- **Source-swap must be free** — all upstream specifics live behind the adapter
+  and our `/deals` contract; the frontend must never learn the source changed.
+
+## 11. Proposed folder shape (for when we build)
+
+```
+smartsaver/
+├─ ARCHITECTURE.md      ← base design
+├─ DEALS.md             ← this document
+├─ server/              ← deals backend (thin API)
+│  ├─ deals.route       ← GET /deals?postal_code=&q=
+│  ├─ adapters/flipp    ← upstream calls + map → Deal (only file that knows Flipp)
+│  └─ cache             ← per-postal-code, weekly TTL
+└─ src/
+   ├─ lib/deals         ← client fetch of our /deals (framework-agnostic)
+   └─ components/       ← DealList, DealCard, "Add as stop" control
+```
+
+## 12. Suggested build order (later)
+
+1. `server/adapters/flipp` — fetch + normalize a postal code's items to `Deal[]`
+2. Cache layer (weekly TTL) in front of the adapter
+3. `GET /deals` endpoint (CORS-clean, serves normalized `Deal[]`)
+4. `lib/deals` client + `DealList`/`DealCard` in the panel
+5. "Add as stop" → deal.store into `Trip.stops` → recompute route
+6. Deal-aware optimization copy (show savings alongside distance/ETA)
+7. Swap prototype source → official/licensed source (adapter-only change)
+```

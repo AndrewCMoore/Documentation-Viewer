@@ -1,0 +1,154 @@
+# SmartSaver — Web App Build Plan (`apps/web`)
+> **Implemented in:** the [Packages](PACKAGES.md) and [Getting Started](GETTING_STARTED.md) guide pages; screens in [User States](USER_STATES.md).
+
+> Build document. Adapted from the original `smartsaver` repo's `WEBAPP.md` for
+> the monorepo layout (`ARCHITECTURE.md §7`) — the product design and `lib/`
+> contracts are **unchanged**; only paths and the "shared with mobile" framing
+> are updated, since mobile is no longer hypothetical (`ARCHITECTURE.md §2`).
+
+## 1. What we are building
+
+The planner screen: an interactive map, a multi-stop list, real OSRM routing
+with distance/ETA/fuel, nearby grocery **deals**, and a working **Worth-It**
+verdict, ending in an "Open in Maps" handoff.
+
+**Accent:** Indigo/violet — `--brand:#5A50E1`, `--brand-strong:#4840CE`,
+`--brand-weak:#ECEBFB`. Savings stay green (`--money:#0E9F6E`) in all states
+(`STYLE_GUIDE.md`).
+
+## 2. Stack
+
+**React + Vite + TypeScript + MapLibre GL JS (via `react-map-gl`) + Zustand,**
+consuming `packages/core` and `packages/api` from the monorepo root.
+
+| Choice | Why |
+|---|---|
+| **React + `react-map-gl`** | `ARCHITECTURE.md §4` names react-map-gl for web. |
+| **Vite + TypeScript** | Fast SPA build; `packages/core` stays pure TS with zero framework coupling (mobile shares it, `ARCHITECTURE.md §6`). |
+| **Zustand** | Trip state machine (`ARCHITECTURE.md §5`: `idle\|searching\|routing\|ready\|error`) — lives in `packages/core`, imported here. |
+| **Vitest** | Unit-tests `packages/core` (worthit/match/estimate/maplinks) and this app's components. |
+| **Tiles: OpenFreeMap** | Free vector tiles, no API key, no demo rate limits. Env-configurable. |
+
+## 3. Folder shape (this app's slice of the monorepo — see `ARCHITECTURE.md §7` for the whole tree)
+
+```
+apps/web/
+├─ index.html
+├─ package.json  vite.config.ts  tsconfig.json  .env  .env.example
+└─ src/
+   ├─ main.tsx  App.tsx
+   ├─ styles/tokens.css              ← indigo design tokens from STYLE_GUIDE.md
+   └─ components/
+       ├─ Map.tsx  SearchBox.tsx  StopList.tsx
+       ├─ DealList.tsx  WorthItCard.tsx  RouteSummary.tsx  OpenInMaps.tsx
+       └─ UseMyLocation.tsx
+```
+
+`packages/core` (imported, not duplicated) holds `store/trip.ts` and every
+`lib/*` module: `geocode`, `route`, `estimate`, `maplinks`, `location`,
+`stores`, `deals`, `list`, `match`, `worthit`, `rewards`, `types`.
+`packages/api` holds `deals.ts`, `stores.ts`, `_cache.ts`.
+
+## 4. `packages/core` module contracts (implement the doc interfaces — reuse, don't reinvent)
+
+| Module | Contract | Source |
+|---|---|---|
+| `geocode` | `search(q)→Place[]` (Nominatim, debounced); `reverse(lat,lng)→{postalCode,label}` | ARCHITECTURE §5–6, LOCATION §5 |
+| `route` | `route(stops)` + `trip(stops)` → `{geometry, distanceMeters, durationSeconds, order, legs}` (OSRM `/route`,`/trip`) | ARCHITECTURE §5–6 |
+| `estimate` | `estimate(distanceM, costModel)→{fuelLitres, fuelCost, currency}`, unit-safe | WORTH_IT §5 |
+| `maplinks` | `google/apple/waze(orderedStops)→url` (Google waypoints ≤9); web builds `https://` URLs, mobile's platform shim builds native schemes with the same contract | ARCHITECTURE §6 |
+| `location` | geolocation → `OriginLocation`; manual Nominatim fallback → `Trip.stops[0]`; web uses browser Geolocation, mobile's shim uses `expo-location` | LOCATION §6,§8 |
+| `stores` | `nearby({lat,lng,radiusM})→CandidateStore[]` via `/api/stores` | LOCATION §5–6 |
+| `deals` | `deals({postalCode,q?})→Deal[]` via `/api/deals` | DEALS §6,§8 |
+| `list` | GroceryList CRUD + seed taxonomy + `needed` toggle, storage-adapter-backed persistence (`localStorage` on web, `AsyncStorage` on mobile) | GROCERY_LIST §4,§5,§8 |
+| `match` | `match(listItems, deals)→{itemId→Deal[]}` (v1 keyword+category) | GROCERY_LIST §7 |
+| `worthit` | `decide(inputs)→WorthItResult`: cheapest-insertion Δ, `netBenefit=savings+rewards−fuel−time`, greedy selection | WORTH_IT §4,§6,§7,§8 |
+| `rewards` | `programFor(merchant)→Program\|null`; `rewardsValue(s)`; presets; default **$0** | REWARDS §4,§6,§7 |
+
+**Correctness rules the code must honor:** marginal (not absolute) deltas
+(`WORTH_IT §3`); `valueOfTime` and `rewards` default **$0** (`WORTH_IT §4`,
+`REWARDS §3`); greedy stops at `minWorthItThreshold` (~$2); always show the
+**breakdown + baseline** ("vs. your usual store"), never a bare verdict.
+
+## 5. Runtime & deployment
+
+**Dev — `npm run dev` from `apps/web`, one process:** Vite serves the SPA on
+`:5173` with HMR; `packages/api`'s handlers run in-process as Vite middleware;
+`packages/core`'s `geocode`/`route` call the OSRM/Nominatim **demo servers
+directly** (CORS-clean); tiles from OpenFreeMap.
+
+**Prod — two deployables, shared by every front end:**
+
+```mermaid
+graph TB
+  SPA["apps/web (static bundle)"]
+  MOB["apps/mobile (App Store / Play Store)"]
+  SF["packages/api (serverless)<br/>Flipp adapter + shared cache (KV/Redis)<br/>Overpass + Nominatim reverse-geocode + cache"]
+  OFM["OpenFreeMap tiles"]
+  OSRM["OSRM + Nominatim<br/>(demo now → self-hosted later, ARCHITECTURE §8)"]
+  SPA -->|"/api/*"| SF
+  MOB -->|"/api/*"| SF
+  SPA -->|"tiles"| OFM
+  SPA -->|"/route, /search"| OSRM
+  MOB -->|"/route, /search"| OSRM
+```
+
+- `vite build` (from `apps/web`) → static SPA on any CDN/static host.
+- `packages/api` deploys once (Vercel/Netlify), called by **both** web and
+  mobile — `ARCHITECTURE.md §2,§6`. Identical client contract → no frontend
+  change from dev to prod.
+- **Env-swap only** for demo → self-hosted OSRM/Nominatim.
+- **Cache caveat:** serverless in-memory cache doesn't survive cold starts /
+  multiple instances → managed KV (Upstash Redis or similar) in prod; this is
+  also what lets web and mobile share cache hits.
+
+## 6. Build order
+
+1. **Scaffold** — Vite/React/TS in `apps/web`, wire `packages/core`/
+   `packages/api` as workspace dependencies, `tokens.css`, env files.
+   `npm run dev` serves a blank shell.
+2. **Map + shell** — panel(404px)+map grid; MapLibre + OpenFreeMap tiles;
+   brand row/logo.
+3. **Origin + search + stops** — `location`, `geocode`, `SearchBox`,
+   `StopList` (add/remove/drag-reorder), markers.
+4. **Routing + estimate** — `route` (`/route`, `/trip` optimize toggle), draw
+   polyline, `RouteSummary` (distance/ETA/fuel via `estimate`).
+5. **Handoff** — `maplinks`, `OpenInMaps` (Google primary; Apple/Waze ghost),
+   pre-ordered stops.
+6. **Deals** — `/api/deals` (Flipp adapter + weekly-TTL cache), `deals` lib,
+   `DealList`/`DealCard`, "Add as stop."
+7. **List + match** — seed `list` (storage-adapter-backed), `match` v1 →
+   per-store `matchedItems`.
+8. **Worth-It + rewards** — `worthit` (`decide`), `rewards` (`rewardsValue`),
+   `WorthItCard` (itemized savings/detour/fuel/rewards → net + "✓ Worth it"),
+   savings chip on map.
+9. **Responsive + polish** — panel → bottom sheet <860px; loading/error
+   states; endpoint env swap.
+
+## 7. Out of scope (explicit follow-ups, not built now)
+
+- Full grocery-list **editor** UI + category management (seed a starter list;
+  defer the editor — `GROCERY_EDITOR.md`).
+- Cost-model **settings panel** beyond `SETTINGS.md`'s scope.
+- **Saved trips / Postgres** — `DATABASE.md` is explicitly *production-only*.
+- v2 catalog/embedding matching; self-hosted OSRM/Nominatim/Overpass.
+
+## 8. Verification (end-to-end)
+
+1. `npm run dev` (in `apps/web`) → app loads with map + panel (indigo brand,
+   green money).
+2. **Origin:** allow geolocation (or type a postal code) → origin marker +
+   nearby grocers (`/api/stores` → Overpass).
+3. **Stops:** search a place → add → marker drops; add 2–3; drag to reorder.
+4. **Route:** polyline draws; `RouteSummary` shows distance/ETA/fuel;
+   "optimize" reorders via OSRM `/trip`.
+5. **Deals:** cards render for the area (`/api/deals` → Flipp); "Add as stop"
+   appends the store and re-routes.
+6. **Worth-It:** card shows itemized savings − detour − fuel (+ rewards if on)
+   → net benefit + "✓ Worth it / Skip", baseline stated.
+7. **Handoff:** "Open in Google Maps" opens a URL with **ordered** origin /
+   destination / waypoints; Apple/Waze links valid.
+8. **Unit tests:** `npm test` — `worthit` (netBenefit sign, greedy converges,
+   $0 defaults), `match` (keyword hit/miss), `estimate` (metric↔imperial),
+   `maplinks` (URL shape, ≤9 waypoints).
+9. Resize < 860px → panel becomes a bottom sheet; map stays usable.

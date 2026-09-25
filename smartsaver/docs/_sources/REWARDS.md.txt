@@ -1,0 +1,272 @@
+# SmartSaver — Rewards & Grocer Preference (Addendum to ARCHITECTURE.md)
+
+> Planning document. No application code yet — this captures the design for
+> letting users **prefer different grocers based on rewards points** so we can
+> build against it later. Read alongside `ARCHITECTURE.md`, `DEALS.md`,
+> `GROCERY_LIST.md`, and especially `WORTH_IT.md` — this layer extends the
+> Worth-It net-benefit decision, it does not replace it.
+
+## 1. What the rewards layer is
+
+The preference layer. A shopper doesn't only chase the lowest shelf price — they
+also earn **loyalty points** (PC Optimum at Loblaws/No Frills/Superstore, Scene+
+at Sobeys/FreshCo/Safeway, Metro's Moi, Air Miles, …) and often *prefer* the
+grocers where those points are worth the most to them. This layer lets that
+preference change which stores SmartSaver recommends.
+
+It does so **without adding a second, incomparable ranking**. `WORTH_IT.md` put
+savings, fuel, and time on one scale — dollars — and decided keep/skip on net
+benefit. Rewards are just **one more dollar-denominated term** on that same
+scale: points earned at a store, valued at a user-set \$/point, tilt the net
+benefit toward the grocers the user prefers. "Prefer store X" becomes "store X
+earns me \$Y in points I actually value," not a magic bias the arithmetic can't
+explain.
+
+## 2. Where it fits (the full data flow)
+
+```mermaid
+graph TD
+  GL["Grocery list (demand)"] --> M["Matching"]
+  DL["Deals per store (supply)"] --> M
+  M --> BS["per-store basket + spend"]
+  RT["Route + fuel/time model (ARCHITECTURE §4)"] --> DC["marginal detour cost"]
+  MER["merchant → loyalty program → REWARDS"] --> PV["points value"]
+  BS --> WI["WORTH-IT ENGINE"]
+  DC --> WI
+  PV --> WI
+  WI --> NB["net benefit (savings + rewards − detour) → keep/skip → ranked stops"]
+```
+
+Rewards sit **beside matching and routing** and feed the *same* Worth-It engine.
+The engine's `netBenefit` gains one term; everything downstream (`recommendedStops`
+→ `Trip.stops` → OSRM `/trip`) is unchanged.
+
+## 3. The core idea: rewards are earned dollars, opt-in and marginal
+
+Two principles carried straight over from `WORTH_IT.md`:
+
+- **Same scale — dollars.** A point is only worth something once the user says
+  what it's worth. `rewardsValue(s) = pointsEarned(s) × valuePerPoint(program)`.
+  We convert points to dollars once, then let the existing net-benefit math do
+  the rest. No parallel "points score" competing with the dollar decision.
+- **Marginal, not absolute (`WORTH_IT.md §3`).** Points count only on the
+  **incremental basket you'd actually buy at `s`** — the same items whose savings
+  the engine already attributes to `s`. Points you'd have earned anyway at your
+  baseline store are *not* a reason to detour.
+
+And one principle carried over from `valueOfTime` (`WORTH_IT.md §4`):
+
+- **We never invent a dollar value silently.** The rewards term defaults to
+  **\$0** (program disabled) exactly like `valueOfTime`. Points move the decision
+  only after the user enables a program and sets — or accepts a preset for — what
+  a point is worth to *them*. The strict fuel-vs-savings decision is the honest
+  default.
+
+## 4. The decision, extended (one new term)
+
+The Worth-It decision (`WORTH_IT.md §4`) gains a single additive term:
+
+```
+netBenefit(s) = savings(s) + rewardsValue(s) − fuelCost(Δdistance) − timeCost(Δduration)
+
+keep s  ⟺  netBenefit(s) ≥ minWorthItThreshold
+```
+
+Where the one new term is:
+
+```
+rewardsValue(s) = pointsEarned(s) × valuePerPoint(program(s))
+
+pointsEarned(s) = basketSpend(s) × earnRate(program(s))        // base earn
+                + Σ targeted offers matched at s               // optional, v2 (§5)
+```
+
+- **`basketSpend(s)`** — the dollars you'd spend on `s`'s incremental items
+  (the deal prices the matching layer already produced, `GROCERY_LIST §7`). Reuse
+  it; don't recompute a basket.
+- **`earnRate(program)`** — base points per dollar for the loyalty program
+  behind the merchant (§6), a user-editable setting with sane presets (§5).
+- **`valuePerPoint(program)`** — dollars a point is worth *to this user*, set in
+  settings (§5). This is the knob that encodes preference: value PC Optimum
+  highly and No Frills rises in the ranking automatically.
+
+Nothing else in the engine changes: greedy marginal selection (`WORTH_IT.md §7`)
+already maximizes net benefit, so a bigger `netBenefit` simply makes preferred
+grocers more likely to clear the threshold and be picked — no new selection code.
+
+### The soft-preference escape hatch
+
+Some users just want to *favour a chain* without doing points math. Support it
+**inside the same dollar frame**, not as a separate bias:
+
+- **Preference premium** — a small user-assigned \$/visit for a grocer they like
+  ("I'll pay up to \$3 of detour to shop at my Sobeys"). Folds into
+  `rewardsValue(s)` as a flat addend and stays visible in the breakdown.
+- **Tie-break only** — when two stores land within a configurable epsilon of each
+  other on net benefit, prefer the higher-ranked grocer. No dollar fiction; just
+  breaks ties.
+
+Both are opt-in; default is neither (pure earned-points value). Whichever a user
+picks, the "why" panel (§8, `WORTH_IT §10`) shows the arithmetic — a preference
+never hides in a verdict.
+
+## 5. Rewards model & settings (explicit, like the fuel model)
+
+Per `WORTH_IT.md §5`, these are **user-supplied, surfaced, and editable** — never
+hidden constants. Per program, with presets to avoid a blank form:
+
+| Input | Default (prototype) | Notes |
+|---|---|---|
+| Program enabled | **off** | \$0 rewards term until enabled — the honest default (§3) |
+| Earn rate | program preset (e.g. PC Optimum ~10 pts/\$1 base) | Points per \$1 of base spend; user-editable |
+| Value per point | program preset (e.g. PC Optimum ~\$0.001/pt → 1000 pts ≈ \$1) | The core preference knob (§4) |
+| Preference premium | **\$0/visit** | Optional flat "I like this grocer" addend (§4) |
+| Tie-break rank | none | Optional ordering used only within the net-benefit epsilon (§4) |
+
+**Presets ship as reference data, not gospel.** Real earn/redemption rates vary
+by program, tier, and redemption path; we seed reasonable defaults and let the
+user correct them, mirroring "estimates, not bills" everywhere else. Category
+multipliers and personalized targeted offers are **v2** — the base earn rate is
+enough to make the preference feature work and stays defensible.
+
+## 6. Merchant → loyalty program (the join, behind an adapter)
+
+The engine knows a store only as `Deal.merchant` (`DEALS.md §6`) — a string like
+"No Frills". Rewards needs to resolve that to a **loyalty program** so it can pick
+the right earn rate and value:
+
+- **Prototype (v1):** a small static, normalized map — merchant/chain →
+  `program` (e.g. `no frills | loblaws | real canadian superstore → pc-optimum`;
+  `sobeys | freshco | safeway → scene-plus`; `metro → moi`). Cheap, covers the
+  major chains, good enough to demo. Unknown merchant → no program → \$0 rewards
+  term (fails safe to the strict decision).
+- **Production (v2):** the map is reference data and can live in the catalog DB
+  (`DATABASE.md` Cluster 1 is exactly this kind of seeded reference asset) or a
+  `program_membership` table. Same **adapter seam** as everywhere else: the
+  resolution upgrades behind a stable `programFor(merchant) → Program | null`
+  interface and the engine never learns.
+
+This mirrors the `DEALS.md` source-swap and `lib/match` catalog-upgrade posture:
+the messy real-world mapping is isolated so the decision code stays clean.
+
+## 7. Core data model
+
+Extends the Worth-It shapes (`WORTH_IT.md §8`); additions only.
+
+```
+LoyaltyProgram                      -- reference data (§6), seeded + user-tunable
+ ├─ id                              // 'pc-optimum' | 'scene-plus' | 'moi' | 'air-miles'
+ ├─ label                          // "PC Optimum"
+ ├─ merchants: [string]            // normalized chain names that earn into it
+ ├─ earnRate                       // base points per $1  (preset, user-editable)
+ └─ valuePerPoint                  // $ per point         (preset, user-editable)
+
+RewardsPrefs                        -- per-user settings (§5); part of the cost model
+ ├─ enabled: boolean               // master opt-in; false → rewards term = $0 (§3)
+ ├─ programs: { [programId]: { enabled, earnRate?, valuePerPoint? } }  // user overrides presets
+ ├─ preferencePremium: { [programId | merchant]: number }   // optional flat $/visit (§4)
+ └─ tieBreakRank?: [programId]      // optional ordering, used within net-benefit epsilon (§4)
+
+// WorthItInputs.costModel gains:
+//   rewards: RewardsPrefs          // sits beside fuelPrice / valueOfTime / units / threshold
+
+// WorthItResult.perStore[] gains:
+//   rewardsValue                   // $ points earned on the incremental basket (§4)
+//   program                        // resolved LoyaltyProgram | null (§6), for the breakdown
+```
+
+`rewardsValue` joins `savings`/`fuelCost`/`timeCost` in the per-store breakdown so
+the UI can show it as its own line. `netBenefit` and the greedy selection are
+unchanged in shape — only their inputs grew by one term.
+
+## 8. Key flows
+
+**Configure a preference**
+`settings → enable rewards → pick program(s) → accept preset or set earnRate / valuePerPoint (and optional preference premium) → persist (§5)`
+
+**Evaluate one store with rewards**
+`candidate → programFor(merchant) (§6) → pointsEarned = basketSpend × earnRate → rewardsValue = points × valuePerPoint → netBenefit = savings + rewardsValue − fuelCost − timeCost`
+
+**Rank & recommend (unchanged engine)**
+`candidates → greedy marginal selection (WORTH_IT §7) now maximizing the rewards-inclusive netBenefit → recommendedStops → Trip.stops → OSRM /trip`
+
+**Explain the call (why we preferred this grocer)**
+`perStore → panel: "Save \$8 + \$1.20 PC Optimum points, −\$4.10 detour → net +\$5.10 ✓ (vs. your usual store)"` — the rewards line is always shown, never folded silently into the verdict (`WORTH_IT §10`).
+
+**Interface (stable):** the Worth-It contract `decide(inputs) → WorthItResult`
+(`WORTH_IT §9`) is unchanged — rewards ride in via `inputs.costModel.rewards`.
+
+## 9. Known constraints to design around
+
+- **Points are not savings — don't double-count.** `savings(s)` compares shelf
+  prices; `rewardsValue(s)` is points *on top*. They're separate terms on the
+  same basket and must both be surfaced separately, never merged into one number.
+- **A point's value is personal and fuzzy.** Redemption rates, tiers, and paths
+  vary; our \$/point is a user-set estimate. Default off (§3); when on, show it in
+  the breakdown so a wrong number is obvious — same as fuel price and value-of-time.
+- **Marginal only (§3).** Count points on the *incremental* basket bought at `s`,
+  not points you'd earn at your baseline anyway. Absolute lifetime points are a
+  vanity metric, not a routing input.
+- **Preference must never override safety of the math.** Even a strong preference
+  is capped by what the user assigns it (a \$/point value or a \$/visit premium);
+  it can tip a close call, but it can't send someone 30 km to net a loss unless
+  they explicitly priced it that way. `minWorthItThreshold` still governs.
+- **Merchant→program mapping is incomplete and drifts.** Unknown or mis-mapped
+  merchants must fail safe to \$0 rewards (strict decision), and the mapping must
+  be correctable — same stance as `flyer_term_map` staleness in `DATABASE.md §8`.
+- **Targeted offers / multipliers are v2.** Base earn rate keeps v1 honest and
+  simple; personalized offers need account-linked loyalty data we don't have in
+  the prototype. Don't model them until that data source exists.
+- **No account-linked point balances in the prototype.** We estimate *earned*
+  value from spend × rate; we do **not** read a user's real balance or expiry.
+  That would need official loyalty-program integration — a production concern with
+  the same "unofficial vs licensed" risk as `DEALS.md §10`.
+
+## 10. How it plugs in (behind existing seams)
+
+Nothing here forks the pipeline; it extends one formula and adds reference data.
+
+| Existing seam | What rewards adds |
+|---|---|
+| `WorthItInputs.costModel` (`WORTH_IT §8`) | new `rewards: RewardsPrefs` beside fuel/time settings |
+| `netBenefit` (`WORTH_IT §4`) | one additive `+ rewardsValue(s)` term; selection code unchanged |
+| `Deal.merchant` (`DEALS §6`) | the join key into `programFor(merchant)` (§6) |
+| Settings persistence (`WORTH_IT §5`, `GROCERY_LIST §8`) | `RewardsPrefs` persists with the rest of the cost model — localStorage (prototype) → account (production) |
+| Catalog/reference DB (`DATABASE §5`) | `LoyaltyProgram` map is seedable reference data if/when it graduates to the DB |
+| Worth-It "why" panel (`WORTH_IT §9`) | a rewards line in the per-store breakdown |
+
+## 11. Proposed folder shape (additions)
+
+```
+smartsaver/
+├─ ARCHITECTURE.md
+├─ DEALS.md
+├─ GROCERY_LIST.md
+├─ WORTH_IT.md
+├─ REWARDS.md           ← this document
+└─ src/
+   └─ lib/rewards       ← LoyaltyProgram presets, programFor(merchant) adapter (§6),
+                           rewardsValue() term + RewardsPrefs (consumed by lib/worthit)
+```
+
+`lib/rewards` is framework-agnostic like the other `lib/` modules (reusable for a
+future mobile app). It produces the `rewardsValue` term and program resolution
+that `lib/worthit` folds into `netBenefit`; it owns no routing or matching logic.
+
+## 12. Suggested build order (later)
+
+1. `LoyaltyProgram` presets + normalized `programFor(merchant)` map for the major
+   chains (§6); unknown → null → \$0 term.
+2. `RewardsPrefs` settings (master opt-in, per-program earn rate + value-per-point)
+   with presets and unit-safe persistence beside the existing cost model (§5).
+3. `rewardsValue(s)` on the incremental basket; add the `+ rewardsValue` term to
+   `netBenefit` (§4) — verify greedy selection needs no change.
+4. Rewards line in the per-store breakdown + "why we preferred this grocer" copy
+   (§8, `WORTH_IT §10`).
+5. Optional soft preference: preference premium (\$/visit) and/or net-benefit
+   tie-break rank (§4).
+6. v2: category multipliers + targeted offers, once account-linked loyalty data
+   exists; graduate the merchant→program map into the catalog DB (`DATABASE §5`).
+7. Production: pursue official/licensed loyalty integration for real balances and
+   redemption values, behind the same `lib/rewards` interface (source-swap free).
+```

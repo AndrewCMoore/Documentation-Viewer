@@ -1,0 +1,343 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Packages &mdash; SmartSaver  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=3b126f1a" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="API" href="API.html" />
+    <link rel="prev" title="Getting Started" href="GETTING_STARTED.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #1b1a3a" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            SmartSaver
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Guide</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="GETTING_STARTED.html">Getting Started</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Packages</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#packages-core">packages/core</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#packages-api">packages/api</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#apps-web">apps/web</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#apps-mobile">apps/mobile</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="API.html">API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Design</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="ARCHITECTURE.html">SmartSaver — Multi-Platform Architecture &amp; Planning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DIAGRAMS.html">SmartSaver — Architecture Diagrams (for audit)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DEALS.html">SmartSaver — Deals Layer (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="GROCERY_LIST.html">SmartSaver — Grocery List (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="GROCERY_EDITOR.html">SmartSaver — Grocery List Editor UI (Addendum to GROCERY_LIST.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LOCATION.html">SmartSaver — Location &amp; Store Discovery (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="WORTH_IT.html">SmartSaver — Worth-It Engine (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="REWARDS.html">SmartSaver — Rewards &amp; Grocer Preference (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SETTINGS.html">SmartSaver — Cost-Model Settings (Addendum to WORTH_IT.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DATABASE.html">SmartSaver — Database (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DEFENSIVE.html">SmartSaver — Defensive Programming Rules</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Clients</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="WEBAPP.html">SmartSaver — Web App Build Plan (<code class="docutils literal notranslate"><span class="pre">apps/web</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MOBILE.html">SmartSaver — Mobile App Build Plan (<code class="docutils literal notranslate"><span class="pre">apps/mobile</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="STYLE_GUIDE.html">SmartSaver — Style Guide (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="USER_STATES.html">User States</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #1b1a3a" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">SmartSaver</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Packages</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/PACKAGES.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="packages">
+<h1>Packages<a class="headerlink" href="#packages" title="Link to this heading"></a></h1>
+<p>npm workspaces: <code class="docutils literal notranslate"><span class="pre">packages/*</span></code>, <code class="docutils literal notranslate"><span class="pre">apps/*</span></code>. All packages are <code class="docutils literal notranslate"><span class="pre">private</span></code>.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Package</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Status</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">packages/core</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&#64;smartsaver/core</span></code></p></td>
+<td><p>Skeleton</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">packages/api</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&#64;smartsaver/api</span></code></p></td>
+<td><p>Deals, categorization and nearby stores implemented</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">apps/web</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&#64;smartsaver/web</span></code></p></td>
+<td><p>Panel + deals search + map (no routing yet)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">apps/mobile</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&#64;smartsaver/mobile</span></code></p></td>
+<td><p>Blank shell</p></td>
+</tr>
+</tbody>
+</table>
+<section id="packages-core">
+<h2>packages/core<a class="headerlink" href="#packages-core" title="Link to this heading"></a></h2>
+<p>Framework-agnostic logic shared by clients. Builds with <code class="docutils literal notranslate"><span class="pre">tsc</span></code> to <code class="docutils literal notranslate"><span class="pre">dist/</span></code>; rebuild (<code class="docutils literal notranslate"><span class="pre">npm</span> <span class="pre">run</span> <span class="pre">build:core</span></code>) after changing it, since the web app consumes <code class="docutils literal notranslate"><span class="pre">dist/</span></code>. Planned modules: <a class="reference internal" href="ARCHITECTURE.html"><span class="std std-doc">SmartSaver — Multi-Platform Architecture &amp; Planning</span></a>.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Export</p></th>
+<th class="head"><p>File</p></th>
+<th class="head"><p>Role</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">CORE_VERSION</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">src/index.ts</span></code></p></td>
+<td><p>Package version constant</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">LatLng</span></code>, <code class="docutils literal notranslate"><span class="pre">Place</span></code>, <code class="docutils literal notranslate"><span class="pre">Stop</span></code>, <code class="docutils literal notranslate"><span class="pre">RouteResult</span></code>, <code class="docutils literal notranslate"><span class="pre">Estimate</span></code>, <code class="docutils literal notranslate"><span class="pre">CostModel</span></code>, <code class="docutils literal notranslate"><span class="pre">StoreRef</span></code>, <code class="docutils literal notranslate"><span class="pre">CandidateStore</span></code>, <code class="docutils literal notranslate"><span class="pre">Deal</span></code>, <code class="docutils literal notranslate"><span class="pre">Category</span></code>, <code class="docutils literal notranslate"><span class="pre">ListItem</span></code>, <code class="docutils literal notranslate"><span class="pre">GroceryList</span></code>, <code class="docutils literal notranslate"><span class="pre">TripStatus</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">src/types.ts</span></code></p></td>
+<td><p>Data model. <code class="docutils literal notranslate"><span class="pre">Place</span> <span class="pre">=</span> <span class="pre">{label,</span> <span class="pre">lat,</span> <span class="pre">lng}</span></code>; <code class="docutils literal notranslate"><span class="pre">Stop</span></code> adds an <code class="docutils literal notranslate"><span class="pre">id</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Result&lt;T&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">search(q,</span> <span class="pre">signal?,</span> <span class="pre">near?)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">src/geocode.ts</span></code></p></td>
+<td><p>Nominatim place search (up to 10 validated hits); <code class="docutils literal notranslate"><span class="pre">near</span></code> bounds results to a ~30 km box around a point. Returns <code class="docutils literal notranslate"><span class="pre">{ok,</span> <span class="pre">value}</span></code> or <code class="docutils literal notranslate"><span class="pre">{ok:</span> <span class="pre">false,</span> <span class="pre">reason}</span></code>; an abort is an empty success</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">currentLocation()</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">src/location.ts</span></code></p></td>
+<td><p>Browser Geolocation to a <code class="docutils literal notranslate"><span class="pre">Place</span></code>; rejects if denied or unavailable</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">postalPlace(query)</span></code>, <code class="docutils literal notranslate"><span class="pre">normalizeCaPostal(query)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">src/location.ts</span></code></p></td>
+<td><p>Postal code or address to a <code class="docutils literal notranslate"><span class="pre">Place</span></code> (<code class="docutils literal notranslate"><span class="pre">Result</span></code>). Canadian postals are sent to Nominatim spaced (<code class="docutils literal notranslate"><span class="pre">K2K</span> <span class="pre">0P7</span></code>); if Nominatim has no entry, falls back to the Zippopotam FSA centroid, labelled <code class="docutils literal notranslate"><span class="pre">(approximate)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">route(stops)</span></code>, <code class="docutils literal notranslate"><span class="pre">trip(stops)</span></code>, <code class="docutils literal notranslate"><span class="pre">withReturn(stops,</span> <span class="pre">roundTrip)</span></code>, <code class="docutils literal notranslate"><span class="pre">MAX_STOPS</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">src/route.ts</span></code></p></td>
+<td><p>OSRM <code class="docutils literal notranslate"><span class="pre">/route</span></code> and <code class="docutils literal notranslate"><span class="pre">/trip</span></code> (optimized order), each response validated; 2 to 25 stops; <code class="docutils literal notranslate"><span class="pre">withReturn</span></code> appends a return leg to the origin</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">estimate(meters,</span> <span class="pre">costModel)</span></code>, <code class="docutils literal notranslate"><span class="pre">toKm</span></code>, <code class="docutils literal notranslate"><span class="pre">toMiles</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">src/estimate.ts</span></code></p></td>
+<td><p>Fuel litres and cost in canonical metric units (m, $/L, L/100km)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">google</span></code>, <code class="docutils literal notranslate"><span class="pre">apple</span></code>, <code class="docutils literal notranslate"><span class="pre">waze</span></code>, <code class="docutils literal notranslate"><span class="pre">MAX_WAYPOINTS</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">src/maplinks.ts</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">https://</span></code> deep links for pre-ordered stops. Google takes origin, destination and up to 9 waypoints; Apple takes origin and destination only; Waze takes the destination only</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">tripStore</span></code>, <code class="docutils literal notranslate"><span class="pre">DEFAULT_COST_MODEL</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">src/store/trip.ts</span></code></p></td>
+<td><p>Zustand vanilla store: <code class="docutils literal notranslate"><span class="pre">stops</span></code> (index 0 is the origin), <code class="docutils literal notranslate"><span class="pre">optimize</span></code>, <code class="docutils literal notranslate"><span class="pre">roundTrip</span></code> (both default on), <code class="docutils literal notranslate"><span class="pre">route</span></code>, <code class="docutils literal notranslate"><span class="pre">estimate</span></code>, <code class="docutils literal notranslate"><span class="pre">status</span></code>, <code class="docutils literal notranslate"><span class="pre">error</span></code>, <code class="docutils literal notranslate"><span class="pre">list</span></code>. Actions <code class="docutils literal notranslate"><span class="pre">toggleItem</span></code> (persists the list), <code class="docutils literal notranslate"><span class="pre">setOrigin</span></code>, <code class="docutils literal notranslate"><span class="pre">addStop</span></code> (dedupes, max 25), <code class="docutils literal notranslate"><span class="pre">removeStop</span></code>, <code class="docutils literal notranslate"><span class="pre">moveStop</span></code>, <code class="docutils literal notranslate"><span class="pre">reorderStop</span></code>, <code class="docutils literal notranslate"><span class="pre">setOptimize</span></code>, <code class="docutils literal notranslate"><span class="pre">setRoundTrip</span></code>, <code class="docutils literal notranslate"><span class="pre">computeRoute</span></code>. Every stop change recomputes the route; a superseded request is aborted and its result dropped</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">deals({</span> <span class="pre">postalCode,</span> <span class="pre">q?</span> <span class="pre">},</span> <span class="pre">signal?)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">src/deals.ts</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">/api/deals</span></code> client. Returns <code class="docutils literal notranslate"><span class="pre">Result</span></code>; keeps at most 100 rows and drops rows without a string <code class="docutils literal notranslate"><span class="pre">id</span></code>/<code class="docutils literal notranslate"><span class="pre">name</span></code>/<code class="docutils literal notranslate"><span class="pre">merchant</span></code>, a finite <code class="docutils literal notranslate"><span class="pre">price</span></code> (and <code class="docutils literal notranslate"><span class="pre">wasPrice</span></code> if present), or a 3-letter currency code</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">nearby(point,</span> <span class="pre">signal?)</span></code>, <code class="docutils literal notranslate"><span class="pre">findStore(merchant,</span> <span class="pre">candidates)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">src/stores.ts</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">/api/stores</span></code> client (validates rows, returns <code class="docutils literal notranslate"><span class="pre">Result</span></code>); nearest candidate whose name matches a merchant, ignoring case, accents and punctuation</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">seedList</span></code>, <code class="docutils literal notranslate"><span class="pre">loadList(storage?)</span></code>, <code class="docutils literal notranslate"><span class="pre">saveList(list,</span> <span class="pre">storage?)</span></code>, <code class="docutils literal notranslate"><span class="pre">toggleNeeded</span></code>, <code class="docutils literal notranslate"><span class="pre">CATEGORIES</span></code>, <code class="docutils literal notranslate"><span class="pre">categoryId</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">src/list.ts</span></code></p></td>
+<td><p>Seeded “My Staples” list (11 categories, ~65 items, each with <code class="docutils literal notranslate"><span class="pre">matchTerms</span></code>, none needed by default), persisted under <code class="docutils literal notranslate"><span class="pre">smartsaver.list.v2</span></code>; corrupted storage reseeds</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">match(items,</span> <span class="pre">deals)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">src/match.ts</span></code></p></td>
+<td><p>Map of item id to matching deals, cheapest first. Keyword match with plural, diacritic, descriptor and store-brand normalization; rejects derived products (“chicken broth” is not chicken) unless asked for</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">safeStorage()</span></code>, <code class="docutils literal notranslate"><span class="pre">StorageLike</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">src/storage.ts</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">localStorage</span></code> when available, else an in-memory fallback. List functions take a <code class="docutils literal notranslate"><span class="pre">StorageLike</span></code>, so mobile can pass its own adapter</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">assert</span></code>, <code class="docutils literal notranslate"><span class="pre">assertLatLng</span></code>, <code class="docutils literal notranslate"><span class="pre">isFiniteNumber</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">src/assert.ts</span></code></p></td>
+<td><p>Invariant helpers (<a class="reference internal" href="DEFENSIVE.html"><span class="std std-doc">SmartSaver — Defensive Programming Rules</span></a>)</p></td>
+</tr>
+</tbody>
+</table>
+<p>Ported from the original <code class="docutils literal notranslate"><span class="pre">smartsaver</span></code> repo’s <code class="docutils literal notranslate"><span class="pre">lib/</span></code> and <code class="docutils literal notranslate"><span class="pre">store/trip.ts</span></code>, trimmed to what exists so far. Nominatim and OSRM use the public demo servers (constants in <code class="docutils literal notranslate"><span class="pre">geocode.ts</span></code> and <code class="docutils literal notranslate"><span class="pre">route.ts</span></code>; not yet env-configurable). Tests are colocated <code class="docutils literal notranslate"><span class="pre">src/*.test.ts</span></code> (Vitest, fetch mocked).</p>
+</section>
+<section id="packages-api">
+<h2>packages/api<a class="headerlink" href="#packages-api" title="Link to this heading"></a></h2>
+<p>Express server (ESM, <code class="docutils literal notranslate"><span class="pre">tsx</span> <span class="pre">watch</span></code> in dev, <code class="docutils literal notranslate"><span class="pre">tsc</span></code> to <code class="docutils literal notranslate"><span class="pre">dist/</span></code>). Tests: Vitest, colocated <code class="docutils literal notranslate"><span class="pre">src/*.test.ts</span></code>.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>File</p></th>
+<th class="head"><p>Role</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">src/server.ts</span></code></p></td>
+<td><p>Express app; routes <code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/api/deals</span></code>, <code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/api/deal-options</span></code>, <code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/api/stores</span></code>; CORS; <code class="docutils literal notranslate"><span class="pre">API_PORT</span></code> (8787)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">src/deals.ts</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">handleDeals(postalCode,</span> <span class="pre">q)</span></code>: validation, cache, aggregator</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">src/dealOptions.ts</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">handleDealOptions(postalCode,</span> <span class="pre">q)</span></code>: same, plus categorization</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">src/savingsDealAggregator.ts</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">fetchDeals(postalCode,</span> <span class="pre">term)</span></code>: fetches and normalizes upstream (Flipp) flyer items</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">src/dealCategorizer.ts</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">categorizeDeals</span></code>, <code class="docutils literal notranslate"><span class="pre">matchCategory</span></code>, taxonomy</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">src/stores.ts</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">handleStores(lat,</span> <span class="pre">lng,</span> <span class="pre">radius)</span></code>: Overpass grocers, OSRM reachability gate, Nominatim postal codes, cache</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">src/_cache.ts</span></code></p></td>
+<td><p>In-memory TTL cache (<code class="docutils literal notranslate"><span class="pre">cacheGet</span></code>, <code class="docutils literal notranslate"><span class="pre">cacheSet</span></code>), max 500 entries</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">src/index.ts</span></code></p></td>
+<td><p>Re-exports <code class="docutils literal notranslate"><span class="pre">API_VERSION</span></code>, <code class="docutils literal notranslate"><span class="pre">handleDeals</span></code>, <code class="docutils literal notranslate"><span class="pre">fetchDeals</span></code>, <code class="docutils literal notranslate"><span class="pre">AggregatorResult</span></code>, <code class="docutils literal notranslate"><span class="pre">handleDealOptions</span></code>, <code class="docutils literal notranslate"><span class="pre">categorizeDeals</span></code>, <code class="docutils literal notranslate"><span class="pre">CategoryGroup</span></code>, <code class="docutils literal notranslate"><span class="pre">handleStores</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">scripts/smoke-deal-options.mjs</span></code></p></td>
+<td><p>Live smoke test across 15 cities (uses <code class="docutils literal notranslate"><span class="pre">dist/</span></code>)</p></td>
+</tr>
+</tbody>
+</table>
+<p>Not implemented: persistent cache. Details: <a class="reference internal" href="API.html"><span class="std std-doc">API</span></a>; planned design: <a class="reference internal" href="DEALS.html"><span class="std std-doc">SmartSaver — Deals Layer (Addendum to ARCHITECTURE.md)</span></a>.</p>
+</section>
+<section id="apps-web">
+<h2>apps/web<a class="headerlink" href="#apps-web" title="Link to this heading"></a></h2>
+<p>React 18 + Vite 5 SPA. Vite dev server proxies <code class="docutils literal notranslate"><span class="pre">/api</span></code> to <code class="docutils literal notranslate"><span class="pre">localhost:8787</span></code>. Zustand (via <code class="docutils literal notranslate"><span class="pre">packages/core</span></code>) holds trip state; Vitest is installed but has no web tests yet. Build steps 1–7 of <a class="reference internal" href="WEBAPP.html"><span class="std std-doc">SmartSaver — Web App Build Plan (apps/web)</span></a> are implemented: a 404px side panel (bottom sheet below 860px) beside a MapLibre map on OpenFreeMap tiles. The panel has “Use my location”, a place search (Nominatim, debounced 400 ms, 3+ characters) that adds stops, a stop list (up/down buttons or drag to reorder, remove; the first stop is the origin, shown as <code class="docutils literal notranslate"><span class="pre">A</span></code> and kept first), a route summary (distance, time, fuel, with round-trip and optimize toggles), an “Open in Google Maps” button (Apple Maps and Waze as secondary) that hands off the stops in optimized order, a collapsible “My Staples” grocery list (tap items to mark them needed), and a postal-code/query search that calls <code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/api/deals</span></code> (through the core <code class="docutils literal notranslate"><span class="pre">deals</span></code> client) and lists the results. Each deal has an “Add stop” button: deals carry only a merchant name, so the app asks <code class="docutils literal notranslate"><span class="pre">/api/stores</span></code> for grocers near the origin (or near the searched postal code, resolved with <code class="docutils literal notranslate"><span class="pre">postalPlace</span></code>, when there is no origin) and adds the nearest one whose name matches the merchant. If none match, it falls back to geocoding the merchant name within ~30 km. Above the deals, “On sale from your list” shows each needed item found in the loaded deals with its cheapest deal, and counts the misses (“2 of 3”). If nothing matches, the card says so and points to the stop search. The map shows a marker per stop, the route polyline, and fits its view to the stops (Toronto until the first stop). The tile style is set by <code class="docutils literal notranslate"><span class="pre">VITE_MAP_STYLE_URL</span></code> (see <code class="docutils literal notranslate"><span class="pre">.env.example</span></code>). <code class="docutils literal notranslate"><span class="pre">vite.config.ts</span></code> excludes <code class="docutils literal notranslate"><span class="pre">maplibre-gl</span></code> from dependency pre-bundling so its worker loads in dev. Screens: <a class="reference internal" href="USER_STATES.html"><span class="std std-doc">User States</span></a>.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>File</p></th>
+<th class="head"><p>Role</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">src/App.tsx</span></code></p></td>
+<td><p>Layout and search state (<code class="docutils literal notranslate"><span class="pre">idle</span></code>, <code class="docutils literal notranslate"><span class="pre">searching</span></code>, <code class="docutils literal notranslate"><span class="pre">ready</span></code>, <code class="docutils literal notranslate"><span class="pre">error</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">src/components/GroceryList.tsx</span></code></p></td>
+<td><p>Collapsible staples list by category; toggles <code class="docutils literal notranslate"><span class="pre">needed</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">src/components/ListMatches.tsx</span></code></p></td>
+<td><p>Needed items on sale in the loaded deals, cheapest deal each</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">src/components/Map.tsx</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">react-map-gl</span></code> map with zoom controls, OpenFreeMap style, stop markers, fit-to-stops</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">src/components/PlaceSearch.tsx</span></code></p></td>
+<td><p>Debounced place search; a chosen result is added as a stop</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">src/components/StopList.tsx</span></code></p></td>
+<td><p>Ordered stops with up/down, remove and drag-to-reorder</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">src/components/OpenInMaps.tsx</span></code></p></td>
+<td><p>Nav-app handoff; orders stops by <code class="docutils literal notranslate"><span class="pre">route.order</span></code> and adds the return leg on round trips; opens in a new tab</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">src/components/RouteSummary.tsx</span></code></p></td>
+<td><p>Round-trip and optimize toggles; distance, time and fuel; route error block</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">src/components/UseMyLocation.tsx</span></code></p></td>
+<td><p>Sets the origin from browser geolocation; falls back to a hint to search</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">src/components/SearchBox.tsx</span></code></p></td>
+<td><p>Postal code (<code class="docutils literal notranslate"><span class="pre">^[A-Z0-9]{3,10}$</span></code>) + optional query form</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">src/components/DealList.tsx</span></code></p></td>
+<td><p>Deal cards: sale price (green), struck was-price, “Add stop” with adding/added/failed states</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">src/styles/tokens.css</span></code></p></td>
+<td><p>Light/dark design tokens from <a class="reference internal" href="STYLE_GUIDE.html"><span class="std std-doc">SmartSaver — Style Guide (Addendum to ARCHITECTURE.md)</span></a></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">src/styles/app.css</span></code></p></td>
+<td><p>Layout and component styles (tokens only)</p></td>
+</tr>
+</tbody>
+</table>
+<p>Not implemented: grocery list editor (add/rename items and categories; out of scope per <a class="reference internal" href="WEBAPP.html"><span class="std std-doc">SmartSaver — Web App Build Plan (apps/web)</span></a>), catalog aliases in matching, Worth-It, grocer pins on the map, skeleton loading, imperial units, editable cost model.</p>
+</section>
+<section id="apps-mobile">
+<h2>apps/mobile<a class="headerlink" href="#apps-mobile" title="Link to this heading"></a></h2>
+<p>Expo ~51 / React Native 0.74 app. <code class="docutils literal notranslate"><span class="pre">App.tsx</span></code> renders a title and <code class="docutils literal notranslate"><span class="pre">CORE_VERSION</span></code>. Only <code class="docutils literal notranslate"><span class="pre">typecheck</span></code> is run in CI. Planned: <a class="reference internal" href="MOBILE.html"><span class="std std-doc">SmartSaver — Mobile App Build Plan (apps/mobile)</span></a>.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="GETTING_STARTED.html"><span class="std std-doc">Getting Started</span></a>, <a class="reference internal" href="API.html"><span class="std std-doc">API</span></a>, <a class="reference internal" href="ARCHITECTURE.html"><span class="std std-doc">SmartSaver — Multi-Platform Architecture &amp; Planning</span></a>, <a class="reference internal" href="DEALS.html"><span class="std std-doc">SmartSaver — Deals Layer (Addendum to ARCHITECTURE.md)</span></a>, <a class="reference internal" href="WEBAPP.html"><span class="std std-doc">SmartSaver — Web App Build Plan (apps/web)</span></a>, <a class="reference internal" href="MOBILE.html"><span class="std std-doc">SmartSaver — Mobile App Build Plan (apps/mobile)</span></a>, <a class="reference internal" href="DATABASE.html"><span class="std std-doc">SmartSaver — Database (Addendum to ARCHITECTURE.md)</span></a></p>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="GETTING_STARTED.html" class="btn btn-neutral float-left" title="Getting Started" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="API.html" class="btn btn-neutral float-right" title="API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

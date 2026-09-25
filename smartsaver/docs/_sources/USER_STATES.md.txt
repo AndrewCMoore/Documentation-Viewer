@@ -1,0 +1,48 @@
+﻿# User States
+
+Screenshots are captured from the running web app by `npm run docs:screenshots`
+(Playwright). Add a state to `STATES` in `docs/screenshots.mjs` as each screen ships.
+
+Implemented screens for the [](WEBAPP.md) build plan; see [Getting Started](GETTING_STARTED.md#building-these-docs) for capturing them.
+
+## Home
+
+Empty state: prompts for a postal code, with the map centered on Toronto.
+
+![Home](_static/screenshots/home.png)
+
+## Stops and route
+
+Three stops added through the place search: `A` is the origin, then numbered stops. The map fits all markers and draws the route; the summary shows distance, time and fuel, with the "Open in Google Maps" handoff below it. Screenshot uses mocked Nominatim and OSRM data.
+
+![Stops and route](_static/screenshots/stops.png)
+
+## Route error
+
+Shown when OSRM cannot build a route. The stops stay in place and no polyline is drawn.
+
+![Route error](_static/screenshots/route-error.png)
+
+## Deals
+
+Results for a postal code from `/api/deals`. Screenshot uses mocked data.
+
+![Deals](_static/screenshots/deals.png)
+
+## List matches
+
+Milk, Eggs and Bread marked needed in "My Staples", then a deals search: the two items on sale show with their cheapest deal; Bread is counted as a miss ("2 of 3"). Screenshot uses mocked deals.
+
+![List matches](_static/screenshots/list-matches.png)
+
+## Deal added as a stop
+
+"Add stop" on a deal finds the nearest matching grocer from `/api/stores` and adds it to the trip; the button shows "Added ✓" and the route recomputes. Screenshot uses mocked deals, stores, Nominatim and OSRM data.
+
+![Deal added as a stop](_static/screenshots/deal-added.png)
+
+## Deals error
+
+Shown when `/api/deals` fails (for example an invalid postal code returns 400).
+
+![Deals error](_static/screenshots/deals-error.png)

@@ -1,0 +1,380 @@
+# SmartSaver — Architecture Diagrams (for audit)
+
+> Derived verbatim from the design docs (`ARCHITECTURE`, `DEALS`, `GROCERY_LIST`,
+> `WORTH_IT`, `REWARDS`, `LOCATION`, `SETTINGS`, `DATABASE`, `WEBAPP`, `MOBILE`,
+> `DEFENSIVE`). Redone from the original repo's `DIAGRAMS.md` for the
+> multi-platform monorepo (`ARCHITECTURE.md §2`: one backend, three front
+> ends) — every diagram that named a single SPA now shows `apps/web` and
+> `apps/mobile` both hanging off the same `packages/core`/`packages/api`. No
+> code exists yet — these render the *intended* system. Each section ends with
+> **Audit:** the assumptions/risks worth checking.
+
+---
+
+## 1. System context & components
+
+```mermaid
+graph TB
+  subgraph webclient["apps/web (React + Vite + TS)"]
+    WUI["components/<br/>Map · SearchBox · StopList · DealList<br/>WorthItCard · RouteSummary · OpenInMaps · UseMyLocation"]
+  end
+
+  subgraph mobclient["apps/mobile (React Native/Expo, iOS + Android)"]
+    MUI["components/<br/>RN re-implementations, same names/behavior as apps/web"]
+  end
+
+  subgraph core["packages/core — framework-agnostic TS, shared by both clients"]
+    STORE["store/trip.ts (Zustand)<br/>Trip state machine + costModel"]
+    LIB["lib/ — geocode route estimate maplinks · location stores deals<br/>list match · worthit rewards settings"]
+    STORE --> LIB
+  end
+
+  WUI --> STORE
+  MUI --> STORE
+
+  subgraph backend["packages/api — /api/* (Vite middleware dev → serverless prod)"]
+    DEALSAPI["/api/deals<br/>Flipp adapter"]
+    STORESAPI["/api/stores<br/>Overpass adapter + Nominatim reverse"]
+    CACHE["_cache — in-memory dev → KV/Redis prod"]
+    DEALSAPI --> CACHE
+    STORESAPI --> CACHE
+  end
+
+  subgraph ext["EXTERNAL / OSS STACK"]
+    TILES["OpenFreeMap<br/>vector tiles"]
+    OSRM["OSRM<br/>/route /trip"]
+    NOM["Nominatim<br/>geocode + reverse"]
+    OVER["Overpass API<br/>OSM POIs"]
+    FLIPP["Flipp backflipp<br/>weekly flyer items"]
+    GEO["Device location<br/>browser Geolocation (web) / expo-location (mobile)"]
+    NAV["Google / Apple / Waze<br/>https URLs (web) / native schemes + https fallback (mobile)"]
+  end
+
+  subgraph prod["PRODUCTION-ONLY PERSISTENCE"]
+    PG[("Postgres · PostGIS + pgvector<br/>catalog + saved trips")]
+    REDIS[("Redis / KV<br/>deals + stores cache — one shared instance for both clients")]
+  end
+
+  LIB -->|tiles| TILES
+  LIB -->|/route /trip| OSRM
+  LIB -->|search / reverse| NOM
+  LIB -->|GET /api/deals| DEALSAPI
+  LIB -->|GET /api/stores| STORESAPI
+  LIB -->|on-device, via platform shim| GEO
+  LIB -->|deep link, ordered stops, via platform shim| NAV
+  DEALSAPI -->|cache miss only| FLIPP
+  STORESAPI -->|cache miss only| OVER
+  STORESAPI -->|reverse-geocode postal| NOM
+  CACHE -.prod.-> REDIS
+  LIB -.prod: save/load trips.-> PG
+```
+
+**Audit:** both clients talk to OSRM/Nominatim/tiles/device-location
+**directly** but reach Flipp/Overpass **only via `packages/api`** (CORS +
+source-hiding) — this was already true for web and now must hold for mobile
+too. Postgres is production-only; the prototype has no DB. Confirm nothing in
+`packages/core/lib/` ever imports a Flipp/Overpass URL, and that mobile's
+`location`/`maplinks` platform shims resolve to the **same exported contract**
+web uses, not a parallel API (`ARCHITECTURE.md §6`).
+
+---
+
+## 2. End-to-end data pipeline (demand + supply → decision → route)
+
+```mermaid
+flowchart TD
+  A["Grocery list built<br/>lib/list · storage adapter<br/>(localStorage web / AsyncStorage mobile)"] --> M
+  B["Approximate location<br/>platform shim → OriginLocation<br/>(denied → manual → Nominatim)"] --> O["origin = Trip.stops[0]"]
+  O --> D["Discover grocers<br/>/api/stores → Overpass<br/>→ CandidateStore[]"]
+  D --> DE["Deals per store<br/>/api/deals → Flipp<br/>keyed by postalCode"]
+  DE --> M["Match: list ∩ deals<br/>lib/match v1 (keyword + category)"]
+  M --> W["WORTH-IT ENGINE<br/>net = savings + rewards − fuel − time<br/>greedy marginal selection"]
+  RW["Rewards<br/>programFor(merchant) → rewardsValue"] --> W
+  RT["Routing seam (OSRM)<br/>Δdistance / Δduration"] --> W
+  W --> REC["recommendedStops (1–3)"]
+  REC --> TS["Trip.stops"]
+  TS --> OPT["OSRM /trip optimize → /route"]
+  OPT --> OUT["route + distance / ETA / fuel<br/>+ Worth-It 'why' panel"]
+  OUT --> H["Open in Maps<br/>platform shim: https (web) / native scheme + fallback (mobile)"]
+```
+
+**Audit:** identical pipeline regardless of which client runs it — the only
+platform-varying nodes are the two explicitly marked "platform shim" steps
+(location, handoff); every other box is `packages/core` logic that must
+produce the **same output for the same input** on web and mobile
+(`ARCHITECTURE.md §6` reuse contract). `CandidateStore` is one shared shape
+(discovery fills `store`+`kind`+`distanceM`; match fills `matchedItems`;
+routing fills `deltas`) with **no adapter between layers**. Check that
+`distanceM` (crow-flies) is never used as travel cost, on either platform.
+
+---
+
+## 3. `packages/core` module dependencies (the reuse boundary — shared web+mobile)
+
+```mermaid
+graph LR
+  STORE["store/trip.ts"] --> worthit
+  STORE --> location
+  STORE --> route
+  STORE --> deals
+  STORE --> list
+
+  worthit --> match
+  worthit --> route
+  worthit --> estimate
+  worthit --> rewards
+  worthit --> settings
+  match --> list
+  match --> deals
+  estimate --> settings
+  location --> geocode
+
+  geocode --> NOM["Nominatim"]
+  route --> OSRM["OSRM"]
+  deals --> APID["/api/deals"]
+  stores --> APIS["/api/stores"]
+
+  location -.implemented by.-> LOCWEB["web: browser Geolocation"]
+  location -.implemented by.-> LOCMOB["mobile: expo-location"]
+  maplinks -.implemented by.-> MLWEB["web: https:// URLs"]
+  maplinks -.implemented by.-> MLMOB["mobile: native schemes + https fallback"]
+  list -.storage adapter.-> STOWEB["web: localStorage"]
+  list -.storage adapter.-> STOMOB["mobile: AsyncStorage"]
+  settings -.storage adapter.-> STOWEB
+  settings -.storage adapter.-> STOMOB
+  rewards -.-> PM["programFor(merchant)<br/>static map v1 → catalog v2"]
+```
+
+**Audit:** `worthit` is the convergence point (consumes match + route +
+rewards + settings) — unchanged from the original design. Every doc pins a
+**stable interface** so v1→v2 swaps and platform swaps both stay internal:
+`match()`, `decide(inputs)→WorthItResult`, `programFor(merchant)`, the `list`/
+`settings` storage adapter, and the `location`/`maplinks` platform-shim
+contracts. `packages/core` must stay pure/framework-agnostic — this is the
+whole diagram that proves the reuse claim in `ARCHITECTURE.md §6`; if a
+`lib/*` module ever imports React or React Native directly, this boundary is
+broken.
+
+---
+
+## 4. Trip state machine (`ARCHITECTURE.md §5` — Zustand, `packages/core`)
+
+```mermaid
+stateDiagram-v2
+  [*] --> idle
+  idle --> searching: type query (debounced geocode)
+  searching --> idle: results shown, no route
+  idle --> routing: stops change
+  searching --> routing: pick result → stops change
+  routing --> ready: OSRM Ok (geometry + distance + ETA)
+  routing --> error: code≠Ok / empty routes / bad geometry
+  ready --> searching: edit / add stop
+  ready --> routing: reorder / optimize toggle
+  error --> searching: edit
+  error --> routing: retry
+```
+
+**Audit:** one state machine, no per-platform variant — `apps/web` and
+`apps/mobile` both render this same store's state, they just render it
+differently (panel vs. screen). `error` is a first-class state, not a thrown
+exception (`DEFENSIVE.md §7`: OSRM `code≠"Ok"`, empty routes, zero-distance,
+missing geometry are *expected*). Confirm re-route fires **only when stops
+actually change** (debounce/dedupe), not per keystroke, on either client.
+
+---
+
+## 5. Deployment topology (three deployables, one backend)
+
+```mermaid
+graph TB
+  subgraph dev["DEV — apps/web: npm run dev, one process"]
+    V["Vite :5173 · SPA + HMR"]
+    MW["packages/api Vite middleware<br/>in-memory cache"]
+    V --> MW
+    V -->|direct, CORS-clean| DEMO["OSRM + Nominatim<br/>DEMO servers"]
+    V --> OFM["OpenFreeMap tiles"]
+    MW -->|cache miss| UP1["Flipp · Overpass"]
+  end
+
+  subgraph devmob["DEV — apps/mobile: Expo dev server"]
+    EXPO["Expo Go / dev client<br/>simulator or device"]
+    EXPO -->|direct, same demo servers| DEMO
+  end
+
+  subgraph prod["PROD — three deployables, one shared backend"]
+    CDN["apps/web: static SPA bundle · CDN"]
+    STORES["apps/mobile: App Store / Play Store<br/>(+ Expo OTA for JS-only updates)"]
+    SF["packages/api: serverless fns<br/>/api/deals /api/stores"]
+    KV[("Managed KV / Redis<br/>shared cache — both clients hit the same entries")]
+    SELF["OSRM + Nominatim<br/>demo → self-hosted (env-swap)"]
+    CDN -->|/api/*| SF
+    STORES -->|/api/*| SF
+    CDN -->|/route /search| SELF
+    STORES -->|/route /search| SELF
+    CDN --> OFM2["OpenFreeMap tiles"]
+    STORES --> OFM2
+    SF --> KV
+    SF -->|cache miss| UP2["Flipp · Overpass"]
+    SF --> SELF
+  end
+```
+
+**Audit:** the *only* dev→prod client change is meant to be **endpoint env
+vars** (demo→self-hosted OSRM/Nominatim) — the `/api/*` contract is identical
+for both clients, and web + mobile share one KV cache entry per
+postal-code/coordinate key (`ARCHITECTURE.md §2`: no duplicated upstream
+load). New risk vs. the original topology: **mobile ships through app-store
+review**, not a CDN push — a bad `packages/api` change can be fixed instantly
+for web but mobile users only get it once the store approves an OTA/binary
+update, so a backend contract break is worse now than when only web existed.
+
+---
+
+## 6. Production persistence — data model (`DATABASE.md`, production-only)
+
+```mermaid
+erDiagram
+  category ||--o{ product : classifies
+  product ||--o{ product_alias : "synonyms / matchTerms"
+  product ||--o{ flyer_term_map : "memoized match decision"
+  trip ||--o{ trip_stop : "ordered stops (CASCADE)"
+
+  category {
+    smallint id PK
+    text slug UK
+    text label
+    smallint sort_order "store-walk order"
+  }
+  product {
+    bigint id PK
+    text canonical_name
+    smallint category_id FK
+    vector embedding "v2 only, NULL in v1"
+    timestamptz created_at
+  }
+  product_alias {
+    bigint id PK
+    bigint product_id FK
+    text term "trigram index"
+    text source "seed|user|flyer|learned"
+  }
+  flyer_term_map {
+    text raw_term PK
+    bigint product_id FK "NULL = un-matchable"
+    real confidence
+    timestamptz last_seen_at
+  }
+  trip {
+    uuid id PK
+    uuid user_id "owner key — NOT a FK yet"
+    text client "web|ios|android — provenance only, never branches logic"
+    boolean optimized
+    integer distance_m
+    integer duration_s
+    numeric fuel_cost
+    jsonb worthit "frozen snapshot"
+    geography geometry "LineString 4326, optional"
+    timestamptz created_at
+  }
+  trip_stop {
+    uuid id PK
+    uuid trip_id FK
+    smallint seq "0 = origin"
+    text label
+    geography location "Point 4326"
+    text postal_code "deals key"
+    text role "origin|waypoint|destination"
+    boolean from_deal
+  }
+```
+
+**Audit:** two independent clusters, same as the original design; only
+addition is `trip.client`, so a saved trip records which front end created it
+— **for analytics/support only**, never to branch server-side behavior (one
+backend serves all clients identically, `ARCHITECTURE.md §2`). Deliberate
+calls to verify: `user_id` is an external **owner key**, not a FK (accounts
+out of scope); `worthit` stored as **JSONB snapshot** (frozen, never
+recomputed); **deals cache stays in Redis, never these tables**; `embedding`
+NULL until v2. History must never be retro-fit when fuel price / OSM /
+matching later drift.
+
+---
+
+## 7. Deals fetch (cache hit/miss — same shape for `/api/stores`, same for both clients)
+
+```mermaid
+sequenceDiagram
+  participant UI as apps/web Panel or apps/mobile Screen · lib/deals
+  participant API as packages/api /api/deals
+  participant C as Cache (weekly TTL)
+  participant F as Flipp backflipp
+
+  UI->>API: GET /deals?postal_code=&q=
+  API->>C: get(postal_code[, q])
+  alt cache hit
+    C-->>API: Deal[]
+  else cache miss
+    API->>F: items/search?q=&postal_code=
+    F-->>API: raw upstream items
+    API->>API: normalize → Deal (adapter)
+    API->>C: set(key, Deal[], weekly TTL)
+  end
+  API-->>UI: Deal[] — our contract, source hidden
+```
+
+**Audit:** cache key = postal_code (deals) / rounded (lat,lng,radius)
+(stores); weekly TTL matches flyer cadence. Only the adapter file knows the
+upstream — **neither** frontend must ever learn the source changed. A web
+user and a mobile user in the same postal code now legitimately warm the same
+cache entry — confirm the cache key has nothing web-specific baked in (e.g. no
+`User-Agent`- or origin-based key component) or this sharing silently breaks.
+Unofficial `backflipp`/Overpass have no SLA (prototype risk; license/self-host
+for prod).
+
+---
+
+## 8. Worth-It decision — greedy marginal selection (`WORTH_IT.md §4,§7`)
+
+```mermaid
+flowchart TD
+  S["candidates: CandidateStore[]<br/>(matchedItems from lib/match)"] --> BASE["baseline plan<br/>(usual single store, or none)"]
+  BASE --> EVAL["for each candidate — compute net:"]
+  EVAL --> CALC["Δdist,Δdur = cheapest-insertion (OSRM)<br/>savings = Σ (baselinePrice − price@s)<br/>rewards = points × $/pt (default $0)<br/>fuel = Δdist × price / efficiency<br/>time = Δdur × valueOfTime (default $0)<br/>net = savings + rewards − fuel − time"]
+  CALC --> PICK{"best positive net<br/>≥ minWorthItThreshold ($2)?"}
+  PICK -->|yes| ADD["add store → re-assign its items'<br/>baseline to this store"]
+  ADD --> EVAL
+  PICK -->|no| DONE["recommendedStops (converges 1–3)<br/>→ Trip.stops → OSRM /trip"]
+```
+
+**Audit:** the "worth it" line falls out of the loop threshold — no magic
+constant beyond `$2`. Everything is **marginal vs. the no-stop baseline**
+(never home-to-store distance or raw basket price). `valueOfTime` and
+`rewards` default **$0** (honest, defensible). Diminishing returns are
+automatic (claimed items shrink the next store's savings). The "why" panel
+must always show the arithmetic + stated baseline, never a bare verdict —
+this logic lives in `packages/core` and is identical on web and mobile; the
+parity check in `MOBILE.md §6` exists specifically to catch a divergence here.
+
+---
+
+## 9. Mobile build & release pipeline (`MOBILE.md §4,§7` — new vs. the original design)
+
+```mermaid
+flowchart LR
+  DEV["apps/mobile source<br/>(TS, imports packages/core)"] --> BUILD["EAS Build<br/>iOS + Android binaries"]
+  BUILD --> TEST["TestFlight (iOS)<br/>Internal testing track (Android)"]
+  TEST --> SUBMIT["EAS Submit<br/>App Store Connect / Play Console review"]
+  SUBMIT --> LIVE["Live on stores"]
+
+  DEV -.JS-only change, no native module touched.-> OTA["EAS Update (OTA)"]
+  OTA -->|pushed directly, no store review| LIVE
+```
+
+**Audit:** the store-review path (`BUILD → TEST → SUBMIT`) is the only route
+for anything touching a native module (new native dependency, permission
+change, app icon/config) — budget real calendar time for it
+(`ARCHITECTURE.md §9`). The OTA path only ever ships JS/`packages/core`
+changes; confirm the release process never assumes OTA can carry a native
+change, and that a `packages/api` contract change gets rolled out
+**backward-compatibly** for however long store review takes, since mobile
+can't hotfix past a breaking backend change the way web can.

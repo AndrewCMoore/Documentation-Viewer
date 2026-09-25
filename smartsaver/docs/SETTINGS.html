@@ -1,0 +1,712 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SmartSaver — Cost-Model Settings (Addendum to WORTH_IT.md) &mdash; SmartSaver  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=3b126f1a" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.12.1/dist/mermaid.esm.min.mjs";
+
+
+
+
+
+const initStyles = () => {
+    const defaultStyle = document.createElement('style');
+    defaultStyle.textContent = "pre.mermaid {\n    /* Same as .mermaid-container > pre */\n    display: block;\n    width: 100%;\n}\n\npre.mermaid > svg {\n    /* Same as .mermaid-container > pre > svg */\n    height: 500px;\n    width: 100%;\n    max-width: 100% !important;\n}";
+    document.head.appendChild(defaultStyle);
+
+    const fullscreenStyle = document.createElement('style');
+    fullscreenStyle.textContent = ".mermaid-container {\n    position: relative;\n    display: flex;\n    flex-direction: row;\n    width: 100%;\n}\n\n.mermaid-container > pre {\n    display: block;\n    width: 100%;\n}\n\n.mermaid-container > pre > svg {\n    height: 500px;\n    width: 100%;\n    max-width: 100% !important;\n}\n\n.mermaid-fullscreen-btn {\n    position: absolute;\n    width: 28px;\n    height: 28px;\n    background: rgba(255, 255, 255, 0.95);\n    border: 1px solid rgba(0, 0, 0, 0.3);\n    border-radius: 4px;\n    cursor: pointer;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    transition: all 0.2s;\n    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);\n    font-size: 14px;\n    line-height: 1;\n    padding: 0;\n    color: #333;\n}\n\n.mermaid-fullscreen-btn:hover {\n    opacity: 100% !important;\n    background: rgba(255, 255, 255, 1);\n    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);\n    transform: scale(1.1);\n}\n\n.mermaid-fullscreen-btn.dark-theme {\n    background: rgba(50, 50, 50, 0.95);\n    border: 1px solid rgba(255, 255, 255, 0.3);\n    color: #e0e0e0;\n}\n\n.mermaid-fullscreen-btn.dark-theme:hover {\n    background: rgba(60, 60, 60, 1);\n    box-shadow: 0 3px 10px rgba(255, 255, 255, 0.2);\n}\n\n.mermaid-fullscreen-modal {\n    display: none;\n    position: fixed !important;\n    top: 0 !important;\n    left: 0 !important;\n    width: 95vw;\n    height: 100vh;\n    background: rgba(255, 255, 255, 0.98);\n    z-index: 9999;\n    padding: 20px;\n    overflow: auto;\n}\n\n.mermaid-fullscreen-modal.dark-theme {\n    background: rgba(0, 0, 0, 0.98);\n}\n\n.mermaid-fullscreen-modal.active {\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen {\n    position: relative;\n    width: 95vw;\n    height: 90vh;\n    max-width: 95vw;\n    max-height: 90vh;\n    background: white;\n    border-radius: 8px;\n    padding: 20px;\n    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);\n    overflow: auto;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen.dark-theme {\n    background: #1a1a1a;\n    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);\n}\n\n.mermaid-container-fullscreen pre.mermaid {\n    width: 100%;\n    height: 100%;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen .mermaid svg {\n    height: 100% !important;\n    width: 100% !important;\n    cursor: grab;\n}\n\n.mermaid-fullscreen-close {\n    position: fixed !important;\n    top: 20px !important;\n    right: 20px !important;\n    width: 40px;\n    height: 40px;\n    background: rgba(255, 255, 255, 0.95);\n    border: 1px solid rgba(0, 0, 0, 0.2);\n    border-radius: 50%;\n    cursor: pointer;\n    z-index: 10000;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);\n    transition: all 0.2s;\n    font-size: 24px;\n    line-height: 1;\n    color: #333;\n}\n\n.mermaid-fullscreen-close:hover {\n    background: white;\n    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);\n    transform: scale(1.1);\n}\n\n.mermaid-fullscreen-close.dark-theme {\n    background: rgba(50, 50, 50, 0.95);\n    border: 1px solid rgba(255, 255, 255, 0.2);\n    color: #e0e0e0;\n}\n\n.mermaid-fullscreen-close.dark-theme:hover {\n    background: rgba(60, 60, 60, 1);\n    box-shadow: 0 6px 16px rgba(255, 255, 255, 0.2);\n}\n\n.mermaid-fullscreen-modal .mermaid-fullscreen-btn {\n    display: none !important;\n}";
+    document.head.appendChild(fullscreenStyle);
+}
+
+// Detect if page has dark background
+const isDarkTheme = () => {
+    // We use a set of heuristics:
+    // 1. Check for common dark mode classes or attributes
+    // 2. Check computed background color brightness
+    if (document.documentElement.classList.contains('dark') ||
+        document.documentElement.getAttribute('data-theme') === 'dark' ||
+        document.body.classList.contains('dark') ||
+        document.body.getAttribute('data-theme') === 'dark') {
+        // console.log("Dark theme detected via class/attribute");
+        return true;
+    }
+    if (document.documentElement.classList.contains('light') ||
+        document.documentElement.getAttribute('data-theme') === 'light' ||
+        document.body.classList.contains('light') ||
+        document.body.getAttribute('data-theme') === 'light') {
+        // console.log("Light theme detected via class/attribute");
+        return false;
+    }
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        // console.log("Dark theme detected via prefers-color-scheme");
+        return true;
+    }
+    const bgColor = window.getComputedStyle(document.body).backgroundColor;
+    const match = bgColor.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/);
+    if (match) {
+        const r = parseInt(match[1]);
+        const g = parseInt(match[2]);
+        const b = parseInt(match[3]);
+        const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+        // console.log("Background color brightness:", brightness);
+        return brightness < 128;
+    }
+    // console.log("No dark or light theme detected, defaulting to light theme");
+    return false;
+};
+
+let darkTheme = isDarkTheme();
+let modal = null;
+let modalContent = null;
+let previousScrollOffset = [window.scrollX, window.scrollY];
+let _lazyObserver = null;
+let _renderQueue = Promise.resolve();
+let closeModal = () => {};
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal?.classList.contains('active')) {
+        closeModal();
+    }
+});
+
+// Apply d3 zoom to each SVG. Idempotent: an SVG already wrapped is skipped,
+// so this is safe to call both for the initial batch and for diagrams that
+// render lazily once they become visible.
+const addZoomToSvgs = (svgs) => {
+    svgs.each(function() {
+        if (this.getAttribute('data-zoom-applied') === 'true') return;
+        var svg = d3.select(this);
+        svg.html("<g class='wrapper'>" + svg.html() + "</g>");
+        var inner = svg.select("g");
+        var zoom = d3.zoom().on("zoom", function(event) {
+            inner.attr("transform", event.transform);
+        });
+        svg.call(zoom);
+        this.setAttribute('data-zoom-applied', 'true');
+    });
+};
+
+const runMermaid = async (rerun) => {
+    console.log("Running mermaid diagrams, rerun =", rerun);
+    // clear all existing mermaid charts
+    let all_mermaids = document.querySelectorAll(".mermaid");
+
+    if (rerun) {
+        // Disconnect any previous lazy rendering observer
+        if (_lazyObserver) {
+            _lazyObserver.disconnect();
+            _lazyObserver = null;
+        }
+
+        all_mermaids.forEach((el) => {
+            el.removeAttribute('data-mermaid-deferred');
+            el.removeAttribute('data-mermaid-render-failed');
+            if(!el.hasAttribute("data-original-code")) {
+                // store original code
+                // console.log(`Storing original code for first run: `, el.innerHTML);
+                el.setAttribute('data-original-code', el.innerHTML);
+            }
+            if(el.getAttribute("data-processed") === "true") {
+                // remove and restore original
+                el.removeAttribute("data-processed");
+                // console.log(`Restoring original code for re-run: `, el.getAttribute('data-original-code'));
+                el.innerHTML = el.getAttribute('data-original-code');
+            } else {
+                // store original code
+                // console.log(`Storing original code for re-run: `, el.innerHTML);
+                el.setAttribute('data-original-code', el.innerHTML);
+            }
+        });
+
+        // Separate visible and hidden elements. Mermaid's layout engine measures
+        // text dimensions via the DOM, which fails for elements hidden by a parent
+        // (e.g., Reveal.js non-active slides, sphinx-design unopened tabs),
+        // producing broken SVGs. Render visible elements now, defer hidden ones.
+        const visible = [];
+        const hidden = [];
+        all_mermaids.forEach((el) => {
+            // offsetParent is null for display:none ancestors.
+            // getClientRects().length > 0 catches position:fixed elements
+            // (which also have null offsetParent but are still visible).
+            if (el.offsetParent !== null || el.getClientRects().length > 0) {
+                visible.push(el);
+            } else {
+                hidden.push(el);
+                el.setAttribute('data-mermaid-deferred', 'true');
+            }
+        });
+
+        if (visible.length > 0) {
+            try {
+                await mermaid.run({ nodes: visible });
+            } catch (e) {
+                console.error("Mermaid rendering failed:", e);
+            }
+        }
+
+        // Lazily render hidden elements when they become visible.
+        // Uses a promise chain (_renderQueue) to serialize rendering,
+        // since IntersectionObserver may report multiple entries at once
+        // and mermaid.run() is not safe to call concurrently.
+        if (hidden.length > 0) {
+            if (typeof IntersectionObserver === 'undefined') {
+                console.warn("IntersectionObserver not available; hidden mermaid diagrams will not render.");
+            } else {
+                _renderQueue = Promise.resolve();
+                _lazyObserver = new IntersectionObserver((entries) => {
+                    for (const entry of entries) {
+                        if (entry.isIntersecting && entry.target.getAttribute("data-processed") !== "true") {
+                            _lazyObserver.unobserve(entry.target);
+                            const el = entry.target;
+                            _renderQueue = _renderQueue.then(async () => {
+                                try {
+                                    await mermaid.run({ nodes: [el] });
+                                    el.removeAttribute('data-mermaid-deferred');
+                                    // Apply zoom to the now-rendered diagram, matching
+                                    // the decoration visible diagrams receive.
+                                    if (false) {
+                                        addZoomToSvgs(d3.selectAll("").select(function() {
+                                            return this.querySelector("svg");
+                                        }));
+                                    }
+                                } catch (e) {
+                                    console.error("Mermaid deferred rendering failed:", e);
+                                    el.removeAttribute('data-mermaid-deferred');
+                                    el.setAttribute('data-mermaid-render-failed', 'true');
+                                }
+                            });
+                        }
+                    }
+                });
+                hidden.forEach((el) => _lazyObserver.observe(el));
+            }
+        }
+    }
+
+    all_mermaids = document.querySelectorAll(".mermaid");
+    // Exclude deferred (hidden) and render-failed elements from completion checks
+    const mermaids_active = document.querySelectorAll(".mermaid:not([data-mermaid-deferred]):not([data-mermaid-render-failed])");
+    const mermaids_processed = document.querySelectorAll(".mermaid:not([data-mermaid-deferred]):not([data-mermaid-render-failed])[data-processed='true']");
+
+    if (false) {
+        const mermaids_to_add_zoom = 0 === -1 ? mermaids_active.length : 0;
+        if(mermaids_to_add_zoom > 0) {
+            var svgs = d3.selectAll("").select(function() {
+                return this.querySelector("svg");
+            });
+            // Wait until every active (visible) diagram has rendered. Deferred
+            // diagrams are excluded, so a fixed d3_node_count that counts a
+            // hidden diagram no longer loops forever waiting for its SVG.
+            if(mermaids_active.length !== mermaids_processed.length) {
+                setTimeout(() => runMermaid(false), 200);
+                return;
+            }
+            addZoomToSvgs(svgs);
+        }
+    } else if(mermaids_active.length !== mermaids_processed.length) {
+        // Wait for mermaid to process all diagrams
+        setTimeout(() => runMermaid(false), 200);
+        return;
+    }
+
+    // Stop here if not adding fullscreen capability
+    if (!true) return;
+
+    if (modal !== null ) {
+        // Destroy existing modal
+        modal.remove();
+        modal = null;
+        modalContent = null;
+    }
+
+    modal = document.createElement('div');
+    modal.className = 'mermaid-fullscreen-modal' + (darkTheme ? ' dark-theme' : '');
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-label', 'Fullscreen diagram viewer');
+    modal.innerHTML = `
+        <button class="mermaid-fullscreen-close${darkTheme ? ' dark-theme' : ''}" aria-label="Close fullscreen">✕</button>
+        <div class="mermaid-container-fullscreen${darkTheme ? ' dark-theme' : ''}"></div>
+    `;
+    document.body.appendChild(modal);
+
+    modalContent = modal.querySelector('.mermaid-container-fullscreen');
+    const closeBtn = modal.querySelector('.mermaid-fullscreen-close');
+
+    closeModal = () => {
+        modal.classList.remove('active');
+        modalContent.innerHTML = '';
+        document.body.style.overflow = ''
+        window.scrollTo({left: previousScrollOffset[0], top: previousScrollOffset[1], behavior: 'instant'});
+    };
+
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+    });
+    document.querySelectorAll('.mermaid').forEach((mermaidDiv) => {
+        if (mermaidDiv.parentNode.classList.contains('mermaid-container') ||
+            mermaidDiv.closest('.mermaid-fullscreen-modal')) {
+            // Already processed, adjust button class if needed
+            const existingBtn = mermaidDiv.parentNode.querySelector('.mermaid-fullscreen-btn');
+            if (existingBtn) {
+                existingBtn.className = 'mermaid-fullscreen-btn' + (darkTheme ? ' dark-theme' : '');
+            }
+            return;
+        }
+
+        const container = document.createElement('div');
+        container.className = 'mermaid-container';
+        mermaidDiv.parentNode.insertBefore(container, mermaidDiv);
+        container.appendChild(mermaidDiv);
+
+        const fullscreenBtn = document.createElement('button');
+        fullscreenBtn.className = 'mermaid-fullscreen-btn' + (darkTheme ? ' dark-theme' : '');
+        fullscreenBtn.setAttribute('aria-label', 'View diagram in fullscreen');
+        fullscreenBtn.textContent = "\u26f6";
+        fullscreenBtn.style.opacity = "50%";
+
+        // Calculate dynamic position based on diagram's margin and padding
+        const diagramStyle = window.getComputedStyle(mermaidDiv);
+        const marginTop = parseFloat(diagramStyle.marginTop) || 0;
+        const marginRight = parseFloat(diagramStyle.marginRight) || 0;
+        const paddingTop = parseFloat(diagramStyle.paddingTop) || 0;
+        const paddingRight = parseFloat(diagramStyle.paddingRight) || 0;
+        fullscreenBtn.style.top = `${marginTop + paddingTop + 4}px`;
+        fullscreenBtn.style.right = `${marginRight + paddingRight + 4}px`;
+
+        fullscreenBtn.addEventListener('click', () => {
+            previousScrollOffset = [window.scrollX, window.scrollY];
+            const clone = mermaidDiv.cloneNode(true);
+            modalContent.innerHTML = '';
+            modalContent.appendChild(clone);
+
+            const svg = clone.querySelector('svg');
+            if (svg) {
+                svg.removeAttribute('width');
+                svg.removeAttribute('height');
+                svg.style.width = '100%';
+                svg.style.height = 'auto';
+                svg.style.maxWidth = '100%';
+                svg.style.display = 'block';
+
+                if (false) {
+                    setTimeout(() => {
+                        const g = svg.querySelector('g');
+                        if (g) {
+                            var svgD3 = d3.select(svg);
+                            svgD3.html("<g class='wrapper'>" + svgD3.html() + "</g>");
+                            var inner = svgD3.select("g");
+                            var zoom = d3.zoom().on("zoom", function(event) {
+                                inner.attr("transform", event.transform);
+                            });
+                            svgD3.call(zoom);
+                        }
+                    }, 100);
+                }
+            }
+
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+        container.appendChild(fullscreenBtn);
+    });
+};
+
+
+
+const load = async () => {
+    initStyles();
+
+
+    await runMermaid(true);
+
+    const reRunIfThemeChanges = async () => {
+        const newDarkTheme = isDarkTheme();
+        if (newDarkTheme !== darkTheme) {
+            darkTheme = newDarkTheme;
+            console.log("Theme change detected, re-running mermaid with", darkTheme ? "dark" : "default", "theme");
+            await mermaid.initialize(
+                {...{"startOnLoad": false},
+                ...{ darkMode: darkTheme, theme: darkTheme ? "dark" : "default" },
+                }
+            );
+            await runMermaid(true);
+        }
+    };
+
+    // Update theme classes when theme changes
+    const themeObserver = new MutationObserver(reRunIfThemeChanges);
+    themeObserver.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['class', 'style', 'data-theme']
+    });
+    themeObserver.observe(document.body, {
+        attributes: true,
+        attributeFilter: ['class', 'style', 'data-theme']
+    });
+};
+
+
+
+
+
+console.log("Initializing mermaid with", darkTheme ? "dark" : "default", "theme");
+mermaid.initialize(
+    {...{"startOnLoad": false},
+    ...{ darkMode: darkTheme, theme: darkTheme ? "dark" : "default" },
+    }
+);
+
+window.addEventListener("load", load);
+window.runMermaid = runMermaid;</script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="SmartSaver — Database (Addendum to ARCHITECTURE.md)" href="DATABASE.html" />
+    <link rel="prev" title="SmartSaver — Rewards &amp; Grocer Preference (Addendum to ARCHITECTURE.md)" href="REWARDS.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #1b1a3a" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            SmartSaver
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="GETTING_STARTED.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PACKAGES.html">Packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="API.html">API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Design</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="ARCHITECTURE.html">SmartSaver — Multi-Platform Architecture &amp; Planning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DIAGRAMS.html">SmartSaver — Architecture Diagrams (for audit)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DEALS.html">SmartSaver — Deals Layer (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="GROCERY_LIST.html">SmartSaver — Grocery List (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="GROCERY_EDITOR.html">SmartSaver — Grocery List Editor UI (Addendum to GROCERY_LIST.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LOCATION.html">SmartSaver — Location &amp; Store Discovery (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="WORTH_IT.html">SmartSaver — Worth-It Engine (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="REWARDS.html">SmartSaver — Rewards &amp; Grocer Preference (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">SmartSaver — Cost-Model Settings (Addendum to WORTH_IT.md)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#what-the-settings-layer-is">1. What the settings layer is</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#where-it-fits-the-data-flow">2. Where it fits (the data flow)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-settings-worth-it-5-made-concrete">3. The settings (WORTH_IT §5, made concrete)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#units-the-one-design-decision-that-matters">4. Units: the one design decision that matters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#core-data-model">5. Core data model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-panel-minimal-now-full-screen-later">6. The panel (minimal now → full screen later)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#persistence-localstorage-like-the-rest-of-the-prototype">7. Persistence (localStorage, like the rest of the prototype)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#key-flows">8. Key flows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#known-constraints-to-design-around">9. Known constraints to design around</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#suggested-build-order-later">10. Suggested build order (later)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="DATABASE.html">SmartSaver — Database (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DEFENSIVE.html">SmartSaver — Defensive Programming Rules</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Clients</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="WEBAPP.html">SmartSaver — Web App Build Plan (<code class="docutils literal notranslate"><span class="pre">apps/web</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MOBILE.html">SmartSaver — Mobile App Build Plan (<code class="docutils literal notranslate"><span class="pre">apps/mobile</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="STYLE_GUIDE.html">SmartSaver — Style Guide (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="USER_STATES.html">User States</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #1b1a3a" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">SmartSaver</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">SmartSaver — Cost-Model Settings (Addendum to WORTH_IT.md)</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/SETTINGS.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="smartsaver-cost-model-settings-addendum-to-worth-it-md">
+<h1>SmartSaver — Cost-Model Settings (Addendum to WORTH_IT.md)<a class="headerlink" href="#smartsaver-cost-model-settings-addendum-to-worth-it-md" title="Link to this heading"></a></h1>
+<blockquote>
+<div><p>Planning document. No application code yet — this captures the design for the
+<strong>cost-model settings panel</strong>, promoting the deferred follow-up in <code class="docutils literal notranslate"><span class="pre">WEBAPP.md</span> <span class="pre">§8</span></code>
+(“ship defaults + minimal inline controls; full screen later”) into a real spec.
+Read alongside <code class="docutils literal notranslate"><span class="pre">WORTH_IT.md</span></code> (§5 fuel/time model, §8 <code class="docutils literal notranslate"><span class="pre">costModel</span></code>), <code class="docutils literal notranslate"><span class="pre">REWARDS.md</span></code>
+(§5 rewards settings), and <code class="docutils literal notranslate"><span class="pre">GROCERY_EDITOR.md</span></code> (panel + auto-persist patterns).
+This is the layer that turns the Worth-It engine’s <strong>hidden constants into
+user-visible, editable inputs</strong> — the “garbage in, garbage out” defence (<code class="docutils literal notranslate"><span class="pre">WORTH_IT</span> <span class="pre">§10</span></code>).</p>
+</div></blockquote>
+<section id="what-the-settings-layer-is">
+<h2>1. What the settings layer is<a class="headerlink" href="#what-the-settings-layer-is" title="Link to this heading"></a></h2>
+<p>The <strong>input surface for the cost model</strong>. <code class="docutils literal notranslate"><span class="pre">WORTH_IT.md</span> <span class="pre">§5</span></code> declares that fuel
+price, efficiency, value of time, units, and the worth-it threshold are
+“user-supplied approximations, surfaced and editable — never hidden constants.”
+Today they exist only as inline defaults baked into <code class="docutils literal notranslate"><span class="pre">decide()</span></code>. This layer is
+where those numbers actually become the user’s to set, persist, and see reflected
+in every verdict.</p>
+<blockquote>
+<div><p>One rule governs the whole panel: <strong>every number that moves a keep/skip
+decision is visible and editable here, with its default shown as a default.</strong>
+A wrong fuel price should be obvious and fixable, not buried inside a verdict.</p>
+</div></blockquote>
+</section>
+<section id="where-it-fits-the-data-flow">
+<h2>2. Where it fits (the data flow)<a class="headerlink" href="#where-it-fits-the-data-flow" title="Link to this heading"></a></h2>
+<pre  class="mermaid">
+        graph TD
+  SP[&quot;Settings panel (this doc)&quot;] --&gt;|&quot;edits&quot;| CMS[&quot;CostModelSettings (persisted, localStorage)&quot;]
+  CMS --&gt;|&quot;read at decide-time, canonicalized §4&quot;| CM[&quot;WorthItInputs.costModel (WORTH_IT §8)&quot;]
+  CM --&gt; DEC[&quot;decide()&quot;] --&gt; WR[&quot;WorthItResult&quot;]
+  CM --&gt; RS[&quot;RouteSummary fuel estimate (lib/estimate, ARCH §5)&quot;]
+    </pre><p>Settings <strong>own</strong> the numbers; the Worth-It engine and the fuel estimate both
+<strong>read</strong> them. Nothing here changes <code class="docutils literal notranslate"><span class="pre">decide()</span></code>’s shape or the greedy loop — it
+only feeds the same <code class="docutils literal notranslate"><span class="pre">costModel</span></code> the engine already consumes.</p>
+</section>
+<section id="the-settings-worth-it-5-made-concrete">
+<h2>3. The settings (WORTH_IT §5, made concrete)<a class="headerlink" href="#the-settings-worth-it-5-made-concrete" title="Link to this heading"></a></h2>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Setting</p></th>
+<th class="head"><p>Field</p></th>
+<th class="head"><p>Default (prototype)</p></th>
+<th class="head"><p>Surfaced as</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Fuel price</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">fuelPrice</span></code></p></td>
+<td><p>region $/L (or $/gal) — editable, shown <em>as</em> a default</p></td>
+<td><p>Inline (primary)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Fuel efficiency</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">efficiency</span></code></p></td>
+<td><p>8.9 L/100km (≈26 mpg)</p></td>
+<td><p>Inline (primary)</p></td>
+</tr>
+<tr class="row-even"><td><p>Units</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">units</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">metric</span></code> | <code class="docutils literal notranslate"><span class="pre">imperial</span></code> — one toggle drives both above</p></td>
+<td><p>Inline (primary)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Value of time</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">valueOfTime</span></code></p></td>
+<td><p><strong>$0/hr</strong> — opt-in above that (<code class="docutils literal notranslate"><span class="pre">WORTH_IT</span> <span class="pre">§4</span></code>)</p></td>
+<td><p>Advanced</p></td>
+</tr>
+<tr class="row-even"><td><p>Worth-it floor</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">minWorthItThreshold</span></code></p></td>
+<td><p><strong>$2</strong> (<code class="docutils literal notranslate"><span class="pre">WORTH_IT</span> <span class="pre">§4</span></code>)</p></td>
+<td><p>Advanced</p></td>
+</tr>
+<tr class="row-odd"><td><p>Rewards</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">rewards:</span> <span class="pre">RewardsPrefs</span></code></p></td>
+<td><p>master <strong>off</strong> → $0 term (<code class="docutils literal notranslate"><span class="pre">REWARDS</span> <span class="pre">§3,§5</span></code>)</p></td>
+<td><p>Own section (REWARDS)</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Three primary knobs, the rest tucked away.</strong> Fuel price, efficiency, and units
+are the numbers that actually swing a verdict and that a shopper knows off-hand —
+they get inline controls (§6). <code class="docutils literal notranslate"><span class="pre">valueOfTime</span></code> and the threshold have defensible
+defaults ($0, $2) most users never touch, so they live under an “Advanced”
+disclosure. Rewards keep their own section per <code class="docutils literal notranslate"><span class="pre">REWARDS.md</span></code> — this panel only
+hosts the entry point.</p>
+</section>
+<section id="units-the-one-design-decision-that-matters">
+<h2>4. Units: the one design decision that matters<a class="headerlink" href="#units-the-one-design-decision-that-matters" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">units</span></code> is a <strong>display + entry</strong> preference; the engine works in one canonical
+unit internally (metric — metres/seconds from OSRM, $/L, L/100km), exactly as
+<code class="docutils literal notranslate"><span class="pre">WORTH_IT</span> <span class="pre">§5</span></code> and the <code class="docutils literal notranslate"><span class="pre">lib/estimate</span></code> contract (<code class="docutils literal notranslate"><span class="pre">WEBAPP</span> <span class="pre">§4</span></code>) require.</p>
+<p><strong>Store canonical, convert at the edges — never relabel.</strong> Flipping the toggle
+must preserve the <em>physical</em> value, not swap the number’s meaning:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>8.9 L/100km  ⇄  26.4 mpg          (efficiency)
+$1.55 / L    ⇄  $5.87 / gal        (fuel price, at $/L × 3.785)
+</pre></div>
+</div>
+<p>So the toggle re-expresses the same car and the same gas price in the other
+system; it does <strong>not</strong> turn “8.9 L/100km” into “8.9 mpg.” Conversions:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>mpg          = 235.215 / litresPer100km
+pricePerGal  = pricePerLitre × 3.785411784
+</pre></div>
+</div>
+<p>Canonical storage means <code class="docutils literal notranslate"><span class="pre">decide()</span></code> and <code class="docutils literal notranslate"><span class="pre">estimate()</span></code> see one unit regardless of
+what the user is looking at — the imperial/metric formulas in <code class="docutils literal notranslate"><span class="pre">WORTH_IT</span> <span class="pre">§5</span></code> are
+just two presentations of the persisted canonical value.</p>
+</section>
+<section id="core-data-model">
+<h2>5. Core data model<a class="headerlink" href="#core-data-model" title="Link to this heading"></a></h2>
+<p>Reuses <code class="docutils literal notranslate"><span class="pre">WorthItInputs.costModel</span></code> (<code class="docutils literal notranslate"><span class="pre">WORTH_IT</span> <span class="pre">§8</span></code>) — this is that object, persisted
+and unit-tagged. Additions only; no parallel shape.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>CostModelSettings                    -- persisted; the user-facing cost model (§3)
+ ├─ fuelPrice                        // canonical: $ per litre (§4)
+ ├─ efficiency                       // canonical: litres per 100 km (§4)
+ ├─ units: 'metric' | 'imperial'     // display/entry only; drives §4 conversion
+ ├─ valueOfTime                      // $/hr, default 0        (WORTH_IT §4)
+ ├─ minWorthItThreshold              // $ floor, default 2     (WORTH_IT §4)
+ ├─ rewards: RewardsPrefs            // REWARDS §7; master off by default
+ └─ updatedAt                        // bumped on every edit, like GROCERY_EDITOR §3
+
+// Passed into the engine verbatim:
+//   WorthItInputs.costModel = CostModelSettings   (WORTH_IT §8 — same fields)
+// Presented in whatever `units` says; canonicalized once on read (§4).
+</pre></div>
+</div>
+<p>Keeping the persisted settings and <code class="docutils literal notranslate"><span class="pre">WorthItInputs.costModel</span></code> the <strong>same object</strong>
+is the reuse rule from <code class="docutils literal notranslate"><span class="pre">WEBAPP</span> <span class="pre">§4</span></code> (“implement the doc interfaces — reuse, don’t
+reinvent”): the panel edits it, the store holds it, the engine reads it.</p>
+</section>
+<section id="the-panel-minimal-now-full-screen-later">
+<h2>6. The panel (minimal now → full screen later)<a class="headerlink" href="#the-panel-minimal-now-full-screen-later" title="Link to this heading"></a></h2>
+<p><strong>Now (prototype, per <code class="docutils literal notranslate"><span class="pre">WEBAPP</span> <span class="pre">§8</span></code>):</strong> a compact <strong>inline control group</strong> inside
+the existing planner panel — folded into <code class="docutils literal notranslate"><span class="pre">RouteSummary</span></code>/<code class="docutils literal notranslate"><span class="pre">WorthItCard</span></code> or a small
+“⚙ Cost model” disclosure, not a separate route. Three fields + a units toggle:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>⚙ Cost model                                    [metric ▾]
+  Fuel price     [ 1.55 ] $/L
+  Efficiency     [ 8.9  ] L/100km
+  › Advanced     (value of time · worth-it floor)
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><strong>Auto-persist every edit</strong> (debounced) — no Save button, mirroring
+<code class="docutils literal notranslate"><span class="pre">GROCERY_EDITOR</span> <span class="pre">§3</span></code>. <code class="docutils literal notranslate"><span class="pre">updatedAt</span></code> bumps; the open verdict recomputes.</p></li>
+<li><p>Toggling units <strong>converts the visible numbers in place</strong> (§4); the stored
+canonical value is unchanged.</p></li>
+<li><p>Accent + money colours per the indigo mockup (<code class="docutils literal notranslate"><span class="pre">WEBAPP</span> <span class="pre">§1</span></code>): inputs neutral,
+the fuel-cost figure they drive stays in the breakdown, not recoloured here.</p></li>
+</ul>
+<p><strong>Later:</strong> a dedicated settings screen (vehicle presets, per-region fuel
+defaults, full rewards management from <code class="docutils literal notranslate"><span class="pre">REWARDS.md</span></code>). Same <code class="docutils literal notranslate"><span class="pre">CostModelSettings</span></code>
+behind it — the inline controls and the full screen are two editors over one
+persisted object, so the upgrade touches only <code class="docutils literal notranslate"><span class="pre">components/</span></code>.</p>
+</section>
+<section id="persistence-localstorage-like-the-rest-of-the-prototype">
+<h2>7. Persistence (localStorage, like the rest of the prototype)<a class="headerlink" href="#persistence-localstorage-like-the-rest-of-the-prototype" title="Link to this heading"></a></h2>
+<p>Cost-model settings persist client-side through the <strong>same adapter seam</strong> as the
+grocery list (<code class="docutils literal notranslate"><span class="pre">GROCERY_LIST</span> <span class="pre">§8</span></code>, <code class="docutils literal notranslate"><span class="pre">REWARDS</span> <span class="pre">§7</span></code>): localStorage in the prototype,
+account-backed later behind an unchanged interface. <code class="docutils literal notranslate"><span class="pre">DATABASE.md</span> <span class="pre">§3</span></code> explicitly
+keeps settings <strong>out</strong> of the production catalog/trips DB, so this stays a
+client concern indefinitely.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>lib/settings   ← load()/save() CostModelSettings; region default seed;
+                 unit conversion helpers (§4); localStorage-backed
+store/trip.ts  ← already holds costModel (WEBAPP §3); this slice is its editor
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">lib/settings</span></code> is framework-agnostic like the other <code class="docutils literal notranslate"><span class="pre">lib/</span></code> modules, so a future
+mobile app reuses it behind an <code class="docutils literal notranslate"><span class="pre">AsyncStorage</span></code> adapter (<code class="docutils literal notranslate"><span class="pre">MOBILE.md</span></code>, <code class="docutils literal notranslate"><span class="pre">WEBAPP</span> <span class="pre">§6</span></code>).</p>
+</section>
+<section id="key-flows">
+<h2>8. Key flows<a class="headerlink" href="#key-flows" title="Link to this heading"></a></h2>
+<p><strong>Edit a cost input</strong>
+<code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">fuel</span> <span class="pre">price</span> <span class="pre">/</span> <span class="pre">efficiency</span> <span class="pre">→</span> <span class="pre">debounce</span> <span class="pre">→</span> <span class="pre">lib/settings.save()</span> <span class="pre">(persist,</span> <span class="pre">bump</span> <span class="pre">updatedAt)</span> <span class="pre">→</span> <span class="pre">store.costModel</span> <span class="pre">updated</span> <span class="pre">→</span> <span class="pre">open</span> <span class="pre">WorthItResult</span> <span class="pre">recomputes</span></code></p>
+<p><strong>Switch units</strong>
+<code class="docutils literal notranslate"><span class="pre">toggle</span> <span class="pre">metric⇄imperial</span> <span class="pre">→</span> <span class="pre">convert</span> <span class="pre">visible</span> <span class="pre">fields</span> <span class="pre">(§4)</span> <span class="pre">→</span> <span class="pre">persist</span> <span class="pre">units</span> <span class="pre">→</span> <span class="pre">canonical</span> <span class="pre">stored</span> <span class="pre">value</span> <span class="pre">unchanged</span> <span class="pre">→</span> <span class="pre">estimate/decide</span> <span class="pre">unaffected</span></code></p>
+<p><strong>Seed the default</strong>
+<code class="docutils literal notranslate"><span class="pre">first</span> <span class="pre">load</span> <span class="pre">→</span> <span class="pre">no</span> <span class="pre">stored</span> <span class="pre">settings</span> <span class="pre">→</span> <span class="pre">lib/settings</span> <span class="pre">seeds</span> <span class="pre">region</span> <span class="pre">fuel</span> <span class="pre">price</span> <span class="pre">+</span> <span class="pre">8.9</span> <span class="pre">L/100km</span> <span class="pre">+</span> <span class="pre">$0</span> <span class="pre">time</span> <span class="pre">+</span> <span class="pre">$2</span> <span class="pre">floor</span> <span class="pre">→</span> <span class="pre">shown</span> <span class="pre">as</span> <span class="pre">editable</span> <span class="pre">defaults</span> <span class="pre">(never</span> <span class="pre">as</span> <span class="pre">a</span> <span class="pre">bare</span> <span class="pre">constant)</span></code></p>
+</section>
+<section id="known-constraints-to-design-around">
+<h2>9. Known constraints to design around<a class="headerlink" href="#known-constraints-to-design-around" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>Defaults are estimates, shown as such</strong> — we can’t ping a paid API for live
+fuel price (<code class="docutils literal notranslate"><span class="pre">ARCHITECTURE</span> <span class="pre">§7</span></code> keeps the stack free); we seed a static regional
+default and let the user correct it, mirroring “estimates, not bills”
+everywhere else (<code class="docutils literal notranslate"><span class="pre">WORTH_IT</span> <span class="pre">§10</span></code>, <code class="docutils literal notranslate"><span class="pre">REWARDS</span> <span class="pre">§5</span></code>).</p></li>
+<li><p><strong>Canonical-only math</strong> — the single most common way to break this is
+relabelling instead of converting on the units toggle (§4). Store one unit;
+convert at entry and display; the engine never sees <code class="docutils literal notranslate"><span class="pre">units</span></code>-dependent numbers.</p></li>
+<li><p><strong>Don’t over-surface</strong> — three primary knobs; <code class="docutils literal notranslate"><span class="pre">valueOfTime</span></code>/threshold stay
+advanced with defensible defaults so the panel doesn’t read as a form to fill
+before the app is usable (<code class="docutils literal notranslate"><span class="pre">WORTH_IT</span> <span class="pre">§4</span></code>).</p></li>
+<li><p><strong>Settings stay client-side</strong> — out of the production DB by design
+(<code class="docutils literal notranslate"><span class="pre">DATABASE.md</span> <span class="pre">§3</span></code>); the persistence adapter is the only seam that ever moves
+them to an account.</p></li>
+</ul>
+</section>
+<section id="suggested-build-order-later">
+<h2>10. Suggested build order (later)<a class="headerlink" href="#suggested-build-order-later" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">CostModelSettings</span></code> in <code class="docutils literal notranslate"><span class="pre">store/trip.ts</span></code> (reuse <code class="docutils literal notranslate"><span class="pre">costModel</span></code>, <code class="docutils literal notranslate"><span class="pre">WORTH_IT</span> <span class="pre">§8</span></code>) with
+seeded defaults (§3).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">lib/settings</span></code> — <code class="docutils literal notranslate"><span class="pre">load</span></code>/<code class="docutils literal notranslate"><span class="pre">save</span></code> (localStorage), region seed, unit conversion
+helpers (§4), unit-tested metric⇄imperial round-trips (<code class="docutils literal notranslate"><span class="pre">WEBAPP</span> <span class="pre">§9</span></code>).</p></li>
+<li><p>Inline control group in the planner panel — fuel price / efficiency / units,
+auto-persist + recompute (§6).</p></li>
+<li><p>“Advanced” disclosure — <code class="docutils literal notranslate"><span class="pre">valueOfTime</span></code>, <code class="docutils literal notranslate"><span class="pre">minWorthItThreshold</span></code>.</p></li>
+<li><p>Wire the rewards section entry point (<code class="docutils literal notranslate"><span class="pre">REWARDS.md</span></code>).</p></li>
+<li><p>(Later) dedicated settings screen + vehicle/region presets + account-backed
+persistence behind the <code class="docutils literal notranslate"><span class="pre">lib/settings</span></code> adapter (§7).</p></li>
+</ol>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="REWARDS.html" class="btn btn-neutral float-left" title="SmartSaver — Rewards &amp; Grocer Preference (Addendum to ARCHITECTURE.md)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="DATABASE.html" class="btn btn-neutral float-right" title="SmartSaver — Database (Addendum to ARCHITECTURE.md)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

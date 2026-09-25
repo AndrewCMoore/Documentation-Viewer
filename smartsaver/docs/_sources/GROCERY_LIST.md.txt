@@ -1,0 +1,161 @@
+# SmartSaver — Grocery List (Addendum to ARCHITECTURE.md)
+
+> Planning document. No application code yet — this captures the design for the
+> user's grocery-list feature. Read alongside `ARCHITECTURE.md` and `DEALS.md`.
+> The list is the **demand** side; deals are the **supply** side; a matching
+> layer connects them and feeds store selection into the route optimizer.
+
+## 1. What the grocery list is
+
+A saved, **categorized list of the staples a user normally buys** ("My Staples"),
+seeded with the food essentials — Vegetables, Fruits, Grains, Proteins, and so
+on. It persists between trips so the user doesn't rebuild it every week; each
+trip starts from the staples and the user toggles what's actually **needed** this
+time.
+
+The list is the input that makes the deals feature useful: instead of "here are
+random deals near you," SmartSaver can answer **"which nearby stores have *my*
+list on sale, and for how much?"** — then turn the best stores into stops.
+
+## 2. Where it fits (the full data flow)
+
+```mermaid
+graph TD
+  GL["Grocery List (demand)"] --> M["Matching layer<br/>per-store: coverage + basket cost"]
+  DL["Deals per store (supply)"] --> M
+  M --> RS["ranked stores become Trip.stops → OSRM /trip optimize"]
+  RS --> OUT["route + fuel/time estimate + 'Open in Maps' handoff"]
+```
+
+The list plugs into the existing pipeline: matched stores become `Trip.stops`
+(from `ARCHITECTURE.md` §5) and flow straight into OSRM optimization.
+
+## 3. Scope decisions
+
+| Decision | Choice | Consequence |
+|---|---|---|
+| List lifetime | **Persistent recurring staples** + per-trip "needed" toggle | User builds once, reuses weekly; no rebuild each trip |
+| Categories | **Seeded default taxonomy, user-extensible** | Start with the essentials; users can add custom categories |
+| Item → category | **Exactly one category per item** | Simple grouping in the UI; no multi-tag complexity yet |
+| Persistence (prototype) | **Client-side (localStorage)** | Matches "web now"; no backend/account needed to start |
+| List → deals matching | **Own layer behind an adapter** | Same seam philosophy as `DEALS.md`; swap keyword→catalog later |
+
+## 4. Default category taxonomy (seed)
+
+Ordered roughly by how a shopper walks a store. User-extensible; each is a simple
+label the UI groups items under.
+
+| Category | Examples |
+|---|---|
+| **Vegetables** | onions, carrots, lettuce, peppers |
+| **Fruits** | apples, bananas, berries |
+| **Grains** | bread, rice, pasta, cereal, oats |
+| **Proteins** | chicken, beef, fish, eggs, tofu, legumes |
+| **Dairy** | milk, cheese, yogurt, butter |
+| **Pantry** | canned goods, oils, sauces, spices, flour/sugar |
+| **Frozen** | frozen veg, frozen meals, ice cream |
+| **Beverages** | coffee, tea, juice, soft drinks |
+| **Snacks** | chips, crackers, nuts, cookies |
+| **Household** | paper goods, cleaning, toiletries *(non-food; optional)* |
+| **Other** | anything uncategorized |
+
+## 5. Core data model
+
+```
+GroceryList
+ ├─ id
+ ├─ name              // "Weekly staples"
+ ├─ items: [ ListItem ]
+ └─ updatedAt
+
+ListItem
+ ├─ id
+ ├─ name              // "Chicken breast"
+ ├─ category          // one of the taxonomy labels (§4)
+ ├─ quantity?         // "2 lb", "1 dozen" — freeform, optional for now
+ ├─ needed: boolean   // included in THIS trip's active list
+ ├─ matchTerms?: [string]  // synonyms/keywords to help deal matching
+ └─ note?
+```
+
+`matchTerms` is the hook that helps the matching layer bridge a generic list item
+("chicken breast") to a specific flyer item ("boneless skinless chicken
+breasts") — see §7.
+
+## 6. Key flows
+
+**Build / edit the list**
+`add item → suggest a category (default from a keyword map, user can override) → append to list → persist`
+
+**Start a trip from staples**
+`open trip → list loads from persistence → user toggles needed on items for this run`
+
+**Match the list to deals**
+`active (needed) items + trip-area postal codes → matching layer → each item gets Deal[] candidates from nearby stores` *(deals from `DEALS.md` §6)*
+
+**Rank stores → suggest stops**
+`aggregate matched deals per store → coverage (how many of my items are on sale here) + basket cost → rank stores → user adds top stores as Trip.stops → recompute route`
+
+## 7. The matching layer (the hard part)
+
+Resolving a generic **ListItem** to concrete **Deal** rows is the crux — it's the
+same normalization challenge flagged in `DEALS.md`. Kept behind an adapter so we
+can upgrade the strategy without touching the UI:
+
+- **v1 — keyword + category (prototype).** Normalize both sides (lowercase,
+  singularize, strip packaging words like "pack/ea/lb"), match `ListItem.name` +
+  `matchTerms` tokens against `Deal.name`, use `category` as a secondary filter to
+  cut false positives. Cheap, good enough to demo.
+- **v2 — canonical catalog / semantic match (later).** Map flyer items and list
+  items to a shared product catalog (or embeddings) so "chicken breast" reliably
+  matches "boneless skinless chicken breasts." Contained entirely within the
+  adapter.
+
+Interface stays stable: `match(listItems, deals) → { itemId → Deal[] }`.
+
+## 8. Persistence posture (two modes, same code)
+
+- **Prototype:** `localStorage` — the list lives in the browser, no backend, no
+  login. Consistent with the "web now" stance in `ARCHITECTURE.md` §2.
+- **Production:** account-backed storage so the list follows the user across
+  devices (and into a future mobile app). Access it through a `lib/list`
+  persistence adapter so the swap is an implementation detail.
+
+## 9. Known constraints to design around
+
+- **Generic ↔ specific mismatch** — the central risk; over-matching floods the
+  user with irrelevant deals, under-matching hides real savings. Category filter +
+  `matchTerms` mitigate v1; catalog/embeddings fix it in v2.
+- **Not everything is on sale** — many list items won't have a matching deal any
+  given week. Surface "N of your items on sale here" honestly; never imply the
+  whole basket is discounted.
+- **Quantity is freeform for now** — no unit math in v1 (don't compute true
+  per-unit basket totals until units are structured). Present cost as a guide,
+  consistent with `ARCHITECTURE.md` §10.
+- **Category suggestion is a guess** — keyword→category defaults will misfire;
+  always let the user override, and remember overrides.
+
+## 10. Proposed folder shape (additions)
+
+```
+smartsaver/
+├─ ARCHITECTURE.md
+├─ DEALS.md
+├─ GROCERY_LIST.md      ← this document
+└─ src/
+   ├─ lib/list          ← list CRUD, category taxonomy, persistence adapter
+   ├─ lib/match         ← ListItem ↔ Deal matching (adapter: keyword v1 → catalog v2)
+   └─ components/       ← GroceryList, CategorySection, ItemRow, AddItem
+```
+
+## 11. Suggested build order (later)
+
+1. Category taxonomy + `GroceryList` / `ListItem` model
+2. Add / edit / remove items, grouped by category in the panel
+3. Persist the list (localStorage) + keyword→category auto-suggest
+4. Per-trip "needed" toggle → active list
+5. `lib/match` v1 (keyword + category) → item → `Deal[]`
+6. Per-store coverage + basket-cost ranking
+7. Suggest top stores as stops → hand to OSRM optimizer
+8. Account-backed persistence + v2 matching (catalog / embeddings)
+```

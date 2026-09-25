@@ -1,0 +1,282 @@
+# SmartSaver — Grocery List Editor UI (Addendum to GROCERY_LIST.md)
+
+> Planning document. No application code yet — this designs the **editor UI +
+> category management** that `WEBAPP.md §8` deferred ("seed a starter list; defer
+> the editor — `GROCERY_LIST §11`"). Read alongside `GROCERY_LIST.md` (the model
+> and matching layer), `STYLE_GUIDE.md` (tokens + component specs), and
+> `WEBAPP.md` (where it lives in the app shell). This doc turns `GROCERY_LIST`'s
+> paper model into a concrete screen; it does **not** change the matching layer.
+
+## 1. What the editor is
+
+The screen where a user **builds and maintains "My Staples"** — the persistent,
+categorized list of things they normally buy (`GROCERY_LIST §1`) — and, each
+trip, **ticks what they actually need this run**. It is the demand-side input the
+whole deals→worth-it pipeline depends on; if the list is empty or wrong, the
+matching layer has nothing good to match.
+
+It does two jobs on one list, and the design's central move is to keep them from
+colliding (`§4`):
+
+- **Shop this trip** (the common, everyday action): tick / untick `needed`.
+- **Manage staples** (the occasional action): add / edit / remove items and
+  **manage categories** — rename, reorder, add custom, delete.
+
+## 2. Scope decisions
+
+| Decision | Choice | Consequence |
+|---|---|---|
+| Surface | **Dedicated panel view**, not a modal | The list gets long; a 404px modal would cramp it. Swaps the panel content; map stays put on desktop, full-screen on mobile (`§9`). |
+| Two intents, one list | **`needed` toggle always live; structural edits behind an "Edit" mode** | Ticking needs is one tap; destructive affordances (delete, drag, category tools) only appear in Edit mode. |
+| Saving | **Auto-persist every change** (debounced) through `lib/list` → localStorage | No "Save" button; `updatedAt` bumps. Deletes get **undo** (snackbar), not a confirm dialog. |
+| Category is first-class | **Refine `GROCERY_LIST §5`: category becomes an ordered entity** (id + label + order), item references it by id | Enables rename/reorder/custom without rewriting every item. Back-compat note in `§3`. |
+| Category suggestion | **Guess on add, editable chip, remember overrides** | Honors `GROCERY_LIST §9` ("category suggestion is a guess; always let the user override, and remember overrides"). |
+| Empty-list posture | **Seed starter staples on first run** (`WEBAPP §8`) | The editor is rarely fully empty; we still design empty-category + empty-search states (`§7`). |
+| `matchTerms` / `note` | **Secondary, behind a per-item expander** | Keeps the common row simple; power users improve deal matching without clutter. |
+
+## 3. Data-model additions (refines `GROCERY_LIST §5`)
+
+`GROCERY_LIST §5` modeled `category` as a bare label string. Rename / reorder /
+custom categories need a stable referent, so category becomes first-class:
+
+```
+GroceryList
+ ├─ id
+ ├─ name                 // "My Staples"
+ ├─ categories: [ Category ]   // NEW — ordered; defines section order (store-walk, §4)
+ ├─ items: [ ListItem ]
+ └─ updatedAt
+
+Category                 // NEW
+ ├─ id
+ ├─ label                // "Proteins" (renamable)
+ ├─ order                // store-walk position; drag to change
+ ├─ seeded: boolean      // from the §4 taxonomy vs. user-created
+ └─ collapsed?: boolean  // UI state, persisted for convenience
+
+ListItem                 // unchanged from GROCERY_LIST §5 except `category`
+ ├─ id
+ ├─ name
+ ├─ category             // now a Category.id (was: a taxonomy label)
+ ├─ quantity?            // freeform ("2 lb", "1 dozen")
+ ├─ needed: boolean
+ ├─ matchTerms?: [string]
+ └─ note?
+```
+
+Plus one map owned by `lib/list`, not part of the exported list shape:
+
+```
+categoryOverrides: { normalizedName → categoryId }   // NEW — learned corrections
+```
+
+**Back-compat / migration:** the seed loader creates the seeded `Category[]` from
+the `GROCERY_LIST §4` taxonomy (stable ids like `cat_proteins`) and maps seed
+items onto them. Anything reading `item.category` as a label resolves it through
+`categories` by id. This is the only place the §5 model changes; the matching
+layer (`lib/match`) still receives `ListItem`s and is unaffected.
+
+## 4. Screen layout (desktop panel; reference render `style-guide/editor.html`)
+
+The editor replaces the trip content inside the existing 404px panel
+(`WEBAPP §7` shell). Top to bottom:
+
+```
+┌──────────────────────────────────────────────┐
+│ ‹ Back   My Staples            [ Edit ]       │  Header: back to trip, title, mode toggle
+│          34 items · 12 needed this trip       │
+├──────────────────────────────────────────────┤
+│ ⌕ Add an item…            → Proteins ▾   [+]  │  Add bar (sticky): input + guessed-category chip + qty
+├──────────────────────────────────────────────┤
+│ ⌕ Filter your list…                           │  Filter (appears once list is long)
+├──────────────────────────────────────────────┤
+│ VEGETABLES                      4 · 2 ▾        │  Category section header (count · needed · collapse)
+│  ☑ Onions              2 lb                    │  ItemRow: needed checkbox + name + qty
+│  ☐ Carrots                                     │
+│  ☑ Lettuce                          ⋯          │  ⋯ = row menu (edit / synonyms / delete)
+│ PROTEINS                        6 · 5 ▾        │
+│  ☑ Chicken breast      2 lb                    │
+│    ↳ also matches: boneless, skinless   (note) │  matchTerms shown when set (helps deal matching)
+│  ☐ Eggs                1 dozen                 │
+│ … more categories …                            │
+│  + New category                     (Edit mode)│
+├──────────────────────────────────────────────┤
+│ 12 needed · $— est. · Done                     │  Footer: trip summary + return
+└──────────────────────────────────────────────┘
+```
+
+**Header.** Back arrow returns to the trip/planner view. Title = list name
+(`My Staples`). Subline = total item count · "N needed this trip". The **Edit**
+toggle (secondary/ghost button, `STYLE_GUIDE §7`) flips the whole view between
+**Shop mode** and **Edit mode** (`§5`).
+
+**Add bar (sticky, always visible).** `Input / search` spec (`STYLE_GUIDE §7`):
+`--surface-2`, leading `+` icon, `--radius-sm`. As the user types, an inline
+**category chip** (`→ Proteins ▾`, pill, `--brand-weak`/`--brand-text`) shows the
+auto-guess (`§6`); tapping it opens the taxonomy to override. An optional compact
+quantity field sits before the `[+]` add button. Enter or `[+]` commits; the input
+clears and keeps focus for rapid entry.
+
+**Filter.** A lightweight in-list text filter appears once the list exceeds ~1
+screen; it narrows visible rows without touching `needed`. Distinct from the add
+bar (that creates; this finds).
+
+**Category section.** Header = category label (overline style, `STYLE_GUIDE §5`)
++ `total · needed` counts + collapse chevron. Collapsed state persists
+(`Category.collapsed`). In **Edit mode** the header also carries a drag grip
+(reorder = store-walk order) and a `⋯` menu (Rename / Delete). A `+ New category`
+row sits at the bottom of the list in Edit mode.
+
+**Item row.** Reuses the `Stop row` rhythm (`STYLE_GUIDE §7`): 44px min height
+(`§15` hit-target bump), `--surface-2` on hover/press.
+- **Shop mode:** leading **`needed` checkbox** (the primary tap), name, trailing
+  quantity in `--text-2`; a `⋯` row menu reveals Edit / Synonyms / Delete.
+  `matchTerms` and `note`, when present, render as a dim sub-line so power users
+  see what's tuned.
+- **Edit mode:** checkbox is replaced by a **drag grip**; a trailing delete (✕)
+  appears; tapping the row opens the **inline item editor** (`§5`).
+
+**Footer.** Persistent summary ("12 needed · est. $— once matched") + **Done**
+(primary, returns to trip). No Save button — everything is already persisted.
+
+## 5. The two modes (the load-bearing interaction)
+
+`GROCERY_LIST §6` names two flows on the same list — *build/edit* vs. *toggle
+needed for this trip*. Conflating them is the main UX risk, so the mode is
+**explicit**:
+
+| | Shop mode (default) | Edit mode |
+|---|---|---|
+| Row leading control | **`needed` checkbox** | **drag grip** |
+| Row tap | toggles `needed` | opens **inline item editor** |
+| Trailing | `⋯` menu (edit/synonyms/delete) | delete ✕ |
+| Category headers | count + collapse only | + drag grip + rename/delete menu |
+| Extra affordances | — | `+ New category`; reorder categories |
+| Add bar | present in both modes (adding is always allowed) | present |
+
+Rationale: the everyday action (tick what I need) must be a single, undo-safe tap
+with no destructive controls in reach; structural change is deliberate. This
+mirrors the iOS "Edit" pattern and keeps `needed` toggling from ever sitting next
+to a delete.
+
+**Inline item editor** (opens in Edit mode, or via row `⋯` → Edit in Shop mode):
+name, quantity (freeform, `GROCERY_LIST §5`), category (taxonomy picker), and an
+**"Improve deal matching"** expander for `matchTerms` (chip input) + `note`. Saves
+on blur/Enter; Cancel discards. Copy on the expander explains *why* it exists:
+"Add synonyms so more flyer deals match this item" (`GROCERY_LIST §7`).
+
+## 6. Category suggestion & override memory
+
+On add, `lib/list` guesses the category from a **keyword→category map** over the
+normalized item name (`GROCERY_LIST §6`, `§9`). The guess is shown, never
+silently applied — the editable chip in the add bar. Two learning rules:
+
+1. **Remember overrides.** When the user changes the guessed category before
+   adding (or re-categorizes later), write `normalizedName → categoryId` into
+   `categoryOverrides`. Next time that name (or a near-normalization) is typed,
+   the override wins over the keyword map. Directly satisfies `GROCERY_LIST §9`
+   ("remember overrides").
+2. **Unknown → Other.** No keyword hit and no override → default to **Other**
+   (`GROCERY_LIST §4`), still shown in the chip so the user can correct it in one
+   tap (which then teaches rule 1).
+
+Suggestion is a convenience, not a gate: the user can always pick any category,
+including a custom one they just created.
+
+## 7. States
+
+- **First run:** list is **seeded** with starter staples (`WEBAPP §8`), so the
+  user lands on a populated, categorized list — not a blank slate. A one-line hint
+  ("These are starter staples — tick what you need, edit anytime") shows until the
+  first edit.
+- **Empty category:** a seeded category with no items renders a faint
+  "Nothing here yet" row (Edit mode offers delete). Keeps store-walk structure
+  visible without shouting.
+- **Empty filter result:** "No items match '<query>'." + a `+ Add "<query>"`
+  affordance that pipes straight into the add bar with the query prefilled.
+- **Fully empty list** (user deleted everything): friendly zero-state with
+  **Restore starter staples** and an add bar. (Styled per `STYLE_GUIDE §16.2`
+  zero-state: stroke icon, title, one explanatory line, one primary action.)
+- **Delete → undo:** deleting an item or category shows an undo snackbar
+  (`lib/list` keeps a transient undo buffer, not persisted). Deleting a
+  **non-empty** category asks once, inline, "Move N items to Other?" (never
+  silently drops items).
+- **Persist feedback:** no spinner; a subtle "Saved" tick in the header settles
+  after the debounce so the auto-save is legible (respects `prefers-reduced-motion`,
+  `STYLE_GUIDE §9`).
+
+## 8. Component & `lib` contract (extends `GROCERY_LIST §10`, `WEBAPP §3–4`)
+
+**Components** (`src/components/`, re-implemented in RN later per `MOBILE.md §2`):
+
+| Component | Role |
+|---|---|
+| `GroceryListEditor` | The panel view: header, mode state, footer; owns Shop↔Edit toggle. |
+| `AddItemBar` | Input + guessed-category chip + quantity + add; drives `§6`. |
+| `CategorySection` | Section header (counts, collapse, Edit-mode drag/rename/delete) + its rows. |
+| `ItemRow` | Shop-mode row (checkbox/name/qty/`⋯`) and Edit-mode row (grip/delete). |
+| `ItemEditor` | Inline editor: name/qty/category + `matchTerms`/`note` expander (`§5`). |
+| `CategoryEditor` | New/rename category input; delete-with-move prompt. |
+| `UndoSnackbar` | Transient undo for deletes (`§7`). |
+
+**`lib/list` additions** (still pure TS, localStorage-backed, `GROCERY_LIST §8`):
+
+| Function | Contract |
+|---|---|
+| `addItem({name, quantity?, category?})` | Guess category if omitted (`§6`); append; persist; return item. |
+| `updateItem(id, patch)` | Patch name/qty/category/matchTerms/note; persist. |
+| `removeItem(id)` → `undo()` | Remove; return an undo handle (transient buffer). |
+| `toggleNeeded(id)` | Flip `needed`; persist (the Shop-mode common path). |
+| `addCategory(label)` / `renameCategory(id,label)` | Custom category CRUD; append before "Other"; persist. |
+| `reorderCategories(idOrder[])` | Set `order` (store-walk); persist. |
+| `deleteCategory(id, {moveToId='cat_other'})` | Reassign items, then remove; persist. |
+| `suggestCategory(name)` | keyword map + `categoryOverrides` → `categoryId` (`§6`). |
+| `seed()` / `restoreStarter()` | Build seeded categories + starter items (`§7`). |
+
+**Correctness rules the code must honor:** `needed` toggling never destroys data;
+deletes are reversible via the undo buffer; overrides persist and win over the
+keyword map; category delete **moves** items, never orphans them; every mutation
+bumps `updatedAt` and re-persists (debounced). The matching layer contract
+`match(listItems, deals)` (`GROCERY_LIST §7`) is untouched — the editor only
+produces cleaner `ListItem`s for it.
+
+## 9. Responsive (ties to `STYLE_GUIDE §10`, `ARCHITECTURE §3`)
+
+- **≥860px:** editor is the panel content (404px); the map stays visible/dimmed
+  (layout doesn't jump). Header back arrow + Done both return to the trip view.
+- **<860px:** editor is a **full-screen view** (not the bottom sheet — a long
+  editable list needs full height). Add bar and mode toggle stick to the top;
+  Done / back returns to the trip. Hit targets **44px** (`STYLE_GUIDE §15`).
+- Hover lifts stay behind `@media (hover: hover)`; touch uses the **pressed**
+  states from `STYLE_GUIDE §15` (row → `--surface-2`, chip → `--brand-weak`).
+
+## 10. Known constraints to design around
+
+- **Two-intent confusion** — the core risk (`§5`). Mitigated by the explicit
+  Shop/Edit mode split; validate with users that "tick needed" never feels like
+  editing the master list.
+- **Category suggestion misfires** — inevitable (`GROCERY_LIST §9`); the always-
+  visible editable chip + override memory keep a wrong guess to a one-tap fix.
+- **Quantity stays freeform** — no unit math here (`GROCERY_LIST §9`); the editor
+  captures the string only; basket-cost math remains the matching/worth-it layer's
+  problem, presented as a guide.
+- **List can get long** — filter, collapsible categories, and store-walk ordering
+  keep it navigable; don't paginate (breaks the "walk the store" mental model).
+- **localStorage only (prototype)** — no cross-device sync yet; the `lib/list`
+  persistence adapter (`GROCERY_LIST §8`) is the seam where account-backed storage
+  lands later. The editor never assumes a backend.
+
+## 11. Proposed build order (later)
+
+1. Category-as-entity model refactor in `lib/list` + seed/migration (`§3`).
+2. `GroceryListEditor` shell + panel routing (Trip ↔ List) + header/footer.
+3. `CategorySection` + `ItemRow` in **Shop mode**: render seeded list, toggle
+   `needed`, collapse categories.
+4. `AddItemBar` + `suggestCategory` + override memory (`§6`).
+5. **Edit mode:** `ItemEditor`, delete + `UndoSnackbar`, drag-reorder rows.
+6. **Category management:** add / rename / reorder / delete-with-move
+   (`CategoryEditor`).
+7. Filter, empty/zero states, "Saved" feedback (`§7`).
+8. Responsive full-screen mobile pass + pressed states (`§9`).
+9. (Later) account-backed persistence via the `lib/list` adapter (`GROCERY_LIST §8`).
+```

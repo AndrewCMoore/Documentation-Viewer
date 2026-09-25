@@ -1,0 +1,18 @@
+﻿/* Approximation of the Zephyr RTOS docs look on sphinx_rtd_theme. */
+:root { --ss-navy: #1b1a3a; --ss-purple: #6f4fd1; --ss-ink: #1f2430; }
+body, .rst-content { font-family: "Open Sans", "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: var(--ss-ink); }
+.wy-nav-side, .wy-side-nav-search, .wy-nav-top { background: var(--ss-navy); }
+.wy-menu-vertical a { color: #c9c7e6; }
+.wy-menu-vertical li.current > a, .wy-menu-vertical li.on a { background: #262552; color: #fff; }
+.wy-menu-vertical li.current a:hover, .wy-menu-vertical a:hover { background: #33306b; }
+.wy-menu-vertical header, .wy-menu-vertical p.caption { color: #9b8ee6; text-transform: uppercase; letter-spacing: .06em; }
+.wy-side-nav-search input[type=text] { border-color: var(--ss-purple); }
+a, .rst-content a { color: var(--ss-purple); }
+a:hover { color: #4a30a8; }
+.rst-content h1, .rst-content h2 { color: var(--ss-navy); font-weight: 600; }
+.rst-content h1 { border-bottom: 3px solid var(--ss-purple); padding-bottom: .3em; }
+.rst-content code, .rst-content tt { color: #4a30a8; }
+.rst-content div[class^="highlight"] { border: 1px solid #e1e0f0; border-radius: 4px; }
+.rst-content .admonition.seealso, .rst-content .seealso { background: #efecfb; }
+.rst-content .seealso .admonition-title { background: var(--ss-purple); }
+.wy-nav-content { max-width: 960px; }

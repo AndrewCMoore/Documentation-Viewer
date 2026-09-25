@@ -1,0 +1,157 @@
+# API
+
+Express server in `packages/api/src/server.ts`. Default port 8787 (`API_PORT`). CORS origin: `ALLOWED_ORIGIN` (default `http://localhost:5173`). Planned design: [](DEALS.md), [](GROCERY_LIST.md).
+
+## Endpoints
+
+`/api/deals` and `/api/deal-options` take the same query params (`/api/stores` is [below](#get-apistores)):
+
+| Param | Rules |
+|---|---|
+| `postal_code` | Required. Trimmed, uppercased, whitespace removed; must match `^[A-Z0-9]{3,10}$` else `400` |
+| `q` | Optional search term. Trimmed, truncated to 60 chars. Empty falls back to `groceries` upstream |
+
+### GET /api/deals
+
+Flat list of normalized deals.
+
+```json
+[
+  {
+    "id": "12345",
+    "name": "Whole Chicken",
+    "merchant": "Sample Grocer",
+    "price": 4.99,
+    "wasPrice": 6.99,
+    "currency": "CAD",
+    "validFrom": "2026-09-24",
+    "validTo": "2026-09-30",
+    "imageUrl": "https://example.com/img.jpg",
+    "store": { "label": "Sample Grocer", "lat": null, "lng": null, "postalCode": "M5V2T6" }
+  }
+]
+```
+
+- `wasPrice` only present when `original_price` is finite and greater than `price`.
+- `id`: `flyer_item_id`, else `id`, else `"<merchant>-<name>"`.
+- `validFrom`, `validTo`, `imageUrl` are `""` when upstream omits them.
+- `store.lat`/`lng` are `NaN` in memory (no per-item coordinates upstream); `JSON.stringify` serializes `NaN` as `null`.
+
+### GET /api/deal-options
+
+Same deals grouped by category, in taxonomy order; empty categories omitted. Each deal gains a `category` field.
+
+```json
+[
+  {
+    "category": "Proteins",
+    "deals": [
+      { "id": "12345", "name": "Whole Chicken", "merchant": "Sample Grocer", "price": 4.99, "currency": "CAD", "category": "Proteins" }
+    ]
+  }
+]
+```
+
+Remaining deal fields are as in `/api/deals`. An `Other` group appears only when non-empty.
+
+### GET /api/stores
+
+Grocers near a point, nearest first (`src/stores.ts`, ported from the original `smartsaver` repo). Planned design: [](LOCATION.md).
+
+| Param | Rules |
+|---|---|
+| `lat`, `lng` | Required, finite and in range, else `400 {"error":"invalid lat/lng"}` |
+| `radius` | Metres; default 10,000, capped at 20,000 |
+
+```json
+[
+  {
+    "store": { "label": "Union Mercado", "lat": 43.6451347, "lng": -79.3807151, "postalCode": "M5J 1E6" },
+    "kind": "convenience",
+    "distanceM": 21,
+    "routeDistanceM": 189
+  }
+]
+```
+
+1. Overpass query for OSM `shop=supermarket|grocery|convenience|wholesale` nodes and ways within the radius. Tries the primary endpoint twice, then a mirror, with a 1.5 s backoff between attempts; all failing gives `502 {"error":"overpass unavailable (last status <n>)"}`.
+2. Drops POIs without coordinates or without a `name`/`brand`, sorts by straight-line `distanceM`, keeps the nearest 99.
+3. Reachability gate: one OSRM `/table` call gives road distance from the point. Stores farther than `max(radius × 2.5, 5000)` m by road, or unreachable, are dropped. If `/table` fails, every store is kept and `routeDistanceM` is omitted.
+4. Reverse-geocodes a `postalCode` (Nominatim) for the nearest 8 stores; the rest get `""`.
+
+Upstream URLs are overridable with `OVERPASS_URL`, `OVERPASS_MIRROR_URL`, `OSRM_URL` and `NOMINATIM_URL`.
+
+### Errors
+
+These apply to `/api/deals` and `/api/deal-options`.
+
+| Status | Body | Cause |
+|---|---|---|
+| 400 | `{"error":"invalid postal_code"}` | Failed validation |
+| 502 | `{"error":"upstream <status>"}` | Upstream non-2xx |
+| 502 | `{"error":"upstream payload too large"}` | `Content-Length` or streamed body over 5,000,000 bytes (checked while reading, so an oversized body is never fully buffered) |
+| 502 | `{"error":"upstream: invalid JSON"}` | Unparseable body |
+
+Errors are never cached. Any exception thrown by a handler (e.g. a network failure in `fetch`) is caught in `server.ts` and returned as `500 {"error":"internal error"}` on every endpoint.
+
+## Caching
+
+`src/_cache.ts`: in-process `Map`, per-entry TTL, max 500 entries (oldest-inserted evicted first). Not shared across processes and lost on restart; the source comment marks it as the dev implementation.
+
+| Endpoint | Key | TTL |
+|---|---|---|
+| `/api/deals` | `deals:<POSTAL>:<term>` | 7 days; 1 hour if no deals |
+| `/api/deal-options` | `dealOptions:<POSTAL>:<term>` | 7 days; 1 hour if no deals |
+| `/api/stores` | `stores:<lat 2dp>:<lng 2dp>:<radius>` | 1 day |
+| `/api/stores` postal lookups | `postal:<lat 4dp>:<lng 4dp>` | 30 days |
+
+Key uses the normalized postal code and trimmed term. Checked after validation, before the upstream call. Only successful results are cached.
+
+## Aggregator flow
+
+`fetchDeals` (`savingsDealAggregator.ts`) is the only code that knows the upstream (`FLIPP_URL`, default `https://backflipp.wishabi.com/flipp`). It calls `GET {FLIPP_URL}/items/search?postal_code=&q=`.
+
+Normalization, per item:
+
+- Drops items without string `name`/`merchant`, or without a finite price above 0 (`current_price` or `price`).
+- Drops price above 100 (`MAX_GROCERY_PRICE`).
+- Drops merchants whose lowercased name contains a `MERCHANT_DENY` entry (hardware, pet, liquor, etc.).
+- Only the first 100 upstream items are considered (`MAX_ITEMS`), before filtering.
+- Currency is hardcoded `CAD`.
+
+```{mermaid}
+flowchart TD
+    A["GET /api/deals or /api/deal-options"] --> B{"postal_code valid?"}
+    B -- no --> E1["400 invalid postal_code"]
+    B -- yes --> C{"cache hit?"}
+    C -- yes --> R["200 cached body"]
+    C -- no --> F["fetchDeals: Flipp items/search"]
+    F --> G{"upstream ok, size, JSON?"}
+    G -- no --> E2["502 error"]
+    G -- yes --> H["first 100 items, normalize, filter"]
+    H --> I{"endpoint"}
+    I -- deals --> J["cache deals, 7d"]
+    I -- deal-options --> K["categorizeDeals"]
+    K --> L["cache groups, 7d"]
+    J --> S["200 body"]
+    L --> S
+```
+
+## Categorization
+
+`dealCategorizer.ts`. `matchCategory(name)` returns `{ category, keyword? }`; `categorizeDeals(deals)` groups by it.
+
+Taxonomy, in output order: Vegetables, Fruits, Grains, Proteins, Dairy, Pantry, Frozen, Beverages, Snacks, Household, then `Other` (no match). Keyword lists are in `TAXONOMY`.
+
+Matching rules:
+
+- Case-insensitive regex `\b<keyword>(es|s)?\b`: whole word with optional `s`/`es` plural, so `bread` does not match `Shortbread` but `tomato` matches `Tomatoes`.
+- Keywords are regex-escaped; multi-word keywords (`pizza pop`, `ice cream`) work.
+- Longest matching keyword wins across all categories, not category order (`Pizza Pops` matches `pizza pop` in Snacks over `pop` in Beverages).
+- Deals without a string `name` are categorized as `Other`.
+
+`scripts/smoke-deal-options.mjs` uses `matchCategory` to flag any match that is not a whole word.
+
+```{seealso}
+[](GETTING_STARTED.md), [](PACKAGES.md), [](DEALS.md), [](GROCERY_LIST.md), [](ARCHITECTURE.md)
+```

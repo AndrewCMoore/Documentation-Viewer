@@ -1,0 +1,790 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SmartSaver — Worth-It Engine (Addendum to ARCHITECTURE.md) &mdash; SmartSaver  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=3b126f1a" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.12.1/dist/mermaid.esm.min.mjs";
+
+
+
+
+
+const initStyles = () => {
+    const defaultStyle = document.createElement('style');
+    defaultStyle.textContent = "pre.mermaid {\n    /* Same as .mermaid-container > pre */\n    display: block;\n    width: 100%;\n}\n\npre.mermaid > svg {\n    /* Same as .mermaid-container > pre > svg */\n    height: 500px;\n    width: 100%;\n    max-width: 100% !important;\n}";
+    document.head.appendChild(defaultStyle);
+
+    const fullscreenStyle = document.createElement('style');
+    fullscreenStyle.textContent = ".mermaid-container {\n    position: relative;\n    display: flex;\n    flex-direction: row;\n    width: 100%;\n}\n\n.mermaid-container > pre {\n    display: block;\n    width: 100%;\n}\n\n.mermaid-container > pre > svg {\n    height: 500px;\n    width: 100%;\n    max-width: 100% !important;\n}\n\n.mermaid-fullscreen-btn {\n    position: absolute;\n    width: 28px;\n    height: 28px;\n    background: rgba(255, 255, 255, 0.95);\n    border: 1px solid rgba(0, 0, 0, 0.3);\n    border-radius: 4px;\n    cursor: pointer;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    transition: all 0.2s;\n    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);\n    font-size: 14px;\n    line-height: 1;\n    padding: 0;\n    color: #333;\n}\n\n.mermaid-fullscreen-btn:hover {\n    opacity: 100% !important;\n    background: rgba(255, 255, 255, 1);\n    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);\n    transform: scale(1.1);\n}\n\n.mermaid-fullscreen-btn.dark-theme {\n    background: rgba(50, 50, 50, 0.95);\n    border: 1px solid rgba(255, 255, 255, 0.3);\n    color: #e0e0e0;\n}\n\n.mermaid-fullscreen-btn.dark-theme:hover {\n    background: rgba(60, 60, 60, 1);\n    box-shadow: 0 3px 10px rgba(255, 255, 255, 0.2);\n}\n\n.mermaid-fullscreen-modal {\n    display: none;\n    position: fixed !important;\n    top: 0 !important;\n    left: 0 !important;\n    width: 95vw;\n    height: 100vh;\n    background: rgba(255, 255, 255, 0.98);\n    z-index: 9999;\n    padding: 20px;\n    overflow: auto;\n}\n\n.mermaid-fullscreen-modal.dark-theme {\n    background: rgba(0, 0, 0, 0.98);\n}\n\n.mermaid-fullscreen-modal.active {\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen {\n    position: relative;\n    width: 95vw;\n    height: 90vh;\n    max-width: 95vw;\n    max-height: 90vh;\n    background: white;\n    border-radius: 8px;\n    padding: 20px;\n    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);\n    overflow: auto;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen.dark-theme {\n    background: #1a1a1a;\n    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);\n}\n\n.mermaid-container-fullscreen pre.mermaid {\n    width: 100%;\n    height: 100%;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen .mermaid svg {\n    height: 100% !important;\n    width: 100% !important;\n    cursor: grab;\n}\n\n.mermaid-fullscreen-close {\n    position: fixed !important;\n    top: 20px !important;\n    right: 20px !important;\n    width: 40px;\n    height: 40px;\n    background: rgba(255, 255, 255, 0.95);\n    border: 1px solid rgba(0, 0, 0, 0.2);\n    border-radius: 50%;\n    cursor: pointer;\n    z-index: 10000;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);\n    transition: all 0.2s;\n    font-size: 24px;\n    line-height: 1;\n    color: #333;\n}\n\n.mermaid-fullscreen-close:hover {\n    background: white;\n    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);\n    transform: scale(1.1);\n}\n\n.mermaid-fullscreen-close.dark-theme {\n    background: rgba(50, 50, 50, 0.95);\n    border: 1px solid rgba(255, 255, 255, 0.2);\n    color: #e0e0e0;\n}\n\n.mermaid-fullscreen-close.dark-theme:hover {\n    background: rgba(60, 60, 60, 1);\n    box-shadow: 0 6px 16px rgba(255, 255, 255, 0.2);\n}\n\n.mermaid-fullscreen-modal .mermaid-fullscreen-btn {\n    display: none !important;\n}";
+    document.head.appendChild(fullscreenStyle);
+}
+
+// Detect if page has dark background
+const isDarkTheme = () => {
+    // We use a set of heuristics:
+    // 1. Check for common dark mode classes or attributes
+    // 2. Check computed background color brightness
+    if (document.documentElement.classList.contains('dark') ||
+        document.documentElement.getAttribute('data-theme') === 'dark' ||
+        document.body.classList.contains('dark') ||
+        document.body.getAttribute('data-theme') === 'dark') {
+        // console.log("Dark theme detected via class/attribute");
+        return true;
+    }
+    if (document.documentElement.classList.contains('light') ||
+        document.documentElement.getAttribute('data-theme') === 'light' ||
+        document.body.classList.contains('light') ||
+        document.body.getAttribute('data-theme') === 'light') {
+        // console.log("Light theme detected via class/attribute");
+        return false;
+    }
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        // console.log("Dark theme detected via prefers-color-scheme");
+        return true;
+    }
+    const bgColor = window.getComputedStyle(document.body).backgroundColor;
+    const match = bgColor.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/);
+    if (match) {
+        const r = parseInt(match[1]);
+        const g = parseInt(match[2]);
+        const b = parseInt(match[3]);
+        const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+        // console.log("Background color brightness:", brightness);
+        return brightness < 128;
+    }
+    // console.log("No dark or light theme detected, defaulting to light theme");
+    return false;
+};
+
+let darkTheme = isDarkTheme();
+let modal = null;
+let modalContent = null;
+let previousScrollOffset = [window.scrollX, window.scrollY];
+let _lazyObserver = null;
+let _renderQueue = Promise.resolve();
+let closeModal = () => {};
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal?.classList.contains('active')) {
+        closeModal();
+    }
+});
+
+// Apply d3 zoom to each SVG. Idempotent: an SVG already wrapped is skipped,
+// so this is safe to call both for the initial batch and for diagrams that
+// render lazily once they become visible.
+const addZoomToSvgs = (svgs) => {
+    svgs.each(function() {
+        if (this.getAttribute('data-zoom-applied') === 'true') return;
+        var svg = d3.select(this);
+        svg.html("<g class='wrapper'>" + svg.html() + "</g>");
+        var inner = svg.select("g");
+        var zoom = d3.zoom().on("zoom", function(event) {
+            inner.attr("transform", event.transform);
+        });
+        svg.call(zoom);
+        this.setAttribute('data-zoom-applied', 'true');
+    });
+};
+
+const runMermaid = async (rerun) => {
+    console.log("Running mermaid diagrams, rerun =", rerun);
+    // clear all existing mermaid charts
+    let all_mermaids = document.querySelectorAll(".mermaid");
+
+    if (rerun) {
+        // Disconnect any previous lazy rendering observer
+        if (_lazyObserver) {
+            _lazyObserver.disconnect();
+            _lazyObserver = null;
+        }
+
+        all_mermaids.forEach((el) => {
+            el.removeAttribute('data-mermaid-deferred');
+            el.removeAttribute('data-mermaid-render-failed');
+            if(!el.hasAttribute("data-original-code")) {
+                // store original code
+                // console.log(`Storing original code for first run: `, el.innerHTML);
+                el.setAttribute('data-original-code', el.innerHTML);
+            }
+            if(el.getAttribute("data-processed") === "true") {
+                // remove and restore original
+                el.removeAttribute("data-processed");
+                // console.log(`Restoring original code for re-run: `, el.getAttribute('data-original-code'));
+                el.innerHTML = el.getAttribute('data-original-code');
+            } else {
+                // store original code
+                // console.log(`Storing original code for re-run: `, el.innerHTML);
+                el.setAttribute('data-original-code', el.innerHTML);
+            }
+        });
+
+        // Separate visible and hidden elements. Mermaid's layout engine measures
+        // text dimensions via the DOM, which fails for elements hidden by a parent
+        // (e.g., Reveal.js non-active slides, sphinx-design unopened tabs),
+        // producing broken SVGs. Render visible elements now, defer hidden ones.
+        const visible = [];
+        const hidden = [];
+        all_mermaids.forEach((el) => {
+            // offsetParent is null for display:none ancestors.
+            // getClientRects().length > 0 catches position:fixed elements
+            // (which also have null offsetParent but are still visible).
+            if (el.offsetParent !== null || el.getClientRects().length > 0) {
+                visible.push(el);
+            } else {
+                hidden.push(el);
+                el.setAttribute('data-mermaid-deferred', 'true');
+            }
+        });
+
+        if (visible.length > 0) {
+            try {
+                await mermaid.run({ nodes: visible });
+            } catch (e) {
+                console.error("Mermaid rendering failed:", e);
+            }
+        }
+
+        // Lazily render hidden elements when they become visible.
+        // Uses a promise chain (_renderQueue) to serialize rendering,
+        // since IntersectionObserver may report multiple entries at once
+        // and mermaid.run() is not safe to call concurrently.
+        if (hidden.length > 0) {
+            if (typeof IntersectionObserver === 'undefined') {
+                console.warn("IntersectionObserver not available; hidden mermaid diagrams will not render.");
+            } else {
+                _renderQueue = Promise.resolve();
+                _lazyObserver = new IntersectionObserver((entries) => {
+                    for (const entry of entries) {
+                        if (entry.isIntersecting && entry.target.getAttribute("data-processed") !== "true") {
+                            _lazyObserver.unobserve(entry.target);
+                            const el = entry.target;
+                            _renderQueue = _renderQueue.then(async () => {
+                                try {
+                                    await mermaid.run({ nodes: [el] });
+                                    el.removeAttribute('data-mermaid-deferred');
+                                    // Apply zoom to the now-rendered diagram, matching
+                                    // the decoration visible diagrams receive.
+                                    if (false) {
+                                        addZoomToSvgs(d3.selectAll("").select(function() {
+                                            return this.querySelector("svg");
+                                        }));
+                                    }
+                                } catch (e) {
+                                    console.error("Mermaid deferred rendering failed:", e);
+                                    el.removeAttribute('data-mermaid-deferred');
+                                    el.setAttribute('data-mermaid-render-failed', 'true');
+                                }
+                            });
+                        }
+                    }
+                });
+                hidden.forEach((el) => _lazyObserver.observe(el));
+            }
+        }
+    }
+
+    all_mermaids = document.querySelectorAll(".mermaid");
+    // Exclude deferred (hidden) and render-failed elements from completion checks
+    const mermaids_active = document.querySelectorAll(".mermaid:not([data-mermaid-deferred]):not([data-mermaid-render-failed])");
+    const mermaids_processed = document.querySelectorAll(".mermaid:not([data-mermaid-deferred]):not([data-mermaid-render-failed])[data-processed='true']");
+
+    if (false) {
+        const mermaids_to_add_zoom = 0 === -1 ? mermaids_active.length : 0;
+        if(mermaids_to_add_zoom > 0) {
+            var svgs = d3.selectAll("").select(function() {
+                return this.querySelector("svg");
+            });
+            // Wait until every active (visible) diagram has rendered. Deferred
+            // diagrams are excluded, so a fixed d3_node_count that counts a
+            // hidden diagram no longer loops forever waiting for its SVG.
+            if(mermaids_active.length !== mermaids_processed.length) {
+                setTimeout(() => runMermaid(false), 200);
+                return;
+            }
+            addZoomToSvgs(svgs);
+        }
+    } else if(mermaids_active.length !== mermaids_processed.length) {
+        // Wait for mermaid to process all diagrams
+        setTimeout(() => runMermaid(false), 200);
+        return;
+    }
+
+    // Stop here if not adding fullscreen capability
+    if (!true) return;
+
+    if (modal !== null ) {
+        // Destroy existing modal
+        modal.remove();
+        modal = null;
+        modalContent = null;
+    }
+
+    modal = document.createElement('div');
+    modal.className = 'mermaid-fullscreen-modal' + (darkTheme ? ' dark-theme' : '');
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-label', 'Fullscreen diagram viewer');
+    modal.innerHTML = `
+        <button class="mermaid-fullscreen-close${darkTheme ? ' dark-theme' : ''}" aria-label="Close fullscreen">✕</button>
+        <div class="mermaid-container-fullscreen${darkTheme ? ' dark-theme' : ''}"></div>
+    `;
+    document.body.appendChild(modal);
+
+    modalContent = modal.querySelector('.mermaid-container-fullscreen');
+    const closeBtn = modal.querySelector('.mermaid-fullscreen-close');
+
+    closeModal = () => {
+        modal.classList.remove('active');
+        modalContent.innerHTML = '';
+        document.body.style.overflow = ''
+        window.scrollTo({left: previousScrollOffset[0], top: previousScrollOffset[1], behavior: 'instant'});
+    };
+
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+    });
+    document.querySelectorAll('.mermaid').forEach((mermaidDiv) => {
+        if (mermaidDiv.parentNode.classList.contains('mermaid-container') ||
+            mermaidDiv.closest('.mermaid-fullscreen-modal')) {
+            // Already processed, adjust button class if needed
+            const existingBtn = mermaidDiv.parentNode.querySelector('.mermaid-fullscreen-btn');
+            if (existingBtn) {
+                existingBtn.className = 'mermaid-fullscreen-btn' + (darkTheme ? ' dark-theme' : '');
+            }
+            return;
+        }
+
+        const container = document.createElement('div');
+        container.className = 'mermaid-container';
+        mermaidDiv.parentNode.insertBefore(container, mermaidDiv);
+        container.appendChild(mermaidDiv);
+
+        const fullscreenBtn = document.createElement('button');
+        fullscreenBtn.className = 'mermaid-fullscreen-btn' + (darkTheme ? ' dark-theme' : '');
+        fullscreenBtn.setAttribute('aria-label', 'View diagram in fullscreen');
+        fullscreenBtn.textContent = "\u26f6";
+        fullscreenBtn.style.opacity = "50%";
+
+        // Calculate dynamic position based on diagram's margin and padding
+        const diagramStyle = window.getComputedStyle(mermaidDiv);
+        const marginTop = parseFloat(diagramStyle.marginTop) || 0;
+        const marginRight = parseFloat(diagramStyle.marginRight) || 0;
+        const paddingTop = parseFloat(diagramStyle.paddingTop) || 0;
+        const paddingRight = parseFloat(diagramStyle.paddingRight) || 0;
+        fullscreenBtn.style.top = `${marginTop + paddingTop + 4}px`;
+        fullscreenBtn.style.right = `${marginRight + paddingRight + 4}px`;
+
+        fullscreenBtn.addEventListener('click', () => {
+            previousScrollOffset = [window.scrollX, window.scrollY];
+            const clone = mermaidDiv.cloneNode(true);
+            modalContent.innerHTML = '';
+            modalContent.appendChild(clone);
+
+            const svg = clone.querySelector('svg');
+            if (svg) {
+                svg.removeAttribute('width');
+                svg.removeAttribute('height');
+                svg.style.width = '100%';
+                svg.style.height = 'auto';
+                svg.style.maxWidth = '100%';
+                svg.style.display = 'block';
+
+                if (false) {
+                    setTimeout(() => {
+                        const g = svg.querySelector('g');
+                        if (g) {
+                            var svgD3 = d3.select(svg);
+                            svgD3.html("<g class='wrapper'>" + svgD3.html() + "</g>");
+                            var inner = svgD3.select("g");
+                            var zoom = d3.zoom().on("zoom", function(event) {
+                                inner.attr("transform", event.transform);
+                            });
+                            svgD3.call(zoom);
+                        }
+                    }, 100);
+                }
+            }
+
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+        container.appendChild(fullscreenBtn);
+    });
+};
+
+
+
+const load = async () => {
+    initStyles();
+
+
+    await runMermaid(true);
+
+    const reRunIfThemeChanges = async () => {
+        const newDarkTheme = isDarkTheme();
+        if (newDarkTheme !== darkTheme) {
+            darkTheme = newDarkTheme;
+            console.log("Theme change detected, re-running mermaid with", darkTheme ? "dark" : "default", "theme");
+            await mermaid.initialize(
+                {...{"startOnLoad": false},
+                ...{ darkMode: darkTheme, theme: darkTheme ? "dark" : "default" },
+                }
+            );
+            await runMermaid(true);
+        }
+    };
+
+    // Update theme classes when theme changes
+    const themeObserver = new MutationObserver(reRunIfThemeChanges);
+    themeObserver.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['class', 'style', 'data-theme']
+    });
+    themeObserver.observe(document.body, {
+        attributes: true,
+        attributeFilter: ['class', 'style', 'data-theme']
+    });
+};
+
+
+
+
+
+console.log("Initializing mermaid with", darkTheme ? "dark" : "default", "theme");
+mermaid.initialize(
+    {...{"startOnLoad": false},
+    ...{ darkMode: darkTheme, theme: darkTheme ? "dark" : "default" },
+    }
+);
+
+window.addEventListener("load", load);
+window.runMermaid = runMermaid;</script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="SmartSaver — Rewards &amp; Grocer Preference (Addendum to ARCHITECTURE.md)" href="REWARDS.html" />
+    <link rel="prev" title="SmartSaver — Location &amp; Store Discovery (Addendum to ARCHITECTURE.md)" href="LOCATION.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #1b1a3a" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            SmartSaver
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="GETTING_STARTED.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PACKAGES.html">Packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="API.html">API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Design</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="ARCHITECTURE.html">SmartSaver — Multi-Platform Architecture &amp; Planning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DIAGRAMS.html">SmartSaver — Architecture Diagrams (for audit)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DEALS.html">SmartSaver — Deals Layer (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="GROCERY_LIST.html">SmartSaver — Grocery List (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="GROCERY_EDITOR.html">SmartSaver — Grocery List Editor UI (Addendum to GROCERY_LIST.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LOCATION.html">SmartSaver — Location &amp; Store Discovery (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">SmartSaver — Worth-It Engine (Addendum to ARCHITECTURE.md)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#what-the-worth-it-engine-is">1. What the Worth-It Engine is</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#where-it-fits-the-full-data-flow">2. Where it fits (the full data flow)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-core-idea-marginal-not-absolute">3. The core idea: marginal, not absolute</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-decision-in-one-line">4. The decision, in one line</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fuel-time-model-the-assumptions-we-make-explicit">5. Fuel &amp; time model (the assumptions we make explicit)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#getting-distance-and-duration-the-routing-seam">6. Getting Δdistance and Δduration (the routing seam)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#one-store-vs-many-the-cherry-picking-tradeoff">7. One store vs. many: the cherry-picking tradeoff</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#core-data-model">8. Core data model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#key-flows">9. Key flows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#known-constraints-to-design-around">10. Known constraints to design around</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#proposed-folder-shape-additions">11. Proposed folder shape (additions)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#suggested-build-order-later">12. Suggested build order (later)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="REWARDS.html">SmartSaver — Rewards &amp; Grocer Preference (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SETTINGS.html">SmartSaver — Cost-Model Settings (Addendum to WORTH_IT.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DATABASE.html">SmartSaver — Database (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DEFENSIVE.html">SmartSaver — Defensive Programming Rules</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Clients</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="WEBAPP.html">SmartSaver — Web App Build Plan (<code class="docutils literal notranslate"><span class="pre">apps/web</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MOBILE.html">SmartSaver — Mobile App Build Plan (<code class="docutils literal notranslate"><span class="pre">apps/mobile</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="STYLE_GUIDE.html">SmartSaver — Style Guide (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="USER_STATES.html">User States</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #1b1a3a" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">SmartSaver</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">SmartSaver — Worth-It Engine (Addendum to ARCHITECTURE.md)</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/WORTH_IT.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="smartsaver-worth-it-engine-addendum-to-architecture-md">
+<h1>SmartSaver — Worth-It Engine (Addendum to ARCHITECTURE.md)<a class="headerlink" href="#smartsaver-worth-it-engine-addendum-to-architecture-md" title="Link to this heading"></a></h1>
+<blockquote>
+<div><p>Planning document. No application code yet — this captures the design for the
+“is this store worth the trip?” decision layer so we can build against it
+later. Read alongside <code class="docutils literal notranslate"><span class="pre">ARCHITECTURE.md</span></code>, <code class="docutils literal notranslate"><span class="pre">DEALS.md</span></code>, and <code class="docutils literal notranslate"><span class="pre">GROCERY_LIST.md</span></code>.
+This is the layer that turns <em>matched savings</em> into a <em>keep-or-skip</em> decision.</p>
+</div></blockquote>
+<section id="what-the-worth-it-engine-is">
+<h2>1. What the Worth-It Engine is<a class="headerlink" href="#what-the-worth-it-engine-is" title="Link to this heading"></a></h2>
+<p>The judgment layer. <code class="docutils literal notranslate"><span class="pre">GROCERY_LIST.md</span></code> tells us <strong>how much a store saves</strong> on your
+basket; <code class="docutils literal notranslate"><span class="pre">ARCHITECTURE.md</span></code> tells us <strong>what a detour costs</strong> in fuel and time. The
+Worth-It Engine puts them on the same scale — dollars — and answers the only
+question a shopper actually cares about:</p>
+<blockquote>
+<div><p><strong>“I could save $8 on my list at the No Frills across town — but is it worth
+the extra 12 km and 20 minutes to get there?”</strong></p>
+</div></blockquote>
+<p>It ranks candidate stores by <strong>net benefit</strong> (savings minus the cost of reaching
+them) and recommends the set of stops that maximizes net savings — so we never
+send someone 15 minutes out of their way to save $1.50.</p>
+</section>
+<section id="where-it-fits-the-full-data-flow">
+<h2>2. Where it fits (the full data flow)<a class="headerlink" href="#where-it-fits-the-full-data-flow" title="Link to this heading"></a></h2>
+<pre  class="mermaid">
+        graph TD
+  GL[&quot;Grocery list (demand)&quot;] --&gt; M[&quot;Matching&quot;]
+  DL[&quot;Deals per store (supply)&quot;] --&gt; M
+  M --&gt; BS[&quot;per-store basket savings&quot;]
+  RT[&quot;Route + fuel/time model (ARCHITECTURE §4)&quot;] --&gt; DC[&quot;marginal detour cost&quot;]
+  BS --&gt; WI[&quot;WORTH-IT ENGINE&quot;]
+  DC --&gt; WI
+  WI --&gt; NB[&quot;net benefit per store → keep/skip → ranked stops&quot;]
+  NB --&gt; TS[&quot;Trip.stops → OSRM /trip → route + handoff&quot;]
+    </pre><p>The engine sits <strong>after</strong> matching (it needs savings) and <strong>beside</strong> routing (it
+needs marginal distance/time), and its output feeds the same <code class="docutils literal notranslate"><span class="pre">Trip.stops</span></code> the
+optimizer already consumes.</p>
+</section>
+<section id="the-core-idea-marginal-not-absolute">
+<h2>3. The core idea: marginal, not absolute<a class="headerlink" href="#the-core-idea-marginal-not-absolute" title="Link to this heading"></a></h2>
+<p>Everything here is <strong>marginal</strong> — measured against a baseline of <em>not making the
+stop</em>. This is the single most important design decision, because absolute
+numbers lie:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Naïve (wrong)</p></th>
+<th class="head"><p>Marginal (right)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Distance from home to the store</p></td>
+<td><p>Extra distance this stop <strong>adds to the optimized route</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p>Total basket price at the store</p></td>
+<td><p>Savings <strong>vs. what you’d pay without this stop</strong> (your next-best option)</p></td>
+</tr>
+<tr class="row-even"><td><p>“Store B is cheap”</p></td>
+<td><p>“Store B is cheaper <em>than where you’d otherwise buy these items</em>”</p></td>
+</tr>
+</tbody>
+</table>
+<p>A store 10 km away that’s already on your route costs ~0 extra to visit. A store
+1 km away that forces a U-turn adds real distance. The decision must use the
+<strong>delta the stop introduces</strong>, not raw geography.</p>
+</section>
+<section id="the-decision-in-one-line">
+<h2>4. The decision, in one line<a class="headerlink" href="#the-decision-in-one-line" title="Link to this heading"></a></h2>
+<p>For a candidate store <code class="docutils literal notranslate"><span class="pre">s</span></code>, given the plan you’d otherwise run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>netBenefit(s) = savings(s) − fuelCost(Δdistance) − timeCost(Δduration)
+
+keep s  ⟺  netBenefit(s) ≥ minWorthItThreshold
+</pre></div>
+</div>
+<blockquote>
+<div><p><strong>Extended by <code class="docutils literal notranslate"><span class="pre">REWARDS.md</span></code>:</strong> grocer preference adds one dollar-denominated
+term, <code class="docutils literal notranslate"><span class="pre">+</span> <span class="pre">rewardsValue(s)</span></code> (loyalty points earned on the incremental basket,
+valued at a user-set $/point). It defaults to $0 — like <code class="docutils literal notranslate"><span class="pre">valueOfTime</span></code> — and
+rides in via <code class="docutils literal notranslate"><span class="pre">costModel.rewards</span></code>, leaving this formula’s shape and the greedy
+selection unchanged.</p>
+</div></blockquote>
+<p>Where:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>fuelCost(Δdistance) = Δdistance × fuelPrice / efficiency        // $ of gas burned on the detour
+timeCost(Δduration) = Δduration × valueOfTime                   // $ you implicitly pay in time
+savings(s)          = Σ items bought at s ( baselinePrice(item) − price(item @ s) )
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">Δdistance</span></code>, <code class="docutils literal notranslate"><span class="pre">Δduration</span></code></strong> — the <em>extra</em> km and minutes this stop adds to the
+route (route-with-s minus route-without-s), from OSRM. See §6.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">baselinePrice(item)</span></code></strong> — what the same item would cost on your next-best
+option: the cheapest place already on your route, else your default store, else
+a reference/regular price. The counterfactual is what makes savings honest.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">valueOfTime</span></code></strong> — user-set $/hour (default <strong>$0</strong> → pure fuel-vs-savings;
+the strictest, most defensible mode). Users who want it can opt into valuing
+time; we never invent a dollar value for their hour silently.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">minWorthItThreshold</span></code></strong> — small positive floor (e.g. $2) so we don’t route
+someone across town to net a nickel; covers estimate error too.</p></li>
+</ul>
+</section>
+<section id="fuel-time-model-the-assumptions-we-make-explicit">
+<h2>5. Fuel &amp; time model (the assumptions we make explicit)<a class="headerlink" href="#fuel-time-model-the-assumptions-we-make-explicit" title="Link to this heading"></a></h2>
+<p>Per <code class="docutils literal notranslate"><span class="pre">ARCHITECTURE.md</span> <span class="pre">§10</span></code>, these are <strong>user-supplied approximations</strong>, surfaced
+and editable — never hidden constants:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Input</p></th>
+<th class="head"><p>Default (prototype)</p></th>
+<th class="head"><p>Notes</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Fuel price</p></td>
+<td><p>user’s region $/L (or $/gal)</p></td>
+<td><p>Single largest driver of cost; let user set it</p></td>
+</tr>
+<tr class="row-odd"><td><p>Fuel efficiency</p></td>
+<td><p>e.g. 8.9 L/100km (~26 mpg)</p></td>
+<td><p>User’s vehicle; store in settings</p></td>
+</tr>
+<tr class="row-even"><td><p>Value of time</p></td>
+<td><p><strong>$0/hr</strong> (opt-in above that)</p></td>
+<td><p>$0 = decide on fuel alone; conservative default</p></td>
+</tr>
+<tr class="row-odd"><td><p>Units</p></td>
+<td><p>metric or imperial</p></td>
+<td><p>One toggle drives both fuel price and efficiency</p></td>
+</tr>
+<tr class="row-even"><td><p>Round-trip?</p></td>
+<td><p><strong>yes</strong> — a detour adds distance <em>there and back</em> onto the route</p></td>
+<td><p>Δ already captures this via route-with vs route-without</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Unit-safe formula (canonical, metric):</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>fuelCost = (ΔdistanceKm / 100) × litresPer100km × pricePerLitre
+</pre></div>
+</div>
+<p><strong>Imperial:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>fuelCost = (ΔdistanceMiles / mpg) × pricePerGallon
+</pre></div>
+</div>
+<p>The engine works in one canonical unit internally (metres + seconds from OSRM,
+converted once) so the two formulas above are just presentation of the same math.</p>
+</section>
+<section id="getting-distance-and-duration-the-routing-seam">
+<h2>6. Getting Δdistance and Δduration (the routing seam)<a class="headerlink" href="#getting-distance-and-duration-the-routing-seam" title="Link to this heading"></a></h2>
+<p>The marginal cost of a stop = how much longer the trip gets if we insert it.</p>
+<ul class="simple">
+<li><p><strong>Source:</strong> OSRM (<code class="docutils literal notranslate"><span class="pre">ARCHITECTURE.md</span> <span class="pre">§4</span></code>). We already compute the route; the
+engine asks for the route <strong>with</strong> the candidate and <strong>without</strong> it and takes
+the difference.</p></li>
+<li><p><strong>Cheap approximation (prototype):</strong> cheapest-insertion delta — for each
+candidate, find the best position to slot it into the current ordered stops and
+measure the added leg length/time. Avoids re-optimizing the whole trip per
+candidate.</p></li>
+<li><p><strong>Accurate (later):</strong> re-run OSRM <code class="docutils literal notranslate"><span class="pre">/trip</span></code> on the chosen set and reconcile.
+Contained behind the same interface so the upgrade is invisible upstream.</p></li>
+<li><p><strong>Discipline:</strong> mirror “only re-route when stops actually change”
+(<code class="docutils literal notranslate"><span class="pre">ARCHITECTURE.md</span> <span class="pre">§10</span></code>) — batch candidate evaluation; don’t fire OSRM per
+keystroke.</p></li>
+</ul>
+</section>
+<section id="one-store-vs-many-the-cherry-picking-tradeoff">
+<h2>7. One store vs. many: the cherry-picking tradeoff<a class="headerlink" href="#one-store-vs-many-the-cherry-picking-tradeoff" title="Link to this heading"></a></h2>
+<p>The interesting case isn’t a single store — it’s <strong>should I split my list across
+several stores to chase deals, or one-stop-shop?</strong> Each extra store adds its own
+Δdistance/Δduration but only earns savings on the items you actually buy there.</p>
+<p><strong>Greedy marginal selection (prototype):</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mf">1.</span> <span class="n">Start</span> <span class="kn">from</span><span class="w"> </span><span class="nn">the</span> <span class="n">baseline</span> <span class="n">plan</span> <span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span> <span class="n">your</span> <span class="n">usual</span> <span class="n">single</span> <span class="n">store</span><span class="p">,</span> <span class="ow">or</span> <span class="n">none</span><span class="p">)</span><span class="o">.</span>
+<span class="mf">2.</span> <span class="n">For</span> <span class="n">each</span> <span class="n">candidate</span> <span class="n">store</span><span class="p">,</span> <span class="n">compute</span> <span class="n">netBenefit</span> <span class="n">assuming</span> <span class="n">its</span> <span class="n">items</span> <span class="n">are</span> <span class="n">bought</span>
+   <span class="n">there</span> <span class="n">instead</span> <span class="n">of</span> <span class="n">at</span> <span class="n">their</span> <span class="n">current</span> <span class="n">baseline</span> <span class="n">source</span><span class="o">.</span>
+<span class="mf">3.</span> <span class="n">Add</span> <span class="n">the</span> <span class="n">store</span> <span class="k">with</span> <span class="n">the</span> <span class="n">highest</span> <span class="n">positive</span> <span class="n">netBenefit</span><span class="p">;</span> <span class="n">re</span><span class="o">-</span><span class="n">assign</span> <span class="n">those</span> <span class="n">items</span><span class="s1">'</span>
+   <span class="n">baseline</span> <span class="n">to</span> <span class="n">this</span> <span class="n">store</span> <span class="p">(</span><span class="n">so</span> <span class="n">the</span> <span class="nb">next</span> <span class="nb">round</span> <span class="n">measures</span> <span class="n">against</span> <span class="n">the</span> <span class="n">improved</span> <span class="n">plan</span><span class="p">)</span><span class="o">.</span>
+<span class="mf">4.</span> <span class="n">Repeat</span> <span class="n">until</span> <span class="n">no</span> <span class="n">remaining</span> <span class="n">store</span> <span class="n">clears</span> <span class="n">minWorthItThreshold</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>This naturally stops adding stores once detour cost outruns extra savings — the
+“worth it” line falls out of the loop, no magic constant beyond the threshold.</p>
+<p><strong>Diminishing returns are automatic:</strong> each added store shrinks the savings left
+for the next one (items already claimed) while still costing a full detour, so
+the greedy loop converges on a small, sensible set of stops — usually 1–3.</p>
+<p><strong>Later (v2):</strong> this is a prize-collecting routing problem (visit a subset of
+stores to maximize savings − travel cost). Greedy is a good, explainable
+approximation; an optimizer can refine it. Kept behind the interface in §9.</p>
+</section>
+<section id="core-data-model">
+<h2>8. Core data model<a class="headerlink" href="#core-data-model" title="Link to this heading"></a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>WorthItInputs
+ ├─ plan: Trip                    // current ordered stops (ARCHITECTURE §5)
+ ├─ candidates: [ CandidateStore ]
+ ├─ costModel: {
+ │     fuelPrice, efficiency,     // §5 — user settings
+ │     valueOfTime,               // $/hr, default 0
+ │     units,                     // metric | imperial
+ │     minWorthItThreshold        // $ floor, default ~2
+ │   }
+ └─ baseline: BaselineStrategy    // how baselinePrice is chosen (§4)
+
+CandidateStore
+ ├─ store: { label, lat, lng, postalCode }   // from a deal's store (DEALS §6)
+ ├─ matchedItems: [ { itemId, price } ]       // list ∩ deals (GROCERY_LIST §7)
+ └─ deltas: { distance, duration } | null     // filled by routing seam (§6)
+
+WorthItResult
+ ├─ perStore: [ {
+ │     store,
+ │     savings,                   // $ marginal savings on items bought here
+ │     fuelCost, timeCost,        // $ marginal detour cost
+ │     netBenefit,                // savings − fuelCost − timeCost
+ │     worthIt: boolean,          // netBenefit ≥ threshold
+ │     breakdown                  // itemized, for honest UI (§10)
+ │   } ]
+ ├─ recommendedStops: [ store ]   // greedy-selected set (§7) → become Trip.stops
+ └─ summary: { totalSavings, totalDetourCost, totalNet }
+</pre></div>
+</div>
+<p>Shapes reuse <code class="docutils literal notranslate"><span class="pre">Trip</span></code>/<code class="docutils literal notranslate"><span class="pre">store</span></code> from the existing docs so results drop straight into
+<code class="docutils literal notranslate"><span class="pre">Trip.stops</span></code> and the OSRM flow.</p>
+</section>
+<section id="key-flows">
+<h2>9. Key flows<a class="headerlink" href="#key-flows" title="Link to this heading"></a></h2>
+<p><strong>Evaluate one store</strong>
+<code class="docutils literal notranslate"><span class="pre">candidate</span> <span class="pre">has</span> <span class="pre">matchedItems</span> <span class="pre">+</span> <span class="pre">deltas</span> <span class="pre">→</span> <span class="pre">savings</span> <span class="pre">−</span> <span class="pre">fuelCost</span> <span class="pre">−</span> <span class="pre">timeCost</span> <span class="pre">→</span> <span class="pre">netBenefit</span> <span class="pre">→</span> <span class="pre">worthIt</span></code></p>
+<p><strong>Rank &amp; recommend a stop set</strong>
+<code class="docutils literal notranslate"><span class="pre">candidates</span> <span class="pre">→</span> <span class="pre">greedy</span> <span class="pre">marginal</span> <span class="pre">selection</span> <span class="pre">(§7)</span> <span class="pre">→</span> <span class="pre">recommendedStops</span> <span class="pre">→</span> <span class="pre">append</span> <span class="pre">to</span> <span class="pre">Trip.stops</span> <span class="pre">→</span> <span class="pre">OSRM</span> <span class="pre">/trip</span> <span class="pre">→</span> <span class="pre">route</span></code></p>
+<p><strong>Explain the call (why we said skip)</strong>
+<code class="docutils literal notranslate"><span class="pre">WorthItResult.perStore</span> <span class="pre">→</span> <span class="pre">panel:</span> <span class="pre">&quot;Save</span> <span class="pre">\$8,</span> <span class="pre">but</span> <span class="pre">+12</span> <span class="pre">km</span> <span class="pre">/</span> <span class="pre">+20</span> <span class="pre">min</span> <span class="pre">≈</span> <span class="pre">\$4.10</span> <span class="pre">→</span> <span class="pre">net</span> <span class="pre">+\$3.90</span> <span class="pre">✓&quot;</span></code> — always show the arithmetic (§10).</p>
+<p><strong>Interface (stable across v1→v2):</strong>
+<code class="docutils literal notranslate"><span class="pre">decide(inputs)</span> <span class="pre">→</span> <span class="pre">WorthItResult</span></code> — greedy today, optimizer later; UI unchanged.</p>
+</section>
+<section id="known-constraints-to-design-around">
+<h2>10. Known constraints to design around<a class="headerlink" href="#known-constraints-to-design-around" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>Garbage in, garbage out</strong> — the call is only as good as fuel price,
+efficiency, and matched savings. Every input is user-visible and editable; show
+the breakdown so a wrong number is obvious, not buried in a verdict.</p></li>
+<li><p><strong>Estimates, not bills</strong> — ETAs carry no live traffic (<code class="docutils literal notranslate"><span class="pre">ARCHITECTURE</span> <span class="pre">§10</span></code>) and
+savings depend on fuzzy matching (<code class="docutils literal notranslate"><span class="pre">GROCERY_LIST</span> <span class="pre">§9</span></code>). Present net benefit as a
+guide with a margin; that’s what <code class="docutils literal notranslate"><span class="pre">minWorthItThreshold</span></code> absorbs.</p></li>
+<li><p><strong>Time has no universal price</strong> — defaulting <code class="docutils literal notranslate"><span class="pre">valueOfTime</span></code> to $0 keeps the
+default decision defensible (fuel is a real, quotable cost). Anything above $0
+is the user’s explicit choice, shown in the breakdown.</p></li>
+<li><p><strong>Marginal, not absolute (§3)</strong> — the most common way to get this wrong is
+using home-to-store distance or raw basket price. Always diff against the
+no-stop baseline.</p></li>
+<li><p><strong>Don’t over-fragment the trip</strong> — chasing every deal into a 5-store crawl
+usually loses on fuel and time; the greedy threshold (§7) is what keeps the
+recommendation to a sane 1–3 stops.</p></li>
+<li><p><strong>Baseline honesty</strong> — savings are meaningless without a stated counterfactual;
+surface <em>what we compared against</em> (“vs. your usual store”), never a bare “save
+$8.”</p></li>
+</ul>
+</section>
+<section id="proposed-folder-shape-additions">
+<h2>11. Proposed folder shape (additions)<a class="headerlink" href="#proposed-folder-shape-additions" title="Link to this heading"></a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>smartsaver/
+├─ ARCHITECTURE.md
+├─ DEALS.md
+├─ GROCERY_LIST.md
+├─ WORTH_IT.md          ← this document
+└─ src/
+   └─ lib/worthit       ← cost model, marginal deltas, netBenefit,
+                           greedy store selection (decide(inputs) → WorthItResult)
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">lib/worthit</span></code> is framework-agnostic (like the other <code class="docutils literal notranslate"><span class="pre">lib/</span></code> modules) so it’s
+reusable for a future mobile app; it consumes <code class="docutils literal notranslate"><span class="pre">lib/match</span></code> output and <code class="docutils literal notranslate"><span class="pre">lib/route</span></code>
+deltas and produces <code class="docutils literal notranslate"><span class="pre">Trip.stops</span></code>.</p>
+</section>
+<section id="suggested-build-order-later">
+<h2>12. Suggested build order (later)<a class="headerlink" href="#suggested-build-order-later" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p>Cost model + settings (fuel price, efficiency, value of time, units) with
+sane defaults and unit-safe conversion (§5)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">netBenefit</span></code> for a single candidate given savings + deltas (§4)</p></li>
+<li><p>Routing seam: cheapest-insertion Δdistance/Δduration approximation (§6)</p></li>
+<li><p>Per-store <code class="docutils literal notranslate"><span class="pre">WorthItResult</span></code> + itemized breakdown for the panel (§8, §10)</p></li>
+<li><p>Greedy marginal store selection → <code class="docutils literal notranslate"><span class="pre">recommendedStops</span></code> (§7)</p></li>
+<li><p>Wire <code class="docutils literal notranslate"><span class="pre">recommendedStops</span></code> into <code class="docutils literal notranslate"><span class="pre">Trip.stops</span></code> → OSRM <code class="docutils literal notranslate"><span class="pre">/trip</span></code> → route + handoff</p></li>
+<li><p>“Why” UI: show savings vs. detour cost vs. net, with the baseline stated (§9)</p></li>
+<li><p>v2: accurate re-route reconciliation + prize-collecting optimizer, behind the
+<code class="docutils literal notranslate"><span class="pre">decide(inputs)</span></code> interface (§7)</p></li>
+</ol>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="LOCATION.html" class="btn btn-neutral float-left" title="SmartSaver — Location &amp; Store Discovery (Addendum to ARCHITECTURE.md)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="REWARDS.html" class="btn btn-neutral float-right" title="SmartSaver — Rewards &amp; Grocer Preference (Addendum to ARCHITECTURE.md)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

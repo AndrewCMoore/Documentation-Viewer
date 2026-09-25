@@ -1,0 +1,163 @@
+# SmartSaver — Multi-Platform Architecture & Planning
+> **Implemented in:** the [Getting Started](GETTING_STARTED.md), [Packages](PACKAGES.md) and [API](API.md) guide pages.
+
+> Planning document. No application code yet — this captures the design we
+> agreed on so we can build against it later. This repo **supersedes**
+> `C:/Jobs/Projects/smartsaver`'s `ARCHITECTURE.md`/`WEBAPP.md`/`MOBILE.md`: same
+> product, now designed as one backend serving **three** front ends (web, iOS,
+> Android) from day one instead of "web now, mobile later." The feature addenda
+> (`DEALS.md`, `GROCERY_LIST.md`, `GROCERY_EDITOR.md`, `LOCATION.md`,
+> `WORTH_IT.md`, `REWARDS.md`, `SETTINGS.md`, `DATABASE.md`, `DEFENSIVE.md`,
+> `STYLE_GUIDE.md`) are carried over **unchanged** — they describe business
+> logic and rules, not a platform, and nothing about going multi-platform
+> changes them.
+
+## 1. What SmartSaver is
+
+A multi-stop route planner that runs entirely on a **free OpenStreetMap stack**,
+optimizes the stop order to **save time and fuel/money**, then hands off actual
+turn-by-turn navigation to the user's favourite app (Google / Apple / Waze) via
+deep links. Full product logic (deals, list, worth-it, rewards, location) is
+unchanged from the original design — see the addenda above.
+
+## 2. Scope decision: one backend, three front ends
+
+| Decision | Choice | Consequence |
+|---|---|---|
+| Platform | **Web + iOS + Android, same launch** | No "mobile later" — the reuse boundary is load-bearing from the start, not aspirational |
+| Frontend tech | **React (web) + React Native/Expo (iOS, Android)** | One language (TS) across every client; business logic (`packages/core`) ships unchanged to all three; only the render layer differs per platform |
+| Backend | **One shared serverless `/api/*`, one shared cache** | Web and mobile users hit the *same* KV-cached deals/stores data — no duplicated upstream load, no drift between platforms |
+| Optimization goal | **Save money *and* time/fuel** | Unchanged from original — route optimization is core, not optional |
+
+**Why React Native over Flutter or a Capacitor/PWA wrap:** Flutter would
+require re-deriving every `lib/` contract (`worthit`, `match`, `estimate`,
+`rewards`, …) in Dart — the exact rewrite this design exists to avoid. A
+Capacitor wrap reuses more (components too, not just logic) but ships a webview,
+not a native app — weaker store presence, no real native module story if we
+ever want offline tile packs or native geolocation. React Native reuses
+**all** business logic verbatim (it's already pure TS) and gets real native
+UI/perf for the parts that differ (map, screens, gestures) — the same tradeoff
+the original `MOBILE.md` stub already reasoned through, just exercised now
+instead of later.
+
+## 3. Architecture at a glance
+
+```mermaid
+graph TB
+  subgraph clients["FRONT ENDS"]
+    WEB["apps/web<br/>React + Vite + react-map-gl"]
+    IOS["apps/mobile (iOS)<br/>React Native/Expo + maplibre-react-native"]
+    AND["apps/mobile (Android)<br/>same RN codebase as iOS"]
+  end
+  subgraph shared["packages/core (shared, pure TS)"]
+    CORE["geocode · route · estimate · maplinks<br/>location · stores · deals · list · match<br/>worthit · rewards · types · trip store"]
+  end
+  WEB --> CORE
+  IOS --> CORE
+  AND --> CORE
+  CORE -->|"/api/*"| API["shared serverless backend<br/>Flipp + Overpass + Nominatim + KV cache"]
+  CORE -->|"/route, /trip, /search"| OSRM["OSRM + Nominatim"]
+  CORE -->|"deep link"| NAV["Google / Apple / Waze"]
+```
+
+## 4. Component responsibilities
+
+| Concern | Web | Mobile (iOS/Android) | Shared? |
+|---|---|---|---|
+| Map render | MapLibre GL JS (`react-map-gl`) | `@maplibre/maplibre-react-native` | Style/tokens shared; widget swapped |
+| Business logic | `packages/core` | `packages/core` | **Yes, unchanged** |
+| State (Zustand `trip` store) | `packages/core` | `packages/core` | **Yes, unchanged** |
+| Persistence | `localStorage` | `AsyncStorage` | Behind one storage adapter interface in `packages/core` |
+| Navigation handoff | `https://` URLs | native schemes (`comgooglemaps://`, `waze://`, `maps://`) + https fallback | `lib/maplinks` shared contract, platform-specific URL builders |
+| Backend | `packages/api` (serverless) | same `packages/api` | **Yes, one instance** |
+
+## 5. Core data model
+
+Unchanged from the original design — see `WORTH_IT.md`, `LOCATION.md` for full
+shape. Summary:
+
+```
+Trip
+ ├─ stops: [ { id, label, lat, lng } ]   // ordered; [0] = origin, last = destination
+ ├─ optimize: boolean
+ ├─ route: { geometry, distanceMeters, durationSeconds, order, legs[] } | null
+ ├─ estimate: { fuelLitres, fuelCost, currency } | null
+ └─ status: idle | searching | routing | ready | error
+```
+
+## 6. Reuse contract (what's shared vs. re-implemented, per platform)
+
+| Layer | Web | Mobile | Notes |
+|---|---|---|---|
+| `packages/core/lib/*` (geocode, route, estimate, deals, stores, list, match, worthit, rewards) | shared | shared | pure TS, zero framework coupling |
+| `packages/core/store/trip.ts` (Zustand) | shared | shared | Zustand runs unchanged in RN |
+| `packages/core/types.ts` | shared | shared | |
+| `packages/api/*` | shared | shared | one deployed backend, both platforms call it |
+| `apps/web/components/*` | web-only | — | React DOM primitives |
+| `apps/mobile/components/*` | — | mobile-only | RN primitives, parity with web components by name/behavior, not code |
+| `lib/maplinks` platform shim | https URLs | native scheme + fallback | same exported contract, two implementations |
+| `lib/location` platform shim | browser geolocation | RN geolocation + permission flow | same exported contract, two implementations |
+| storage adapter | `localStorage` | `AsyncStorage` | one interface (`GROCERY_LIST.md §8`), two implementations |
+
+## 7. Monorepo folder shape
+
+```
+smartsaver/
+├─ README.md
+├─ docs/
+│  ├─ ARCHITECTURE.md       ← this document
+│  ├─ DEALS.md  GROCERY_LIST.md  GROCERY_EDITOR.md  LOCATION.md
+│  ├─ WORTH_IT.md  REWARDS.md  SETTINGS.md  DATABASE.md  DEFENSIVE.md  STYLE_GUIDE.md
+│  ├─ WEBAPP.md             ← apps/web build plan
+│  ├─ MOBILE.md             ← apps/mobile build plan
+│  └─ DIAGRAMS.md
+├─ package.json              ← npm workspaces root
+├─ apps/
+│  ├─ web/                  ← React + Vite SPA
+│  │  └─ src/components/    ← SearchBox, StopList, Map, DealList, WorthItCard, …
+│  └─ mobile/               ← Expo app (iOS + Android from one codebase)
+│     └─ src/components/    ← RN equivalents of the above
+└─ packages/
+   ├─ core/                 ← lib/, store/, types.ts — framework-agnostic
+   └─ api/                  ← serverless /api/deals, /api/stores, _cache
+```
+
+**Tooling:** npm workspaces (already the package manager in the original app;
+no Turborepo/Nx — two apps and two packages don't yet justify build-graph
+tooling; revisit if build times or workspace count grow).
+
+## 8. Deployment posture (three deployables, one backend)
+
+- **`apps/web`** → static SPA on any CDN/static host (unchanged from original).
+- **`packages/api`** → serverless functions (Vercel/Netlify), one deployment,
+  called by web directly and by mobile over the public internet.
+- **`apps/mobile`** → Expo build → App Store / Play Store, or Expo OTA for JS-only
+  updates between store releases.
+- **Prototype vs. production** posture (public demo OSRM/Nominatim → self-hosted)
+  is unchanged from the original `ARCHITECTURE.md §9` — it's a `packages/api`
+  concern, invisible to which front ends exist.
+
+## 9. Known constraints to design around
+
+Unchanged from the original (`ARCHITECTURE.md §10`) plus one addition:
+
+- **Store review lag.** iOS/Android releases aren't instant like a web deploy —
+  ship JS-only changes via Expo OTA where possible; anything touching native
+  modules needs a store review cycle. Budget for this in release planning.
+- Everything else — search quality, no live traffic, deep-link waypoint limits,
+  rate limits, cost estimate as approximation — carries over as-is.
+
+## 10. Suggested build order (later)
+
+1. Scaffold monorepo (`packages/core`, `packages/api`, workspaces config).
+2. Migrate original `src/lib/`, `src/store/`, `src/lib/types.ts` into
+   `packages/core` verbatim (it's already framework-agnostic).
+3. Migrate `api/*` into `packages/api` verbatim.
+4. `apps/web`: migrate original `src/components/` + `App.tsx`, point at
+   `packages/core`/`packages/api`.
+5. `apps/mobile`: scaffold Expo app, re-implement components in RN, swap map
+   widget, implement the two platform shims + storage adapter.
+6. Verify both apps produce the same Worth-It verdict/route for the same input
+   (shared-core parity check).
+7. Store submission prep (icons, signing, privacy policy — deal/location data
+   usage) for iOS + Android.

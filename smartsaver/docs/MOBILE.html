@@ -1,0 +1,278 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SmartSaver — Mobile App Build Plan (apps/mobile) &mdash; SmartSaver  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=3b126f1a" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="SmartSaver — Style Guide (Addendum to ARCHITECTURE.md)" href="STYLE_GUIDE.html" />
+    <link rel="prev" title="SmartSaver — Web App Build Plan (apps/web)" href="WEBAPP.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #1b1a3a" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            SmartSaver
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="GETTING_STARTED.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PACKAGES.html">Packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="API.html">API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Design</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="ARCHITECTURE.html">SmartSaver — Multi-Platform Architecture &amp; Planning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DIAGRAMS.html">SmartSaver — Architecture Diagrams (for audit)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DEALS.html">SmartSaver — Deals Layer (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="GROCERY_LIST.html">SmartSaver — Grocery List (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="GROCERY_EDITOR.html">SmartSaver — Grocery List Editor UI (Addendum to GROCERY_LIST.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LOCATION.html">SmartSaver — Location &amp; Store Discovery (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="WORTH_IT.html">SmartSaver — Worth-It Engine (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="REWARDS.html">SmartSaver — Rewards &amp; Grocer Preference (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SETTINGS.html">SmartSaver — Cost-Model Settings (Addendum to WORTH_IT.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DATABASE.html">SmartSaver — Database (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DEFENSIVE.html">SmartSaver — Defensive Programming Rules</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Clients</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="WEBAPP.html">SmartSaver — Web App Build Plan (<code class="docutils literal notranslate"><span class="pre">apps/web</span></code>)</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">SmartSaver — Mobile App Build Plan (<code class="docutils literal notranslate"><span class="pre">apps/mobile</span></code>)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#what-we-are-building">1. What we are building</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#stack">2. Stack</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#folder-shape">3. Folder shape</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#what-s-genuinely-mobile-specific-the-only-new-design-surface">4. What’s genuinely mobile-specific (the only new design surface)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#build-order">5. Build order</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#verification-end-to-end-mirrors-webapp-md-9">6. Verification (end-to-end, mirrors <code class="docutils literal notranslate"><span class="pre">WEBAPP.md</span> <span class="pre">§9</span></code>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#out-of-scope-explicit-follow-ups-not-built-now">7. Out of scope (explicit follow-ups, not built now)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="STYLE_GUIDE.html">SmartSaver — Style Guide (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="USER_STATES.html">User States</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #1b1a3a" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">SmartSaver</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">SmartSaver — Mobile App Build Plan (<code class="docutils literal notranslate"><span class="pre">apps/mobile</span></code>)</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/MOBILE.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="smartsaver-mobile-app-build-plan-apps-mobile">
+<h1>SmartSaver — Mobile App Build Plan (<code class="docutils literal notranslate"><span class="pre">apps/mobile</span></code>)<a class="headerlink" href="#smartsaver-mobile-app-build-plan-apps-mobile" title="Link to this heading"></a></h1>
+<blockquote>
+<div><p><strong>Implemented in:</strong> the <a class="reference internal" href="PACKAGES.html#apps-mobile"><span class="std std-ref">Packages</span></a> and <a class="reference internal" href="GETTING_STARTED.html#mobile-expo"><span class="std std-ref">Getting Started</span></a> guide pages.</p>
+</div></blockquote>
+<blockquote>
+<div><p>Build document, mirroring <code class="docutils literal notranslate"><span class="pre">WEBAPP.md</span></code>’s role for the web app. Promoted from
+the original repo’s <code class="docutils literal notranslate"><span class="pre">MOBILE.md</span></code> <strong>stub</strong> — mobile is no longer a “later”
+concern (<code class="docutils literal notranslate"><span class="pre">ARCHITECTURE.md</span> <span class="pre">§2</span></code>: one backend, three front ends from day one).
+Read alongside <code class="docutils literal notranslate"><span class="pre">ARCHITECTURE.md</span></code> §§4,6,7 (reuse contract, folder shape) and
+every feature addendum (<code class="docutils literal notranslate"><span class="pre">DEALS</span></code>, <code class="docutils literal notranslate"><span class="pre">GROCERY_LIST</span></code>, <code class="docutils literal notranslate"><span class="pre">LOCATION</span></code>, <code class="docutils literal notranslate"><span class="pre">WORTH_IT</span></code>,
+<code class="docutils literal notranslate"><span class="pre">REWARDS</span></code>, <code class="docutils literal notranslate"><span class="pre">SETTINGS</span></code>) — none of their contracts change for mobile.</p>
+</div></blockquote>
+<section id="what-we-are-building">
+<h2>1. What we are building<a class="headerlink" href="#what-we-are-building" title="Link to this heading"></a></h2>
+<p>The same planner experience as <code class="docutils literal notranslate"><span class="pre">apps/web</span></code>, native on iOS and Android from one
+React Native codebase: map, multi-stop list, OSRM routing, deals, Worth-It
+verdict, “Open in Maps” handoff — reusing <code class="docutils literal notranslate"><span class="pre">packages/core</span></code> unchanged and talking
+to the same <code class="docutils literal notranslate"><span class="pre">packages/api</span></code> backend as the web app.</p>
+</section>
+<section id="stack">
+<h2>2. Stack<a class="headerlink" href="#stack" title="Link to this heading"></a></h2>
+<p>**Expo (managed React Native) + TypeScript + <code class="docutils literal notranslate"><span class="pre">&#64;maplibre/maplibre-react-native</span></code></p>
+<ul class="simple">
+<li><p>the shared <code class="docutils literal notranslate"><span class="pre">packages/core</span></code> (Zustand store, all <code class="docutils literal notranslate"><span class="pre">lib/*</span></code>).**</p></li>
+</ul>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Choice</p></th>
+<th class="head"><p>Why</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Expo, not bare RN</strong></p></td>
+<td><p>OTA updates for JS-only changes (skip store review for most fixes); simpler build/signing via EAS; drop to bare only if a native module Expo doesn’t support turns out to be required (none identified yet).</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong><code class="docutils literal notranslate"><span class="pre">&#64;maplibre/maplibre-react-native</span></code></strong></p></td>
+<td><p>Same MapLibre/OSM tile stack as web — no separate map vendor, no separate style story.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong><code class="docutils literal notranslate"><span class="pre">packages/core</span></code> unchanged</strong></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ARCHITECTURE.md</span> <span class="pre">§6</span></code> — logic, types, and the Zustand store are pure TS and run as-is in RN.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="folder-shape">
+<h2>3. Folder shape<a class="headerlink" href="#folder-shape" title="Link to this heading"></a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>apps/mobile/
+├─ app.json  eas.json  package.json  tsconfig.json
+├─ App.tsx
+└─ src/
+   ├─ screens/            ← Planner, ListEditor, Settings (mirrors web's top-level layout)
+   ├─ components/         ← RN re-implementations: Map, SearchBox, StopList,
+   │                         DealList, WorthItCard, RouteSummary, OpenInMaps,
+   │                         UseMyLocation — same names/behavior as apps/web,
+   │                         no shared code (React DOM vs RN primitives differ)
+   └─ platform/
+      ├─ maplinks.native.ts   ← comgooglemaps:// / waze:// / maps:// + https fallback
+      ├─ location.native.ts   ← expo-location + permission flow
+      └─ storage.native.ts    ← AsyncStorage, implements packages/core's storage adapter
+</pre></div>
+</div>
+</section>
+<section id="what-s-genuinely-mobile-specific-the-only-new-design-surface">
+<h2>4. What’s genuinely mobile-specific (the only new design surface)<a class="headerlink" href="#what-s-genuinely-mobile-specific-the-only-new-design-surface" title="Link to this heading"></a></h2>
+<p>Everything else is answered by <code class="docutils literal notranslate"><span class="pre">ARCHITECTURE.md</span></code> / the feature addenda.
+Mobile-only concerns:</p>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">platform/maplinks.native.ts</span></code></strong> — deep-link scheme + fallback matrix:
+<code class="docutils literal notranslate"><span class="pre">comgooglemaps://</span></code>, <code class="docutils literal notranslate"><span class="pre">waze://</span></code>, <code class="docutils literal notranslate"><span class="pre">maps://</span></code> (Apple), falling back to the same
+<code class="docutils literal notranslate"><span class="pre">https://</span></code> URLs as web when the target app isn’t installed. Implements the
+same exported contract as web’s <code class="docutils literal notranslate"><span class="pre">lib/maplinks</span></code> (<code class="docutils literal notranslate"><span class="pre">ARCHITECTURE.md</span> <span class="pre">§6</span></code>).</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">platform/location.native.ts</span></code></strong> — <code class="docutils literal notranslate"><span class="pre">expo-location</span></code> + iOS/Android permission
+prompts (foreground-only; no background location needed — this is a
+plan-a-trip tool, not a tracker). Implements the same contract as web’s
+<code class="docutils literal notranslate"><span class="pre">lib/location</span></code>.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">platform/storage.native.ts</span></code></strong> — <code class="docutils literal notranslate"><span class="pre">AsyncStorage</span></code> behind the storage adapter
+interface <code class="docutils literal notranslate"><span class="pre">packages/core</span></code> already expects (<code class="docutils literal notranslate"><span class="pre">GROCERY_LIST.md</span> <span class="pre">§8</span></code>); same key
+names as web’s <code class="docutils literal notranslate"><span class="pre">localStorage</span></code> so a future account-sync feature has one
+schema, not two.</p></li>
+<li><p><strong>Map tile/style parity</strong> — reuse the same style JSON/tokens as
+<code class="docutils literal notranslate"><span class="pre">apps/web</span></code>’s MapLibre instance; verify marker/route-line rendering matches.</p></li>
+<li><p><strong>Offline behaviour</strong> — what degrades gracefully with no connectivity: cached
+last-known route/deals render read-only; new searches/routing show a clear
+“offline” state rather than a spinner that never resolves.</p></li>
+<li><p><strong>Build &amp; distribution</strong> — Expo EAS Build + Submit for iOS (App Store
+Connect) and Android (Play Console); app icons, splash, permissions strings
+(location usage description required by both stores); OTA update channel
+strategy (JS-only fixes ship without a store review).</p></li>
+</ul>
+</section>
+<section id="build-order">
+<h2>5. Build order<a class="headerlink" href="#build-order" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p><strong>Scaffold</strong> — <code class="docutils literal notranslate"><span class="pre">expo</span> <span class="pre">init</span></code> inside <code class="docutils literal notranslate"><span class="pre">apps/mobile</span></code>, wire <code class="docutils literal notranslate"><span class="pre">packages/core</span></code> as a
+workspace dependency, confirm the Zustand <code class="docutils literal notranslate"><span class="pre">trip</span></code> store imports and runs.</p></li>
+<li><p><strong>Map + shell</strong> — MapLibre RN view with the shared style; bottom-tab or
+stack nav matching the web layout’s sections (planner / list / settings).</p></li>
+<li><p><strong>Platform shims</strong> — <code class="docutils literal notranslate"><span class="pre">location.native.ts</span></code>, <code class="docutils literal notranslate"><span class="pre">storage.native.ts</span></code> first (needed
+by everything downstream); <code class="docutils literal notranslate"><span class="pre">maplinks.native.ts</span></code> can wait until handoff.</p></li>
+<li><p><strong>Origin + search + stops</strong> — RN <code class="docutils literal notranslate"><span class="pre">SearchBox</span></code>/<code class="docutils literal notranslate"><span class="pre">StopList</span></code>, backed by the
+already-shared <code class="docutils literal notranslate"><span class="pre">lib/geocode</span></code>/<code class="docutils literal notranslate"><span class="pre">lib/location</span></code> contracts.</p></li>
+<li><p><strong>Routing + estimate</strong> — draw the route line, <code class="docutils literal notranslate"><span class="pre">RouteSummary</span></code>, using the
+shared <code class="docutils literal notranslate"><span class="pre">lib/route</span></code>/<code class="docutils literal notranslate"><span class="pre">lib/estimate</span></code> — identical math to web, different render.</p></li>
+<li><p><strong>Handoff</strong> — <code class="docutils literal notranslate"><span class="pre">maplinks.native.ts</span></code> + <code class="docutils literal notranslate"><span class="pre">OpenInMaps</span></code>, native scheme first,
+https fallback verified on a device without the target app installed.</p></li>
+<li><p><strong>Deals + list + Worth-It</strong> — wire the already-shared <code class="docutils literal notranslate"><span class="pre">lib/deals</span></code>,
+<code class="docutils literal notranslate"><span class="pre">lib/list</span></code>, <code class="docutils literal notranslate"><span class="pre">lib/match</span></code>, <code class="docutils literal notranslate"><span class="pre">lib/worthit</span></code>, <code class="docutils literal notranslate"><span class="pre">lib/rewards</span></code>; this is the step
+that proves the reuse contract — verdicts must match web bit-for-bit for
+the same inputs.</p></li>
+<li><p><strong>Store prep</strong> — icons, permission strings, privacy policy copy (location +
+deal data usage), EAS build profiles, TestFlight/internal-testing rollout.</p></li>
+</ol>
+</section>
+<section id="verification-end-to-end-mirrors-webapp-md-9">
+<h2>6. Verification (end-to-end, mirrors <code class="docutils literal notranslate"><span class="pre">WEBAPP.md</span> <span class="pre">§9</span></code>)<a class="headerlink" href="#verification-end-to-end-mirrors-webapp-md-9" title="Link to this heading"></a></h2>
+<p>Same checklist as the web app’s §9, run on an iOS simulator/device and an
+Android emulator/device, plus:</p>
+<ul class="simple">
+<li><p>Web and mobile given the same list + location produce the <strong>same Worth-It
+verdict</strong> (shared-core parity — the whole point of this architecture).</p></li>
+<li><p>Deep-link handoff opens the native app when installed, falls back to
+<code class="docutils literal notranslate"><span class="pre">https://</span></code> when it isn’t, on both platforms.</p></li>
+<li><p>Airplane mode: last route/deals still render; new actions show an offline
+state, not a hang.</p></li>
+</ul>
+</section>
+<section id="out-of-scope-explicit-follow-ups-not-built-now">
+<h2>7. Out of scope (explicit follow-ups, not built now)<a class="headerlink" href="#out-of-scope-explicit-follow-ups-not-built-now" title="Link to this heading"></a></h2>
+<p>Same exclusions as <code class="docutils literal notranslate"><span class="pre">WEBAPP.md</span> <span class="pre">§8</span></code> (full list editor, saved trips/Postgres, v2
+catalog matching) plus:</p>
+<ul class="simple">
+<li><p>Push notifications, background location, widgets/App Clips — none of the
+current design calls for them.</p></li>
+<li><p>Android tablet / iPad-specific layouts — phone-first, same as web’s
+mobile-breakpoint-first responsive design.</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="WEBAPP.html" class="btn btn-neutral float-left" title="SmartSaver — Web App Build Plan (apps/web)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="STYLE_GUIDE.html" class="btn btn-neutral float-right" title="SmartSaver — Style Guide (Addendum to ARCHITECTURE.md)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

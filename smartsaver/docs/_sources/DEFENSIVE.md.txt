@@ -1,0 +1,180 @@
+# SmartSaver — Defensive Programming Rules
+
+> How we write code here. Adapted from NASA/JPL's **"Power of Ten"** rules for
+> safety-critical software (Holzmann, 2006). Those rules target C; SmartSaver is
+> JavaScript/TypeScript talking to flaky public APIs (Nominatim, OSRM) and
+> handing coordinates to external nav apps. The *spirit* — provable bounds,
+> checked inputs, no silent failure — is what keeps a route planner from sending
+> someone to the wrong hemisphere. This document is the JS translation, with the
+> concrete SmartSaver rules under each.
+>
+> Reference implementation today: `style-guide/build-tokens.mjs`
+> already follows all of the applicable rules; use it as the worked example.
+
+Legend: **A** = adopt as-is · **T** = translated to JS · **N/A** = C-specific.
+
+---
+
+## 1. Simple control flow — no recursion, no `goto` **(A)**
+
+Restrict to simple, statically analysable control flow. In JS that means:
+
+- **No recursion** for data-driven work (walking stops, legs, geocode results).
+  Recursion depth is an unbounded loop in disguise — use iteration with a bound
+  (Rule 2). *Exception:* recursion over statically-fixed structures is fine, but
+  prefer iteration.
+- No `eval`, no dynamically-built control flow, no throwing across module
+  boundaries as a way of jumping (throw only for genuine invariant violations).
+- One clear success path and one error path per operation.
+
+---
+
+## 2. All loops need a fixed upper bound **(T)**
+
+Every loop must have a bound a reader can prove terminates.
+
+- Loops over **untrusted external data** (OSRM legs, Nominatim hits) get an
+  explicit cap. Never `for (const hit of response.results)` with no ceiling —
+  a malformed or hostile response could be enormous.
+
+  ```js
+  const MAX_GEOCODE_RESULTS = 10;   // we only ever show a short pick-list
+  const MAX_STOPS = 25;             // UI + deep-link limits (see below)
+  const MAX_ROUTE_LEGS = MAX_STOPS; // one leg between consecutive stops
+  ```
+- Iterate with `boundedEntries()` / an explicit slice, exactly as
+  `build-tokens.mjs` does with `MAX_TOKENS`.
+- **No unbounded retry loops.** Network retries use a fixed count with backoff,
+  never `while (!ok)`.
+- Waypoint fan-out for deep links is capped at **9** (Google's reliable limit,
+  per `ARCHITECTURE.md` §8/§10) — enforce it in code, don't just hope.
+
+---
+
+## 3. No unbounded allocation after init **(T)**
+
+The C rule bans `malloc` after startup. In a GC language the real hazards are
+*unbounded growth* and *hidden reallocation*:
+
+- Bound anything that grows from user or network input (stop list, geocode
+  cache, route history). Enforce `MAX_STOPS` when adding, not when rendering.
+- Debounced search must **cancel/replace** in-flight requests, not accumulate
+  them (`ARCHITECTURE.md` §10). Use an `AbortController` per query.
+- Treat fetched payloads as bounded: reject responses over a sane byte size
+  before parsing.
+
+---
+
+## 4. Keep functions short (~≤ 60 lines) **(A)**
+
+One screen, one job. If a function needs a section comment, it's two functions.
+`build-tokens.mjs` was split into ~20 single-purpose builders/validators for
+exactly this reason. Route optimization, geocoding, and deep-link building each
+decompose into: **validate input → call → validate output → map to model.**
+
+---
+
+## 5. At least two assertions per function (average) **(T)**
+
+Assert on the invariants that must hold, not on things the type checker already
+guarantees. The high-value assertions in SmartSaver are on the **data model**:
+
+```js
+function assertLatLng(p, where) {
+  assert(Number.isFinite(p?.lat) && p.lat >= -90  && p.lat <= 90,  `${where}.lat out of range`);
+  assert(Number.isFinite(p?.lng) && p.lng >= -180 && p.lng <= 180, `${where}.lng out of range`);
+}
+```
+
+- Validate coordinates from **every** source (geocode result, saved trip, URL
+  param) before they touch the map or a routing request. A NaN lat silently
+  breaks OSRM and deep links.
+- Assertions are for *programmer errors / broken invariants*. Bad **user or
+  network** input is expected — handle it with validation-and-recover (Rule 7),
+  not an assert that crashes the app.
+
+---
+
+## 6. Declare data at the smallest scope **(A)**
+
+- `const` by default; `let` only when reassigned; never `var`.
+- No shared mutable module state. Trip state lives in one owned store; `lib/`
+  functions are pure (`ARCHITECTURE.md` §11 — framework-agnostic, reusable for
+  React Native).
+- Don't hoist a variable to a wider scope just to reuse the name.
+
+---
+
+## 7. Check every return value; validate every parameter **(A — the big one)**
+
+This is where a route planner lives or dies, because Nominatim and OSRM are
+external and imperfect.
+
+- **Check the HTTP result before the body:** `res.ok`, status, `content-type`.
+  Then validate the parsed shape before use — never trust `json.routes[0]`.
+- **Validate at the boundary:** wrap each external call in `lib/` behind a
+  function that returns a typed, validated result or a typed error:
+
+  ```text
+  // returns { ok: true, route } | { ok: false, reason }
+  async function fetchRoute(stops, signal) { … }
+  ```
+- **Never ignore a non-void return.** No floating promises — every `fetch`/async
+  call is awaited or explicitly `.catch()`-handled.
+- **OSRM `code !== "Ok"`, empty `routes`, zero-distance, missing geometry** are
+  all expected failure modes — surface them as `status: error` (data model §5),
+  don't render a broken map.
+- Deep-link builders validate stop count and coordinate ranges and
+  `encodeURIComponent` every value before assembling the URL.
+
+`build-tokens.mjs` models this: all `fs` I/O is wrapped, its return checked, and
+the whole token model is validated before a byte is generated.
+
+---
+
+## 8. Limited preprocessor use **(N/A)**
+
+No C preprocessor in JS. The equivalent discipline: **no code generation or
+metaprogramming in app logic.** Build-time codegen (like `tokens.mjs → tokens.css`)
+is fine because it's isolated, deterministic, and diffable — but it must
+validate its inputs and be reproducible (it is; run `--check` in CI).
+
+---
+
+## 9. Restrict pointers / indirection **(N/A → limit indirection & mutation)**
+
+No raw pointers in JS. The translated rule:
+
+- **Don't mutate inputs.** `lib/` functions never mutate the `stops` array or a
+  fetched response; they return new values. (`build-tokens.mjs` treats the
+  imported token objects as read-only.)
+- Avoid deep property chains on unvalidated data (`a.b.c.d`) — validate the
+  shape first, or use guarded access with an assertion.
+- Prefer plain data + explicit functions over clever dynamic dispatch.
+
+---
+
+## 10. Zero warnings; static analysis from day one **(A)**
+
+- **TypeScript `strict: true`** for app code (`src/`). `noUncheckedIndexedAccess`
+  on — indexing `routes[0]` should be `T | undefined`, forcing a check (Rule 7).
+- **ESLint** with `no-floating-promises`, `no-unused-vars`, `eqeqeq`, and
+  `no-restricted-globals`; **treat warnings as errors** in CI.
+- `build-tokens.mjs` (plain ESM) carries JSDoc types so `tsc --noEmit` and
+  eslint both lint it clean.
+- **CI gate** (add when tooling lands):
+  ```
+  node --check style-guide/build-tokens.mjs
+  node style-guide/build-tokens.mjs --check   # tokens.css not stale
+  tsc --noEmit
+  eslint . --max-warnings 0
+  ```
+
+---
+
+### Priority for SmartSaver
+
+Rules **2, 5, 7, 10** carry the most weight here: a route planner's failures are
+almost all *bad external data* (out-of-range coords, empty routes, oversized
+responses) and *unchecked results*. Bound the loops, validate the coordinates,
+check every response, and let the type checker and linter catch the rest.

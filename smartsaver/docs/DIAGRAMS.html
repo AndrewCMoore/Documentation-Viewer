@@ -1,0 +1,855 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SmartSaver — Architecture Diagrams (for audit) &mdash; SmartSaver  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=3b126f1a" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.12.1/dist/mermaid.esm.min.mjs";
+
+
+
+
+
+const initStyles = () => {
+    const defaultStyle = document.createElement('style');
+    defaultStyle.textContent = "pre.mermaid {\n    /* Same as .mermaid-container > pre */\n    display: block;\n    width: 100%;\n}\n\npre.mermaid > svg {\n    /* Same as .mermaid-container > pre > svg */\n    height: 500px;\n    width: 100%;\n    max-width: 100% !important;\n}";
+    document.head.appendChild(defaultStyle);
+
+    const fullscreenStyle = document.createElement('style');
+    fullscreenStyle.textContent = ".mermaid-container {\n    position: relative;\n    display: flex;\n    flex-direction: row;\n    width: 100%;\n}\n\n.mermaid-container > pre {\n    display: block;\n    width: 100%;\n}\n\n.mermaid-container > pre > svg {\n    height: 500px;\n    width: 100%;\n    max-width: 100% !important;\n}\n\n.mermaid-fullscreen-btn {\n    position: absolute;\n    width: 28px;\n    height: 28px;\n    background: rgba(255, 255, 255, 0.95);\n    border: 1px solid rgba(0, 0, 0, 0.3);\n    border-radius: 4px;\n    cursor: pointer;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    transition: all 0.2s;\n    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);\n    font-size: 14px;\n    line-height: 1;\n    padding: 0;\n    color: #333;\n}\n\n.mermaid-fullscreen-btn:hover {\n    opacity: 100% !important;\n    background: rgba(255, 255, 255, 1);\n    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);\n    transform: scale(1.1);\n}\n\n.mermaid-fullscreen-btn.dark-theme {\n    background: rgba(50, 50, 50, 0.95);\n    border: 1px solid rgba(255, 255, 255, 0.3);\n    color: #e0e0e0;\n}\n\n.mermaid-fullscreen-btn.dark-theme:hover {\n    background: rgba(60, 60, 60, 1);\n    box-shadow: 0 3px 10px rgba(255, 255, 255, 0.2);\n}\n\n.mermaid-fullscreen-modal {\n    display: none;\n    position: fixed !important;\n    top: 0 !important;\n    left: 0 !important;\n    width: 95vw;\n    height: 100vh;\n    background: rgba(255, 255, 255, 0.98);\n    z-index: 9999;\n    padding: 20px;\n    overflow: auto;\n}\n\n.mermaid-fullscreen-modal.dark-theme {\n    background: rgba(0, 0, 0, 0.98);\n}\n\n.mermaid-fullscreen-modal.active {\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen {\n    position: relative;\n    width: 95vw;\n    height: 90vh;\n    max-width: 95vw;\n    max-height: 90vh;\n    background: white;\n    border-radius: 8px;\n    padding: 20px;\n    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);\n    overflow: auto;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen.dark-theme {\n    background: #1a1a1a;\n    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);\n}\n\n.mermaid-container-fullscreen pre.mermaid {\n    width: 100%;\n    height: 100%;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen .mermaid svg {\n    height: 100% !important;\n    width: 100% !important;\n    cursor: grab;\n}\n\n.mermaid-fullscreen-close {\n    position: fixed !important;\n    top: 20px !important;\n    right: 20px !important;\n    width: 40px;\n    height: 40px;\n    background: rgba(255, 255, 255, 0.95);\n    border: 1px solid rgba(0, 0, 0, 0.2);\n    border-radius: 50%;\n    cursor: pointer;\n    z-index: 10000;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);\n    transition: all 0.2s;\n    font-size: 24px;\n    line-height: 1;\n    color: #333;\n}\n\n.mermaid-fullscreen-close:hover {\n    background: white;\n    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);\n    transform: scale(1.1);\n}\n\n.mermaid-fullscreen-close.dark-theme {\n    background: rgba(50, 50, 50, 0.95);\n    border: 1px solid rgba(255, 255, 255, 0.2);\n    color: #e0e0e0;\n}\n\n.mermaid-fullscreen-close.dark-theme:hover {\n    background: rgba(60, 60, 60, 1);\n    box-shadow: 0 6px 16px rgba(255, 255, 255, 0.2);\n}\n\n.mermaid-fullscreen-modal .mermaid-fullscreen-btn {\n    display: none !important;\n}";
+    document.head.appendChild(fullscreenStyle);
+}
+
+// Detect if page has dark background
+const isDarkTheme = () => {
+    // We use a set of heuristics:
+    // 1. Check for common dark mode classes or attributes
+    // 2. Check computed background color brightness
+    if (document.documentElement.classList.contains('dark') ||
+        document.documentElement.getAttribute('data-theme') === 'dark' ||
+        document.body.classList.contains('dark') ||
+        document.body.getAttribute('data-theme') === 'dark') {
+        // console.log("Dark theme detected via class/attribute");
+        return true;
+    }
+    if (document.documentElement.classList.contains('light') ||
+        document.documentElement.getAttribute('data-theme') === 'light' ||
+        document.body.classList.contains('light') ||
+        document.body.getAttribute('data-theme') === 'light') {
+        // console.log("Light theme detected via class/attribute");
+        return false;
+    }
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        // console.log("Dark theme detected via prefers-color-scheme");
+        return true;
+    }
+    const bgColor = window.getComputedStyle(document.body).backgroundColor;
+    const match = bgColor.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/);
+    if (match) {
+        const r = parseInt(match[1]);
+        const g = parseInt(match[2]);
+        const b = parseInt(match[3]);
+        const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+        // console.log("Background color brightness:", brightness);
+        return brightness < 128;
+    }
+    // console.log("No dark or light theme detected, defaulting to light theme");
+    return false;
+};
+
+let darkTheme = isDarkTheme();
+let modal = null;
+let modalContent = null;
+let previousScrollOffset = [window.scrollX, window.scrollY];
+let _lazyObserver = null;
+let _renderQueue = Promise.resolve();
+let closeModal = () => {};
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal?.classList.contains('active')) {
+        closeModal();
+    }
+});
+
+// Apply d3 zoom to each SVG. Idempotent: an SVG already wrapped is skipped,
+// so this is safe to call both for the initial batch and for diagrams that
+// render lazily once they become visible.
+const addZoomToSvgs = (svgs) => {
+    svgs.each(function() {
+        if (this.getAttribute('data-zoom-applied') === 'true') return;
+        var svg = d3.select(this);
+        svg.html("<g class='wrapper'>" + svg.html() + "</g>");
+        var inner = svg.select("g");
+        var zoom = d3.zoom().on("zoom", function(event) {
+            inner.attr("transform", event.transform);
+        });
+        svg.call(zoom);
+        this.setAttribute('data-zoom-applied', 'true');
+    });
+};
+
+const runMermaid = async (rerun) => {
+    console.log("Running mermaid diagrams, rerun =", rerun);
+    // clear all existing mermaid charts
+    let all_mermaids = document.querySelectorAll(".mermaid");
+
+    if (rerun) {
+        // Disconnect any previous lazy rendering observer
+        if (_lazyObserver) {
+            _lazyObserver.disconnect();
+            _lazyObserver = null;
+        }
+
+        all_mermaids.forEach((el) => {
+            el.removeAttribute('data-mermaid-deferred');
+            el.removeAttribute('data-mermaid-render-failed');
+            if(!el.hasAttribute("data-original-code")) {
+                // store original code
+                // console.log(`Storing original code for first run: `, el.innerHTML);
+                el.setAttribute('data-original-code', el.innerHTML);
+            }
+            if(el.getAttribute("data-processed") === "true") {
+                // remove and restore original
+                el.removeAttribute("data-processed");
+                // console.log(`Restoring original code for re-run: `, el.getAttribute('data-original-code'));
+                el.innerHTML = el.getAttribute('data-original-code');
+            } else {
+                // store original code
+                // console.log(`Storing original code for re-run: `, el.innerHTML);
+                el.setAttribute('data-original-code', el.innerHTML);
+            }
+        });
+
+        // Separate visible and hidden elements. Mermaid's layout engine measures
+        // text dimensions via the DOM, which fails for elements hidden by a parent
+        // (e.g., Reveal.js non-active slides, sphinx-design unopened tabs),
+        // producing broken SVGs. Render visible elements now, defer hidden ones.
+        const visible = [];
+        const hidden = [];
+        all_mermaids.forEach((el) => {
+            // offsetParent is null for display:none ancestors.
+            // getClientRects().length > 0 catches position:fixed elements
+            // (which also have null offsetParent but are still visible).
+            if (el.offsetParent !== null || el.getClientRects().length > 0) {
+                visible.push(el);
+            } else {
+                hidden.push(el);
+                el.setAttribute('data-mermaid-deferred', 'true');
+            }
+        });
+
+        if (visible.length > 0) {
+            try {
+                await mermaid.run({ nodes: visible });
+            } catch (e) {
+                console.error("Mermaid rendering failed:", e);
+            }
+        }
+
+        // Lazily render hidden elements when they become visible.
+        // Uses a promise chain (_renderQueue) to serialize rendering,
+        // since IntersectionObserver may report multiple entries at once
+        // and mermaid.run() is not safe to call concurrently.
+        if (hidden.length > 0) {
+            if (typeof IntersectionObserver === 'undefined') {
+                console.warn("IntersectionObserver not available; hidden mermaid diagrams will not render.");
+            } else {
+                _renderQueue = Promise.resolve();
+                _lazyObserver = new IntersectionObserver((entries) => {
+                    for (const entry of entries) {
+                        if (entry.isIntersecting && entry.target.getAttribute("data-processed") !== "true") {
+                            _lazyObserver.unobserve(entry.target);
+                            const el = entry.target;
+                            _renderQueue = _renderQueue.then(async () => {
+                                try {
+                                    await mermaid.run({ nodes: [el] });
+                                    el.removeAttribute('data-mermaid-deferred');
+                                    // Apply zoom to the now-rendered diagram, matching
+                                    // the decoration visible diagrams receive.
+                                    if (false) {
+                                        addZoomToSvgs(d3.selectAll("").select(function() {
+                                            return this.querySelector("svg");
+                                        }));
+                                    }
+                                } catch (e) {
+                                    console.error("Mermaid deferred rendering failed:", e);
+                                    el.removeAttribute('data-mermaid-deferred');
+                                    el.setAttribute('data-mermaid-render-failed', 'true');
+                                }
+                            });
+                        }
+                    }
+                });
+                hidden.forEach((el) => _lazyObserver.observe(el));
+            }
+        }
+    }
+
+    all_mermaids = document.querySelectorAll(".mermaid");
+    // Exclude deferred (hidden) and render-failed elements from completion checks
+    const mermaids_active = document.querySelectorAll(".mermaid:not([data-mermaid-deferred]):not([data-mermaid-render-failed])");
+    const mermaids_processed = document.querySelectorAll(".mermaid:not([data-mermaid-deferred]):not([data-mermaid-render-failed])[data-processed='true']");
+
+    if (false) {
+        const mermaids_to_add_zoom = 0 === -1 ? mermaids_active.length : 0;
+        if(mermaids_to_add_zoom > 0) {
+            var svgs = d3.selectAll("").select(function() {
+                return this.querySelector("svg");
+            });
+            // Wait until every active (visible) diagram has rendered. Deferred
+            // diagrams are excluded, so a fixed d3_node_count that counts a
+            // hidden diagram no longer loops forever waiting for its SVG.
+            if(mermaids_active.length !== mermaids_processed.length) {
+                setTimeout(() => runMermaid(false), 200);
+                return;
+            }
+            addZoomToSvgs(svgs);
+        }
+    } else if(mermaids_active.length !== mermaids_processed.length) {
+        // Wait for mermaid to process all diagrams
+        setTimeout(() => runMermaid(false), 200);
+        return;
+    }
+
+    // Stop here if not adding fullscreen capability
+    if (!true) return;
+
+    if (modal !== null ) {
+        // Destroy existing modal
+        modal.remove();
+        modal = null;
+        modalContent = null;
+    }
+
+    modal = document.createElement('div');
+    modal.className = 'mermaid-fullscreen-modal' + (darkTheme ? ' dark-theme' : '');
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-label', 'Fullscreen diagram viewer');
+    modal.innerHTML = `
+        <button class="mermaid-fullscreen-close${darkTheme ? ' dark-theme' : ''}" aria-label="Close fullscreen">✕</button>
+        <div class="mermaid-container-fullscreen${darkTheme ? ' dark-theme' : ''}"></div>
+    `;
+    document.body.appendChild(modal);
+
+    modalContent = modal.querySelector('.mermaid-container-fullscreen');
+    const closeBtn = modal.querySelector('.mermaid-fullscreen-close');
+
+    closeModal = () => {
+        modal.classList.remove('active');
+        modalContent.innerHTML = '';
+        document.body.style.overflow = ''
+        window.scrollTo({left: previousScrollOffset[0], top: previousScrollOffset[1], behavior: 'instant'});
+    };
+
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+    });
+    document.querySelectorAll('.mermaid').forEach((mermaidDiv) => {
+        if (mermaidDiv.parentNode.classList.contains('mermaid-container') ||
+            mermaidDiv.closest('.mermaid-fullscreen-modal')) {
+            // Already processed, adjust button class if needed
+            const existingBtn = mermaidDiv.parentNode.querySelector('.mermaid-fullscreen-btn');
+            if (existingBtn) {
+                existingBtn.className = 'mermaid-fullscreen-btn' + (darkTheme ? ' dark-theme' : '');
+            }
+            return;
+        }
+
+        const container = document.createElement('div');
+        container.className = 'mermaid-container';
+        mermaidDiv.parentNode.insertBefore(container, mermaidDiv);
+        container.appendChild(mermaidDiv);
+
+        const fullscreenBtn = document.createElement('button');
+        fullscreenBtn.className = 'mermaid-fullscreen-btn' + (darkTheme ? ' dark-theme' : '');
+        fullscreenBtn.setAttribute('aria-label', 'View diagram in fullscreen');
+        fullscreenBtn.textContent = "\u26f6";
+        fullscreenBtn.style.opacity = "50%";
+
+        // Calculate dynamic position based on diagram's margin and padding
+        const diagramStyle = window.getComputedStyle(mermaidDiv);
+        const marginTop = parseFloat(diagramStyle.marginTop) || 0;
+        const marginRight = parseFloat(diagramStyle.marginRight) || 0;
+        const paddingTop = parseFloat(diagramStyle.paddingTop) || 0;
+        const paddingRight = parseFloat(diagramStyle.paddingRight) || 0;
+        fullscreenBtn.style.top = `${marginTop + paddingTop + 4}px`;
+        fullscreenBtn.style.right = `${marginRight + paddingRight + 4}px`;
+
+        fullscreenBtn.addEventListener('click', () => {
+            previousScrollOffset = [window.scrollX, window.scrollY];
+            const clone = mermaidDiv.cloneNode(true);
+            modalContent.innerHTML = '';
+            modalContent.appendChild(clone);
+
+            const svg = clone.querySelector('svg');
+            if (svg) {
+                svg.removeAttribute('width');
+                svg.removeAttribute('height');
+                svg.style.width = '100%';
+                svg.style.height = 'auto';
+                svg.style.maxWidth = '100%';
+                svg.style.display = 'block';
+
+                if (false) {
+                    setTimeout(() => {
+                        const g = svg.querySelector('g');
+                        if (g) {
+                            var svgD3 = d3.select(svg);
+                            svgD3.html("<g class='wrapper'>" + svgD3.html() + "</g>");
+                            var inner = svgD3.select("g");
+                            var zoom = d3.zoom().on("zoom", function(event) {
+                                inner.attr("transform", event.transform);
+                            });
+                            svgD3.call(zoom);
+                        }
+                    }, 100);
+                }
+            }
+
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+        container.appendChild(fullscreenBtn);
+    });
+};
+
+
+
+const load = async () => {
+    initStyles();
+
+
+    await runMermaid(true);
+
+    const reRunIfThemeChanges = async () => {
+        const newDarkTheme = isDarkTheme();
+        if (newDarkTheme !== darkTheme) {
+            darkTheme = newDarkTheme;
+            console.log("Theme change detected, re-running mermaid with", darkTheme ? "dark" : "default", "theme");
+            await mermaid.initialize(
+                {...{"startOnLoad": false},
+                ...{ darkMode: darkTheme, theme: darkTheme ? "dark" : "default" },
+                }
+            );
+            await runMermaid(true);
+        }
+    };
+
+    // Update theme classes when theme changes
+    const themeObserver = new MutationObserver(reRunIfThemeChanges);
+    themeObserver.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['class', 'style', 'data-theme']
+    });
+    themeObserver.observe(document.body, {
+        attributes: true,
+        attributeFilter: ['class', 'style', 'data-theme']
+    });
+};
+
+
+
+
+
+console.log("Initializing mermaid with", darkTheme ? "dark" : "default", "theme");
+mermaid.initialize(
+    {...{"startOnLoad": false},
+    ...{ darkMode: darkTheme, theme: darkTheme ? "dark" : "default" },
+    }
+);
+
+window.addEventListener("load", load);
+window.runMermaid = runMermaid;</script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="SmartSaver — Deals Layer (Addendum to ARCHITECTURE.md)" href="DEALS.html" />
+    <link rel="prev" title="SmartSaver — Multi-Platform Architecture &amp; Planning" href="ARCHITECTURE.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #1b1a3a" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            SmartSaver
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="GETTING_STARTED.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PACKAGES.html">Packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="API.html">API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Design</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="ARCHITECTURE.html">SmartSaver — Multi-Platform Architecture &amp; Planning</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">SmartSaver — Architecture Diagrams (for audit)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#system-context-components">1. System context &amp; components</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#end-to-end-data-pipeline-demand-supply-decision-route">2. End-to-end data pipeline (demand + supply → decision → route)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#packages-core-module-dependencies-the-reuse-boundary-shared-web-mobile">3. <code class="docutils literal notranslate"><span class="pre">packages/core</span></code> module dependencies (the reuse boundary — shared web+mobile)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#trip-state-machine-architecture-md-5-zustand-packages-core">4. Trip state machine (<code class="docutils literal notranslate"><span class="pre">ARCHITECTURE.md</span> <span class="pre">§5</span></code> — Zustand, <code class="docutils literal notranslate"><span class="pre">packages/core</span></code>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#deployment-topology-three-deployables-one-backend">5. Deployment topology (three deployables, one backend)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#production-persistence-data-model-database-md-production-only">6. Production persistence — data model (<code class="docutils literal notranslate"><span class="pre">DATABASE.md</span></code>, production-only)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#deals-fetch-cache-hit-miss-same-shape-for-api-stores-same-for-both-clients">7. Deals fetch (cache hit/miss — same shape for <code class="docutils literal notranslate"><span class="pre">/api/stores</span></code>, same for both clients)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#worth-it-decision-greedy-marginal-selection-worth-it-md-4-7">8. Worth-It decision — greedy marginal selection (<code class="docutils literal notranslate"><span class="pre">WORTH_IT.md</span> <span class="pre">§4,§7</span></code>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mobile-build-release-pipeline-mobile-md-4-7-new-vs-the-original-design">9. Mobile build &amp; release pipeline (<code class="docutils literal notranslate"><span class="pre">MOBILE.md</span> <span class="pre">§4,§7</span></code> — new vs. the original design)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="DEALS.html">SmartSaver — Deals Layer (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="GROCERY_LIST.html">SmartSaver — Grocery List (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="GROCERY_EDITOR.html">SmartSaver — Grocery List Editor UI (Addendum to GROCERY_LIST.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LOCATION.html">SmartSaver — Location &amp; Store Discovery (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="WORTH_IT.html">SmartSaver — Worth-It Engine (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="REWARDS.html">SmartSaver — Rewards &amp; Grocer Preference (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SETTINGS.html">SmartSaver — Cost-Model Settings (Addendum to WORTH_IT.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DATABASE.html">SmartSaver — Database (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DEFENSIVE.html">SmartSaver — Defensive Programming Rules</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Clients</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="WEBAPP.html">SmartSaver — Web App Build Plan (<code class="docutils literal notranslate"><span class="pre">apps/web</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MOBILE.html">SmartSaver — Mobile App Build Plan (<code class="docutils literal notranslate"><span class="pre">apps/mobile</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="STYLE_GUIDE.html">SmartSaver — Style Guide (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="USER_STATES.html">User States</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #1b1a3a" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">SmartSaver</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">SmartSaver — Architecture Diagrams (for audit)</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/DIAGRAMS.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="smartsaver-architecture-diagrams-for-audit">
+<h1>SmartSaver — Architecture Diagrams (for audit)<a class="headerlink" href="#smartsaver-architecture-diagrams-for-audit" title="Link to this heading"></a></h1>
+<blockquote>
+<div><p>Derived verbatim from the design docs (<code class="docutils literal notranslate"><span class="pre">ARCHITECTURE</span></code>, <code class="docutils literal notranslate"><span class="pre">DEALS</span></code>, <code class="docutils literal notranslate"><span class="pre">GROCERY_LIST</span></code>,
+<code class="docutils literal notranslate"><span class="pre">WORTH_IT</span></code>, <code class="docutils literal notranslate"><span class="pre">REWARDS</span></code>, <code class="docutils literal notranslate"><span class="pre">LOCATION</span></code>, <code class="docutils literal notranslate"><span class="pre">SETTINGS</span></code>, <code class="docutils literal notranslate"><span class="pre">DATABASE</span></code>, <code class="docutils literal notranslate"><span class="pre">WEBAPP</span></code>, <code class="docutils literal notranslate"><span class="pre">MOBILE</span></code>,
+<code class="docutils literal notranslate"><span class="pre">DEFENSIVE</span></code>). Redone from the original repo’s <code class="docutils literal notranslate"><span class="pre">DIAGRAMS.md</span></code> for the
+multi-platform monorepo (<code class="docutils literal notranslate"><span class="pre">ARCHITECTURE.md</span> <span class="pre">§2</span></code>: one backend, three front
+ends) — every diagram that named a single SPA now shows <code class="docutils literal notranslate"><span class="pre">apps/web</span></code> and
+<code class="docutils literal notranslate"><span class="pre">apps/mobile</span></code> both hanging off the same <code class="docutils literal notranslate"><span class="pre">packages/core</span></code>/<code class="docutils literal notranslate"><span class="pre">packages/api</span></code>. No
+code exists yet — these render the <em>intended</em> system. Each section ends with
+<strong>Audit:</strong> the assumptions/risks worth checking.</p>
+</div></blockquote>
+<hr class="docutils" />
+<section id="system-context-components">
+<h2>1. System context &amp; components<a class="headerlink" href="#system-context-components" title="Link to this heading"></a></h2>
+<pre  class="mermaid">
+        graph TB
+  subgraph webclient[&quot;apps/web (React + Vite + TS)&quot;]
+    WUI[&quot;components/&lt;br/&gt;Map · SearchBox · StopList · DealList&lt;br/&gt;WorthItCard · RouteSummary · OpenInMaps · UseMyLocation&quot;]
+  end
+
+  subgraph mobclient[&quot;apps/mobile (React Native/Expo, iOS + Android)&quot;]
+    MUI[&quot;components/&lt;br/&gt;RN re-implementations, same names/behavior as apps/web&quot;]
+  end
+
+  subgraph core[&quot;packages/core — framework-agnostic TS, shared by both clients&quot;]
+    STORE[&quot;store/trip.ts (Zustand)&lt;br/&gt;Trip state machine + costModel&quot;]
+    LIB[&quot;lib/ — geocode route estimate maplinks · location stores deals&lt;br/&gt;list match · worthit rewards settings&quot;]
+    STORE --&gt; LIB
+  end
+
+  WUI --&gt; STORE
+  MUI --&gt; STORE
+
+  subgraph backend[&quot;packages/api — /api/* (Vite middleware dev → serverless prod)&quot;]
+    DEALSAPI[&quot;/api/deals&lt;br/&gt;Flipp adapter&quot;]
+    STORESAPI[&quot;/api/stores&lt;br/&gt;Overpass adapter + Nominatim reverse&quot;]
+    CACHE[&quot;_cache — in-memory dev → KV/Redis prod&quot;]
+    DEALSAPI --&gt; CACHE
+    STORESAPI --&gt; CACHE
+  end
+
+  subgraph ext[&quot;EXTERNAL / OSS STACK&quot;]
+    TILES[&quot;OpenFreeMap&lt;br/&gt;vector tiles&quot;]
+    OSRM[&quot;OSRM&lt;br/&gt;/route /trip&quot;]
+    NOM[&quot;Nominatim&lt;br/&gt;geocode + reverse&quot;]
+    OVER[&quot;Overpass API&lt;br/&gt;OSM POIs&quot;]
+    FLIPP[&quot;Flipp backflipp&lt;br/&gt;weekly flyer items&quot;]
+    GEO[&quot;Device location&lt;br/&gt;browser Geolocation (web) / expo-location (mobile)&quot;]
+    NAV[&quot;Google / Apple / Waze&lt;br/&gt;https URLs (web) / native schemes + https fallback (mobile)&quot;]
+  end
+
+  subgraph prod[&quot;PRODUCTION-ONLY PERSISTENCE&quot;]
+    PG[(&quot;Postgres · PostGIS + pgvector&lt;br/&gt;catalog + saved trips&quot;)]
+    REDIS[(&quot;Redis / KV&lt;br/&gt;deals + stores cache — one shared instance for both clients&quot;)]
+  end
+
+  LIB --&gt;|tiles| TILES
+  LIB --&gt;|/route /trip| OSRM
+  LIB --&gt;|search / reverse| NOM
+  LIB --&gt;|GET /api/deals| DEALSAPI
+  LIB --&gt;|GET /api/stores| STORESAPI
+  LIB --&gt;|on-device, via platform shim| GEO
+  LIB --&gt;|deep link, ordered stops, via platform shim| NAV
+  DEALSAPI --&gt;|cache miss only| FLIPP
+  STORESAPI --&gt;|cache miss only| OVER
+  STORESAPI --&gt;|reverse-geocode postal| NOM
+  CACHE -.prod.-&gt; REDIS
+  LIB -.prod: save/load trips.-&gt; PG
+    </pre><p><strong>Audit:</strong> both clients talk to OSRM/Nominatim/tiles/device-location
+<strong>directly</strong> but reach Flipp/Overpass <strong>only via <code class="docutils literal notranslate"><span class="pre">packages/api</span></code></strong> (CORS +
+source-hiding) — this was already true for web and now must hold for mobile
+too. Postgres is production-only; the prototype has no DB. Confirm nothing in
+<code class="docutils literal notranslate"><span class="pre">packages/core/lib/</span></code> ever imports a Flipp/Overpass URL, and that mobile’s
+<code class="docutils literal notranslate"><span class="pre">location</span></code>/<code class="docutils literal notranslate"><span class="pre">maplinks</span></code> platform shims resolve to the <strong>same exported contract</strong>
+web uses, not a parallel API (<code class="docutils literal notranslate"><span class="pre">ARCHITECTURE.md</span> <span class="pre">§6</span></code>).</p>
+</section>
+<hr class="docutils" />
+<section id="end-to-end-data-pipeline-demand-supply-decision-route">
+<h2>2. End-to-end data pipeline (demand + supply → decision → route)<a class="headerlink" href="#end-to-end-data-pipeline-demand-supply-decision-route" title="Link to this heading"></a></h2>
+<pre  class="mermaid">
+        flowchart TD
+  A[&quot;Grocery list built&lt;br/&gt;lib/list · storage adapter&lt;br/&gt;(localStorage web / AsyncStorage mobile)&quot;] --&gt; M
+  B[&quot;Approximate location&lt;br/&gt;platform shim → OriginLocation&lt;br/&gt;(denied → manual → Nominatim)&quot;] --&gt; O[&quot;origin = Trip.stops[0]&quot;]
+  O --&gt; D[&quot;Discover grocers&lt;br/&gt;/api/stores → Overpass&lt;br/&gt;→ CandidateStore[]&quot;]
+  D --&gt; DE[&quot;Deals per store&lt;br/&gt;/api/deals → Flipp&lt;br/&gt;keyed by postalCode&quot;]
+  DE --&gt; M[&quot;Match: list ∩ deals&lt;br/&gt;lib/match v1 (keyword + category)&quot;]
+  M --&gt; W[&quot;WORTH-IT ENGINE&lt;br/&gt;net = savings + rewards − fuel − time&lt;br/&gt;greedy marginal selection&quot;]
+  RW[&quot;Rewards&lt;br/&gt;programFor(merchant) → rewardsValue&quot;] --&gt; W
+  RT[&quot;Routing seam (OSRM)&lt;br/&gt;Δdistance / Δduration&quot;] --&gt; W
+  W --&gt; REC[&quot;recommendedStops (1–3)&quot;]
+  REC --&gt; TS[&quot;Trip.stops&quot;]
+  TS --&gt; OPT[&quot;OSRM /trip optimize → /route&quot;]
+  OPT --&gt; OUT[&quot;route + distance / ETA / fuel&lt;br/&gt;+ Worth-It 'why' panel&quot;]
+  OUT --&gt; H[&quot;Open in Maps&lt;br/&gt;platform shim: https (web) / native scheme + fallback (mobile)&quot;]
+    </pre><p><strong>Audit:</strong> identical pipeline regardless of which client runs it — the only
+platform-varying nodes are the two explicitly marked “platform shim” steps
+(location, handoff); every other box is <code class="docutils literal notranslate"><span class="pre">packages/core</span></code> logic that must
+produce the <strong>same output for the same input</strong> on web and mobile
+(<code class="docutils literal notranslate"><span class="pre">ARCHITECTURE.md</span> <span class="pre">§6</span></code> reuse contract). <code class="docutils literal notranslate"><span class="pre">CandidateStore</span></code> is one shared shape
+(discovery fills <code class="docutils literal notranslate"><span class="pre">store</span></code>+<code class="docutils literal notranslate"><span class="pre">kind</span></code>+<code class="docutils literal notranslate"><span class="pre">distanceM</span></code>; match fills <code class="docutils literal notranslate"><span class="pre">matchedItems</span></code>;
+routing fills <code class="docutils literal notranslate"><span class="pre">deltas</span></code>) with <strong>no adapter between layers</strong>. Check that
+<code class="docutils literal notranslate"><span class="pre">distanceM</span></code> (crow-flies) is never used as travel cost, on either platform.</p>
+</section>
+<hr class="docutils" />
+<section id="packages-core-module-dependencies-the-reuse-boundary-shared-web-mobile">
+<h2>3. <code class="docutils literal notranslate"><span class="pre">packages/core</span></code> module dependencies (the reuse boundary — shared web+mobile)<a class="headerlink" href="#packages-core-module-dependencies-the-reuse-boundary-shared-web-mobile" title="Link to this heading"></a></h2>
+<pre  class="mermaid">
+        graph LR
+  STORE[&quot;store/trip.ts&quot;] --&gt; worthit
+  STORE --&gt; location
+  STORE --&gt; route
+  STORE --&gt; deals
+  STORE --&gt; list
+
+  worthit --&gt; match
+  worthit --&gt; route
+  worthit --&gt; estimate
+  worthit --&gt; rewards
+  worthit --&gt; settings
+  match --&gt; list
+  match --&gt; deals
+  estimate --&gt; settings
+  location --&gt; geocode
+
+  geocode --&gt; NOM[&quot;Nominatim&quot;]
+  route --&gt; OSRM[&quot;OSRM&quot;]
+  deals --&gt; APID[&quot;/api/deals&quot;]
+  stores --&gt; APIS[&quot;/api/stores&quot;]
+
+  location -.implemented by.-&gt; LOCWEB[&quot;web: browser Geolocation&quot;]
+  location -.implemented by.-&gt; LOCMOB[&quot;mobile: expo-location&quot;]
+  maplinks -.implemented by.-&gt; MLWEB[&quot;web: https:// URLs&quot;]
+  maplinks -.implemented by.-&gt; MLMOB[&quot;mobile: native schemes + https fallback&quot;]
+  list -.storage adapter.-&gt; STOWEB[&quot;web: localStorage&quot;]
+  list -.storage adapter.-&gt; STOMOB[&quot;mobile: AsyncStorage&quot;]
+  settings -.storage adapter.-&gt; STOWEB
+  settings -.storage adapter.-&gt; STOMOB
+  rewards -.-&gt; PM[&quot;programFor(merchant)&lt;br/&gt;static map v1 → catalog v2&quot;]
+    </pre><p><strong>Audit:</strong> <code class="docutils literal notranslate"><span class="pre">worthit</span></code> is the convergence point (consumes match + route +
+rewards + settings) — unchanged from the original design. Every doc pins a
+<strong>stable interface</strong> so v1→v2 swaps and platform swaps both stay internal:
+<code class="docutils literal notranslate"><span class="pre">match()</span></code>, <code class="docutils literal notranslate"><span class="pre">decide(inputs)→WorthItResult</span></code>, <code class="docutils literal notranslate"><span class="pre">programFor(merchant)</span></code>, the <code class="docutils literal notranslate"><span class="pre">list</span></code>/
+<code class="docutils literal notranslate"><span class="pre">settings</span></code> storage adapter, and the <code class="docutils literal notranslate"><span class="pre">location</span></code>/<code class="docutils literal notranslate"><span class="pre">maplinks</span></code> platform-shim
+contracts. <code class="docutils literal notranslate"><span class="pre">packages/core</span></code> must stay pure/framework-agnostic — this is the
+whole diagram that proves the reuse claim in <code class="docutils literal notranslate"><span class="pre">ARCHITECTURE.md</span> <span class="pre">§6</span></code>; if a
+<code class="docutils literal notranslate"><span class="pre">lib/*</span></code> module ever imports React or React Native directly, this boundary is
+broken.</p>
+</section>
+<hr class="docutils" />
+<section id="trip-state-machine-architecture-md-5-zustand-packages-core">
+<h2>4. Trip state machine (<code class="docutils literal notranslate"><span class="pre">ARCHITECTURE.md</span> <span class="pre">§5</span></code> — Zustand, <code class="docutils literal notranslate"><span class="pre">packages/core</span></code>)<a class="headerlink" href="#trip-state-machine-architecture-md-5-zustand-packages-core" title="Link to this heading"></a></h2>
+<pre  class="mermaid">
+        stateDiagram-v2
+  [*] --&gt; idle
+  idle --&gt; searching: type query (debounced geocode)
+  searching --&gt; idle: results shown, no route
+  idle --&gt; routing: stops change
+  searching --&gt; routing: pick result → stops change
+  routing --&gt; ready: OSRM Ok (geometry + distance + ETA)
+  routing --&gt; error: code≠Ok / empty routes / bad geometry
+  ready --&gt; searching: edit / add stop
+  ready --&gt; routing: reorder / optimize toggle
+  error --&gt; searching: edit
+  error --&gt; routing: retry
+    </pre><p><strong>Audit:</strong> one state machine, no per-platform variant — <code class="docutils literal notranslate"><span class="pre">apps/web</span></code> and
+<code class="docutils literal notranslate"><span class="pre">apps/mobile</span></code> both render this same store’s state, they just render it
+differently (panel vs. screen). <code class="docutils literal notranslate"><span class="pre">error</span></code> is a first-class state, not a thrown
+exception (<code class="docutils literal notranslate"><span class="pre">DEFENSIVE.md</span> <span class="pre">§7</span></code>: OSRM <code class="docutils literal notranslate"><span class="pre">code≠&quot;Ok&quot;</span></code>, empty routes, zero-distance,
+missing geometry are <em>expected</em>). Confirm re-route fires <strong>only when stops
+actually change</strong> (debounce/dedupe), not per keystroke, on either client.</p>
+</section>
+<hr class="docutils" />
+<section id="deployment-topology-three-deployables-one-backend">
+<h2>5. Deployment topology (three deployables, one backend)<a class="headerlink" href="#deployment-topology-three-deployables-one-backend" title="Link to this heading"></a></h2>
+<pre  class="mermaid">
+        graph TB
+  subgraph dev[&quot;DEV — apps/web: npm run dev, one process&quot;]
+    V[&quot;Vite :5173 · SPA + HMR&quot;]
+    MW[&quot;packages/api Vite middleware&lt;br/&gt;in-memory cache&quot;]
+    V --&gt; MW
+    V --&gt;|direct, CORS-clean| DEMO[&quot;OSRM + Nominatim&lt;br/&gt;DEMO servers&quot;]
+    V --&gt; OFM[&quot;OpenFreeMap tiles&quot;]
+    MW --&gt;|cache miss| UP1[&quot;Flipp · Overpass&quot;]
+  end
+
+  subgraph devmob[&quot;DEV — apps/mobile: Expo dev server&quot;]
+    EXPO[&quot;Expo Go / dev client&lt;br/&gt;simulator or device&quot;]
+    EXPO --&gt;|direct, same demo servers| DEMO
+  end
+
+  subgraph prod[&quot;PROD — three deployables, one shared backend&quot;]
+    CDN[&quot;apps/web: static SPA bundle · CDN&quot;]
+    STORES[&quot;apps/mobile: App Store / Play Store&lt;br/&gt;(+ Expo OTA for JS-only updates)&quot;]
+    SF[&quot;packages/api: serverless fns&lt;br/&gt;/api/deals /api/stores&quot;]
+    KV[(&quot;Managed KV / Redis&lt;br/&gt;shared cache — both clients hit the same entries&quot;)]
+    SELF[&quot;OSRM + Nominatim&lt;br/&gt;demo → self-hosted (env-swap)&quot;]
+    CDN --&gt;|/api/*| SF
+    STORES --&gt;|/api/*| SF
+    CDN --&gt;|/route /search| SELF
+    STORES --&gt;|/route /search| SELF
+    CDN --&gt; OFM2[&quot;OpenFreeMap tiles&quot;]
+    STORES --&gt; OFM2
+    SF --&gt; KV
+    SF --&gt;|cache miss| UP2[&quot;Flipp · Overpass&quot;]
+    SF --&gt; SELF
+  end
+    </pre><p><strong>Audit:</strong> the <em>only</em> dev→prod client change is meant to be <strong>endpoint env
+vars</strong> (demo→self-hosted OSRM/Nominatim) — the <code class="docutils literal notranslate"><span class="pre">/api/*</span></code> contract is identical
+for both clients, and web + mobile share one KV cache entry per
+postal-code/coordinate key (<code class="docutils literal notranslate"><span class="pre">ARCHITECTURE.md</span> <span class="pre">§2</span></code>: no duplicated upstream
+load). New risk vs. the original topology: <strong>mobile ships through app-store
+review</strong>, not a CDN push — a bad <code class="docutils literal notranslate"><span class="pre">packages/api</span></code> change can be fixed instantly
+for web but mobile users only get it once the store approves an OTA/binary
+update, so a backend contract break is worse now than when only web existed.</p>
+</section>
+<hr class="docutils" />
+<section id="production-persistence-data-model-database-md-production-only">
+<h2>6. Production persistence — data model (<code class="docutils literal notranslate"><span class="pre">DATABASE.md</span></code>, production-only)<a class="headerlink" href="#production-persistence-data-model-database-md-production-only" title="Link to this heading"></a></h2>
+<pre  class="mermaid">
+        erDiagram
+  category ||--o{ product : classifies
+  product ||--o{ product_alias : &quot;synonyms / matchTerms&quot;
+  product ||--o{ flyer_term_map : &quot;memoized match decision&quot;
+  trip ||--o{ trip_stop : &quot;ordered stops (CASCADE)&quot;
+
+  category {
+    smallint id PK
+    text slug UK
+    text label
+    smallint sort_order &quot;store-walk order&quot;
+  }
+  product {
+    bigint id PK
+    text canonical_name
+    smallint category_id FK
+    vector embedding &quot;v2 only, NULL in v1&quot;
+    timestamptz created_at
+  }
+  product_alias {
+    bigint id PK
+    bigint product_id FK
+    text term &quot;trigram index&quot;
+    text source &quot;seed|user|flyer|learned&quot;
+  }
+  flyer_term_map {
+    text raw_term PK
+    bigint product_id FK &quot;NULL = un-matchable&quot;
+    real confidence
+    timestamptz last_seen_at
+  }
+  trip {
+    uuid id PK
+    uuid user_id &quot;owner key — NOT a FK yet&quot;
+    text client &quot;web|ios|android — provenance only, never branches logic&quot;
+    boolean optimized
+    integer distance_m
+    integer duration_s
+    numeric fuel_cost
+    jsonb worthit &quot;frozen snapshot&quot;
+    geography geometry &quot;LineString 4326, optional&quot;
+    timestamptz created_at
+  }
+  trip_stop {
+    uuid id PK
+    uuid trip_id FK
+    smallint seq &quot;0 = origin&quot;
+    text label
+    geography location &quot;Point 4326&quot;
+    text postal_code &quot;deals key&quot;
+    text role &quot;origin|waypoint|destination&quot;
+    boolean from_deal
+  }
+    </pre><p><strong>Audit:</strong> two independent clusters, same as the original design; only
+addition is <code class="docutils literal notranslate"><span class="pre">trip.client</span></code>, so a saved trip records which front end created it
+— <strong>for analytics/support only</strong>, never to branch server-side behavior (one
+backend serves all clients identically, <code class="docutils literal notranslate"><span class="pre">ARCHITECTURE.md</span> <span class="pre">§2</span></code>). Deliberate
+calls to verify: <code class="docutils literal notranslate"><span class="pre">user_id</span></code> is an external <strong>owner key</strong>, not a FK (accounts
+out of scope); <code class="docutils literal notranslate"><span class="pre">worthit</span></code> stored as <strong>JSONB snapshot</strong> (frozen, never
+recomputed); <strong>deals cache stays in Redis, never these tables</strong>; <code class="docutils literal notranslate"><span class="pre">embedding</span></code>
+NULL until v2. History must never be retro-fit when fuel price / OSM /
+matching later drift.</p>
+</section>
+<hr class="docutils" />
+<section id="deals-fetch-cache-hit-miss-same-shape-for-api-stores-same-for-both-clients">
+<h2>7. Deals fetch (cache hit/miss — same shape for <code class="docutils literal notranslate"><span class="pre">/api/stores</span></code>, same for both clients)<a class="headerlink" href="#deals-fetch-cache-hit-miss-same-shape-for-api-stores-same-for-both-clients" title="Link to this heading"></a></h2>
+<pre  class="mermaid">
+        sequenceDiagram
+  participant UI as apps/web Panel or apps/mobile Screen · lib/deals
+  participant API as packages/api /api/deals
+  participant C as Cache (weekly TTL)
+  participant F as Flipp backflipp
+
+  UI-&gt;&gt;API: GET /deals?postal_code=&amp;q=
+  API-&gt;&gt;C: get(postal_code[, q])
+  alt cache hit
+    C--&gt;&gt;API: Deal[]
+  else cache miss
+    API-&gt;&gt;F: items/search?q=&amp;postal_code=
+    F--&gt;&gt;API: raw upstream items
+    API-&gt;&gt;API: normalize → Deal (adapter)
+    API-&gt;&gt;C: set(key, Deal[], weekly TTL)
+  end
+  API--&gt;&gt;UI: Deal[] — our contract, source hidden
+    </pre><p><strong>Audit:</strong> cache key = postal_code (deals) / rounded (lat,lng,radius)
+(stores); weekly TTL matches flyer cadence. Only the adapter file knows the
+upstream — <strong>neither</strong> frontend must ever learn the source changed. A web
+user and a mobile user in the same postal code now legitimately warm the same
+cache entry — confirm the cache key has nothing web-specific baked in (e.g. no
+<code class="docutils literal notranslate"><span class="pre">User-Agent</span></code>- or origin-based key component) or this sharing silently breaks.
+Unofficial <code class="docutils literal notranslate"><span class="pre">backflipp</span></code>/Overpass have no SLA (prototype risk; license/self-host
+for prod).</p>
+</section>
+<hr class="docutils" />
+<section id="worth-it-decision-greedy-marginal-selection-worth-it-md-4-7">
+<h2>8. Worth-It decision — greedy marginal selection (<code class="docutils literal notranslate"><span class="pre">WORTH_IT.md</span> <span class="pre">§4,§7</span></code>)<a class="headerlink" href="#worth-it-decision-greedy-marginal-selection-worth-it-md-4-7" title="Link to this heading"></a></h2>
+<pre  class="mermaid">
+        flowchart TD
+  S[&quot;candidates: CandidateStore[]&lt;br/&gt;(matchedItems from lib/match)&quot;] --&gt; BASE[&quot;baseline plan&lt;br/&gt;(usual single store, or none)&quot;]
+  BASE --&gt; EVAL[&quot;for each candidate — compute net:&quot;]
+  EVAL --&gt; CALC[&quot;Δdist,Δdur = cheapest-insertion (OSRM)&lt;br/&gt;savings = Σ (baselinePrice − price&#64;s)&lt;br/&gt;rewards = points × $/pt (default $0)&lt;br/&gt;fuel = Δdist × price / efficiency&lt;br/&gt;time = Δdur × valueOfTime (default $0)&lt;br/&gt;net = savings + rewards − fuel − time&quot;]
+  CALC --&gt; PICK{&quot;best positive net&lt;br/&gt;≥ minWorthItThreshold ($2)?&quot;}
+  PICK --&gt;|yes| ADD[&quot;add store → re-assign its items'&lt;br/&gt;baseline to this store&quot;]
+  ADD --&gt; EVAL
+  PICK --&gt;|no| DONE[&quot;recommendedStops (converges 1–3)&lt;br/&gt;→ Trip.stops → OSRM /trip&quot;]
+    </pre><p><strong>Audit:</strong> the “worth it” line falls out of the loop threshold — no magic
+constant beyond <code class="docutils literal notranslate"><span class="pre">$2</span></code>. Everything is <strong>marginal vs. the no-stop baseline</strong>
+(never home-to-store distance or raw basket price). <code class="docutils literal notranslate"><span class="pre">valueOfTime</span></code> and
+<code class="docutils literal notranslate"><span class="pre">rewards</span></code> default <strong>$0</strong> (honest, defensible). Diminishing returns are
+automatic (claimed items shrink the next store’s savings). The “why” panel
+must always show the arithmetic + stated baseline, never a bare verdict —
+this logic lives in <code class="docutils literal notranslate"><span class="pre">packages/core</span></code> and is identical on web and mobile; the
+parity check in <code class="docutils literal notranslate"><span class="pre">MOBILE.md</span> <span class="pre">§6</span></code> exists specifically to catch a divergence here.</p>
+</section>
+<hr class="docutils" />
+<section id="mobile-build-release-pipeline-mobile-md-4-7-new-vs-the-original-design">
+<h2>9. Mobile build &amp; release pipeline (<code class="docutils literal notranslate"><span class="pre">MOBILE.md</span> <span class="pre">§4,§7</span></code> — new vs. the original design)<a class="headerlink" href="#mobile-build-release-pipeline-mobile-md-4-7-new-vs-the-original-design" title="Link to this heading"></a></h2>
+<pre  class="mermaid">
+        flowchart LR
+  DEV[&quot;apps/mobile source&lt;br/&gt;(TS, imports packages/core)&quot;] --&gt; BUILD[&quot;EAS Build&lt;br/&gt;iOS + Android binaries&quot;]
+  BUILD --&gt; TEST[&quot;TestFlight (iOS)&lt;br/&gt;Internal testing track (Android)&quot;]
+  TEST --&gt; SUBMIT[&quot;EAS Submit&lt;br/&gt;App Store Connect / Play Console review&quot;]
+  SUBMIT --&gt; LIVE[&quot;Live on stores&quot;]
+
+  DEV -.JS-only change, no native module touched.-&gt; OTA[&quot;EAS Update (OTA)&quot;]
+  OTA --&gt;|pushed directly, no store review| LIVE
+    </pre><p><strong>Audit:</strong> the store-review path (<code class="docutils literal notranslate"><span class="pre">BUILD</span> <span class="pre">→</span> <span class="pre">TEST</span> <span class="pre">→</span> <span class="pre">SUBMIT</span></code>) is the only route
+for anything touching a native module (new native dependency, permission
+change, app icon/config) — budget real calendar time for it
+(<code class="docutils literal notranslate"><span class="pre">ARCHITECTURE.md</span> <span class="pre">§9</span></code>). The OTA path only ever ships JS/<code class="docutils literal notranslate"><span class="pre">packages/core</span></code>
+changes; confirm the release process never assumes OTA can carry a native
+change, and that a <code class="docutils literal notranslate"><span class="pre">packages/api</span></code> contract change gets rolled out
+<strong>backward-compatibly</strong> for however long store review takes, since mobile
+can’t hotfix past a breaking backend change the way web can.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="ARCHITECTURE.html" class="btn btn-neutral float-left" title="SmartSaver — Multi-Platform Architecture &amp; Planning" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="DEALS.html" class="btn btn-neutral float-right" title="SmartSaver — Deals Layer (Addendum to ARCHITECTURE.md)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

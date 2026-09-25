@@ -1,0 +1,813 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SmartSaver — Rewards &amp; Grocer Preference (Addendum to ARCHITECTURE.md) &mdash; SmartSaver  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=3b126f1a" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.12.1/dist/mermaid.esm.min.mjs";
+
+
+
+
+
+const initStyles = () => {
+    const defaultStyle = document.createElement('style');
+    defaultStyle.textContent = "pre.mermaid {\n    /* Same as .mermaid-container > pre */\n    display: block;\n    width: 100%;\n}\n\npre.mermaid > svg {\n    /* Same as .mermaid-container > pre > svg */\n    height: 500px;\n    width: 100%;\n    max-width: 100% !important;\n}";
+    document.head.appendChild(defaultStyle);
+
+    const fullscreenStyle = document.createElement('style');
+    fullscreenStyle.textContent = ".mermaid-container {\n    position: relative;\n    display: flex;\n    flex-direction: row;\n    width: 100%;\n}\n\n.mermaid-container > pre {\n    display: block;\n    width: 100%;\n}\n\n.mermaid-container > pre > svg {\n    height: 500px;\n    width: 100%;\n    max-width: 100% !important;\n}\n\n.mermaid-fullscreen-btn {\n    position: absolute;\n    width: 28px;\n    height: 28px;\n    background: rgba(255, 255, 255, 0.95);\n    border: 1px solid rgba(0, 0, 0, 0.3);\n    border-radius: 4px;\n    cursor: pointer;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    transition: all 0.2s;\n    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);\n    font-size: 14px;\n    line-height: 1;\n    padding: 0;\n    color: #333;\n}\n\n.mermaid-fullscreen-btn:hover {\n    opacity: 100% !important;\n    background: rgba(255, 255, 255, 1);\n    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);\n    transform: scale(1.1);\n}\n\n.mermaid-fullscreen-btn.dark-theme {\n    background: rgba(50, 50, 50, 0.95);\n    border: 1px solid rgba(255, 255, 255, 0.3);\n    color: #e0e0e0;\n}\n\n.mermaid-fullscreen-btn.dark-theme:hover {\n    background: rgba(60, 60, 60, 1);\n    box-shadow: 0 3px 10px rgba(255, 255, 255, 0.2);\n}\n\n.mermaid-fullscreen-modal {\n    display: none;\n    position: fixed !important;\n    top: 0 !important;\n    left: 0 !important;\n    width: 95vw;\n    height: 100vh;\n    background: rgba(255, 255, 255, 0.98);\n    z-index: 9999;\n    padding: 20px;\n    overflow: auto;\n}\n\n.mermaid-fullscreen-modal.dark-theme {\n    background: rgba(0, 0, 0, 0.98);\n}\n\n.mermaid-fullscreen-modal.active {\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen {\n    position: relative;\n    width: 95vw;\n    height: 90vh;\n    max-width: 95vw;\n    max-height: 90vh;\n    background: white;\n    border-radius: 8px;\n    padding: 20px;\n    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);\n    overflow: auto;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen.dark-theme {\n    background: #1a1a1a;\n    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);\n}\n\n.mermaid-container-fullscreen pre.mermaid {\n    width: 100%;\n    height: 100%;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen .mermaid svg {\n    height: 100% !important;\n    width: 100% !important;\n    cursor: grab;\n}\n\n.mermaid-fullscreen-close {\n    position: fixed !important;\n    top: 20px !important;\n    right: 20px !important;\n    width: 40px;\n    height: 40px;\n    background: rgba(255, 255, 255, 0.95);\n    border: 1px solid rgba(0, 0, 0, 0.2);\n    border-radius: 50%;\n    cursor: pointer;\n    z-index: 10000;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);\n    transition: all 0.2s;\n    font-size: 24px;\n    line-height: 1;\n    color: #333;\n}\n\n.mermaid-fullscreen-close:hover {\n    background: white;\n    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);\n    transform: scale(1.1);\n}\n\n.mermaid-fullscreen-close.dark-theme {\n    background: rgba(50, 50, 50, 0.95);\n    border: 1px solid rgba(255, 255, 255, 0.2);\n    color: #e0e0e0;\n}\n\n.mermaid-fullscreen-close.dark-theme:hover {\n    background: rgba(60, 60, 60, 1);\n    box-shadow: 0 6px 16px rgba(255, 255, 255, 0.2);\n}\n\n.mermaid-fullscreen-modal .mermaid-fullscreen-btn {\n    display: none !important;\n}";
+    document.head.appendChild(fullscreenStyle);
+}
+
+// Detect if page has dark background
+const isDarkTheme = () => {
+    // We use a set of heuristics:
+    // 1. Check for common dark mode classes or attributes
+    // 2. Check computed background color brightness
+    if (document.documentElement.classList.contains('dark') ||
+        document.documentElement.getAttribute('data-theme') === 'dark' ||
+        document.body.classList.contains('dark') ||
+        document.body.getAttribute('data-theme') === 'dark') {
+        // console.log("Dark theme detected via class/attribute");
+        return true;
+    }
+    if (document.documentElement.classList.contains('light') ||
+        document.documentElement.getAttribute('data-theme') === 'light' ||
+        document.body.classList.contains('light') ||
+        document.body.getAttribute('data-theme') === 'light') {
+        // console.log("Light theme detected via class/attribute");
+        return false;
+    }
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        // console.log("Dark theme detected via prefers-color-scheme");
+        return true;
+    }
+    const bgColor = window.getComputedStyle(document.body).backgroundColor;
+    const match = bgColor.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/);
+    if (match) {
+        const r = parseInt(match[1]);
+        const g = parseInt(match[2]);
+        const b = parseInt(match[3]);
+        const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+        // console.log("Background color brightness:", brightness);
+        return brightness < 128;
+    }
+    // console.log("No dark or light theme detected, defaulting to light theme");
+    return false;
+};
+
+let darkTheme = isDarkTheme();
+let modal = null;
+let modalContent = null;
+let previousScrollOffset = [window.scrollX, window.scrollY];
+let _lazyObserver = null;
+let _renderQueue = Promise.resolve();
+let closeModal = () => {};
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal?.classList.contains('active')) {
+        closeModal();
+    }
+});
+
+// Apply d3 zoom to each SVG. Idempotent: an SVG already wrapped is skipped,
+// so this is safe to call both for the initial batch and for diagrams that
+// render lazily once they become visible.
+const addZoomToSvgs = (svgs) => {
+    svgs.each(function() {
+        if (this.getAttribute('data-zoom-applied') === 'true') return;
+        var svg = d3.select(this);
+        svg.html("<g class='wrapper'>" + svg.html() + "</g>");
+        var inner = svg.select("g");
+        var zoom = d3.zoom().on("zoom", function(event) {
+            inner.attr("transform", event.transform);
+        });
+        svg.call(zoom);
+        this.setAttribute('data-zoom-applied', 'true');
+    });
+};
+
+const runMermaid = async (rerun) => {
+    console.log("Running mermaid diagrams, rerun =", rerun);
+    // clear all existing mermaid charts
+    let all_mermaids = document.querySelectorAll(".mermaid");
+
+    if (rerun) {
+        // Disconnect any previous lazy rendering observer
+        if (_lazyObserver) {
+            _lazyObserver.disconnect();
+            _lazyObserver = null;
+        }
+
+        all_mermaids.forEach((el) => {
+            el.removeAttribute('data-mermaid-deferred');
+            el.removeAttribute('data-mermaid-render-failed');
+            if(!el.hasAttribute("data-original-code")) {
+                // store original code
+                // console.log(`Storing original code for first run: `, el.innerHTML);
+                el.setAttribute('data-original-code', el.innerHTML);
+            }
+            if(el.getAttribute("data-processed") === "true") {
+                // remove and restore original
+                el.removeAttribute("data-processed");
+                // console.log(`Restoring original code for re-run: `, el.getAttribute('data-original-code'));
+                el.innerHTML = el.getAttribute('data-original-code');
+            } else {
+                // store original code
+                // console.log(`Storing original code for re-run: `, el.innerHTML);
+                el.setAttribute('data-original-code', el.innerHTML);
+            }
+        });
+
+        // Separate visible and hidden elements. Mermaid's layout engine measures
+        // text dimensions via the DOM, which fails for elements hidden by a parent
+        // (e.g., Reveal.js non-active slides, sphinx-design unopened tabs),
+        // producing broken SVGs. Render visible elements now, defer hidden ones.
+        const visible = [];
+        const hidden = [];
+        all_mermaids.forEach((el) => {
+            // offsetParent is null for display:none ancestors.
+            // getClientRects().length > 0 catches position:fixed elements
+            // (which also have null offsetParent but are still visible).
+            if (el.offsetParent !== null || el.getClientRects().length > 0) {
+                visible.push(el);
+            } else {
+                hidden.push(el);
+                el.setAttribute('data-mermaid-deferred', 'true');
+            }
+        });
+
+        if (visible.length > 0) {
+            try {
+                await mermaid.run({ nodes: visible });
+            } catch (e) {
+                console.error("Mermaid rendering failed:", e);
+            }
+        }
+
+        // Lazily render hidden elements when they become visible.
+        // Uses a promise chain (_renderQueue) to serialize rendering,
+        // since IntersectionObserver may report multiple entries at once
+        // and mermaid.run() is not safe to call concurrently.
+        if (hidden.length > 0) {
+            if (typeof IntersectionObserver === 'undefined') {
+                console.warn("IntersectionObserver not available; hidden mermaid diagrams will not render.");
+            } else {
+                _renderQueue = Promise.resolve();
+                _lazyObserver = new IntersectionObserver((entries) => {
+                    for (const entry of entries) {
+                        if (entry.isIntersecting && entry.target.getAttribute("data-processed") !== "true") {
+                            _lazyObserver.unobserve(entry.target);
+                            const el = entry.target;
+                            _renderQueue = _renderQueue.then(async () => {
+                                try {
+                                    await mermaid.run({ nodes: [el] });
+                                    el.removeAttribute('data-mermaid-deferred');
+                                    // Apply zoom to the now-rendered diagram, matching
+                                    // the decoration visible diagrams receive.
+                                    if (false) {
+                                        addZoomToSvgs(d3.selectAll("").select(function() {
+                                            return this.querySelector("svg");
+                                        }));
+                                    }
+                                } catch (e) {
+                                    console.error("Mermaid deferred rendering failed:", e);
+                                    el.removeAttribute('data-mermaid-deferred');
+                                    el.setAttribute('data-mermaid-render-failed', 'true');
+                                }
+                            });
+                        }
+                    }
+                });
+                hidden.forEach((el) => _lazyObserver.observe(el));
+            }
+        }
+    }
+
+    all_mermaids = document.querySelectorAll(".mermaid");
+    // Exclude deferred (hidden) and render-failed elements from completion checks
+    const mermaids_active = document.querySelectorAll(".mermaid:not([data-mermaid-deferred]):not([data-mermaid-render-failed])");
+    const mermaids_processed = document.querySelectorAll(".mermaid:not([data-mermaid-deferred]):not([data-mermaid-render-failed])[data-processed='true']");
+
+    if (false) {
+        const mermaids_to_add_zoom = 0 === -1 ? mermaids_active.length : 0;
+        if(mermaids_to_add_zoom > 0) {
+            var svgs = d3.selectAll("").select(function() {
+                return this.querySelector("svg");
+            });
+            // Wait until every active (visible) diagram has rendered. Deferred
+            // diagrams are excluded, so a fixed d3_node_count that counts a
+            // hidden diagram no longer loops forever waiting for its SVG.
+            if(mermaids_active.length !== mermaids_processed.length) {
+                setTimeout(() => runMermaid(false), 200);
+                return;
+            }
+            addZoomToSvgs(svgs);
+        }
+    } else if(mermaids_active.length !== mermaids_processed.length) {
+        // Wait for mermaid to process all diagrams
+        setTimeout(() => runMermaid(false), 200);
+        return;
+    }
+
+    // Stop here if not adding fullscreen capability
+    if (!true) return;
+
+    if (modal !== null ) {
+        // Destroy existing modal
+        modal.remove();
+        modal = null;
+        modalContent = null;
+    }
+
+    modal = document.createElement('div');
+    modal.className = 'mermaid-fullscreen-modal' + (darkTheme ? ' dark-theme' : '');
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-label', 'Fullscreen diagram viewer');
+    modal.innerHTML = `
+        <button class="mermaid-fullscreen-close${darkTheme ? ' dark-theme' : ''}" aria-label="Close fullscreen">✕</button>
+        <div class="mermaid-container-fullscreen${darkTheme ? ' dark-theme' : ''}"></div>
+    `;
+    document.body.appendChild(modal);
+
+    modalContent = modal.querySelector('.mermaid-container-fullscreen');
+    const closeBtn = modal.querySelector('.mermaid-fullscreen-close');
+
+    closeModal = () => {
+        modal.classList.remove('active');
+        modalContent.innerHTML = '';
+        document.body.style.overflow = ''
+        window.scrollTo({left: previousScrollOffset[0], top: previousScrollOffset[1], behavior: 'instant'});
+    };
+
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+    });
+    document.querySelectorAll('.mermaid').forEach((mermaidDiv) => {
+        if (mermaidDiv.parentNode.classList.contains('mermaid-container') ||
+            mermaidDiv.closest('.mermaid-fullscreen-modal')) {
+            // Already processed, adjust button class if needed
+            const existingBtn = mermaidDiv.parentNode.querySelector('.mermaid-fullscreen-btn');
+            if (existingBtn) {
+                existingBtn.className = 'mermaid-fullscreen-btn' + (darkTheme ? ' dark-theme' : '');
+            }
+            return;
+        }
+
+        const container = document.createElement('div');
+        container.className = 'mermaid-container';
+        mermaidDiv.parentNode.insertBefore(container, mermaidDiv);
+        container.appendChild(mermaidDiv);
+
+        const fullscreenBtn = document.createElement('button');
+        fullscreenBtn.className = 'mermaid-fullscreen-btn' + (darkTheme ? ' dark-theme' : '');
+        fullscreenBtn.setAttribute('aria-label', 'View diagram in fullscreen');
+        fullscreenBtn.textContent = "\u26f6";
+        fullscreenBtn.style.opacity = "50%";
+
+        // Calculate dynamic position based on diagram's margin and padding
+        const diagramStyle = window.getComputedStyle(mermaidDiv);
+        const marginTop = parseFloat(diagramStyle.marginTop) || 0;
+        const marginRight = parseFloat(diagramStyle.marginRight) || 0;
+        const paddingTop = parseFloat(diagramStyle.paddingTop) || 0;
+        const paddingRight = parseFloat(diagramStyle.paddingRight) || 0;
+        fullscreenBtn.style.top = `${marginTop + paddingTop + 4}px`;
+        fullscreenBtn.style.right = `${marginRight + paddingRight + 4}px`;
+
+        fullscreenBtn.addEventListener('click', () => {
+            previousScrollOffset = [window.scrollX, window.scrollY];
+            const clone = mermaidDiv.cloneNode(true);
+            modalContent.innerHTML = '';
+            modalContent.appendChild(clone);
+
+            const svg = clone.querySelector('svg');
+            if (svg) {
+                svg.removeAttribute('width');
+                svg.removeAttribute('height');
+                svg.style.width = '100%';
+                svg.style.height = 'auto';
+                svg.style.maxWidth = '100%';
+                svg.style.display = 'block';
+
+                if (false) {
+                    setTimeout(() => {
+                        const g = svg.querySelector('g');
+                        if (g) {
+                            var svgD3 = d3.select(svg);
+                            svgD3.html("<g class='wrapper'>" + svgD3.html() + "</g>");
+                            var inner = svgD3.select("g");
+                            var zoom = d3.zoom().on("zoom", function(event) {
+                                inner.attr("transform", event.transform);
+                            });
+                            svgD3.call(zoom);
+                        }
+                    }, 100);
+                }
+            }
+
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+        container.appendChild(fullscreenBtn);
+    });
+};
+
+
+
+const load = async () => {
+    initStyles();
+
+
+    await runMermaid(true);
+
+    const reRunIfThemeChanges = async () => {
+        const newDarkTheme = isDarkTheme();
+        if (newDarkTheme !== darkTheme) {
+            darkTheme = newDarkTheme;
+            console.log("Theme change detected, re-running mermaid with", darkTheme ? "dark" : "default", "theme");
+            await mermaid.initialize(
+                {...{"startOnLoad": false},
+                ...{ darkMode: darkTheme, theme: darkTheme ? "dark" : "default" },
+                }
+            );
+            await runMermaid(true);
+        }
+    };
+
+    // Update theme classes when theme changes
+    const themeObserver = new MutationObserver(reRunIfThemeChanges);
+    themeObserver.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['class', 'style', 'data-theme']
+    });
+    themeObserver.observe(document.body, {
+        attributes: true,
+        attributeFilter: ['class', 'style', 'data-theme']
+    });
+};
+
+
+
+
+
+console.log("Initializing mermaid with", darkTheme ? "dark" : "default", "theme");
+mermaid.initialize(
+    {...{"startOnLoad": false},
+    ...{ darkMode: darkTheme, theme: darkTheme ? "dark" : "default" },
+    }
+);
+
+window.addEventListener("load", load);
+window.runMermaid = runMermaid;</script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="SmartSaver — Cost-Model Settings (Addendum to WORTH_IT.md)" href="SETTINGS.html" />
+    <link rel="prev" title="SmartSaver — Worth-It Engine (Addendum to ARCHITECTURE.md)" href="WORTH_IT.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #1b1a3a" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            SmartSaver
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="GETTING_STARTED.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PACKAGES.html">Packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="API.html">API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Design</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="ARCHITECTURE.html">SmartSaver — Multi-Platform Architecture &amp; Planning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DIAGRAMS.html">SmartSaver — Architecture Diagrams (for audit)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DEALS.html">SmartSaver — Deals Layer (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="GROCERY_LIST.html">SmartSaver — Grocery List (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="GROCERY_EDITOR.html">SmartSaver — Grocery List Editor UI (Addendum to GROCERY_LIST.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LOCATION.html">SmartSaver — Location &amp; Store Discovery (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="WORTH_IT.html">SmartSaver — Worth-It Engine (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">SmartSaver — Rewards &amp; Grocer Preference (Addendum to ARCHITECTURE.md)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#what-the-rewards-layer-is">1. What the rewards layer is</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#where-it-fits-the-full-data-flow">2. Where it fits (the full data flow)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-core-idea-rewards-are-earned-dollars-opt-in-and-marginal">3. The core idea: rewards are earned dollars, opt-in and marginal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-decision-extended-one-new-term">4. The decision, extended (one new term)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#the-soft-preference-escape-hatch">The soft-preference escape hatch</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#rewards-model-settings-explicit-like-the-fuel-model">5. Rewards model &amp; settings (explicit, like the fuel model)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#merchant-loyalty-program-the-join-behind-an-adapter">6. Merchant → loyalty program (the join, behind an adapter)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#core-data-model">7. Core data model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#key-flows">8. Key flows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#known-constraints-to-design-around">9. Known constraints to design around</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#how-it-plugs-in-behind-existing-seams">10. How it plugs in (behind existing seams)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#proposed-folder-shape-additions">11. Proposed folder shape (additions)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#suggested-build-order-later">12. Suggested build order (later)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="SETTINGS.html">SmartSaver — Cost-Model Settings (Addendum to WORTH_IT.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DATABASE.html">SmartSaver — Database (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DEFENSIVE.html">SmartSaver — Defensive Programming Rules</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Clients</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="WEBAPP.html">SmartSaver — Web App Build Plan (<code class="docutils literal notranslate"><span class="pre">apps/web</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MOBILE.html">SmartSaver — Mobile App Build Plan (<code class="docutils literal notranslate"><span class="pre">apps/mobile</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="STYLE_GUIDE.html">SmartSaver — Style Guide (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="USER_STATES.html">User States</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #1b1a3a" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">SmartSaver</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">SmartSaver — Rewards &amp; Grocer Preference (Addendum to ARCHITECTURE.md)</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/REWARDS.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="smartsaver-rewards-grocer-preference-addendum-to-architecture-md">
+<h1>SmartSaver — Rewards &amp; Grocer Preference (Addendum to ARCHITECTURE.md)<a class="headerlink" href="#smartsaver-rewards-grocer-preference-addendum-to-architecture-md" title="Link to this heading"></a></h1>
+<blockquote>
+<div><p>Planning document. No application code yet — this captures the design for
+letting users <strong>prefer different grocers based on rewards points</strong> so we can
+build against it later. Read alongside <code class="docutils literal notranslate"><span class="pre">ARCHITECTURE.md</span></code>, <code class="docutils literal notranslate"><span class="pre">DEALS.md</span></code>,
+<code class="docutils literal notranslate"><span class="pre">GROCERY_LIST.md</span></code>, and especially <code class="docutils literal notranslate"><span class="pre">WORTH_IT.md</span></code> — this layer extends the
+Worth-It net-benefit decision, it does not replace it.</p>
+</div></blockquote>
+<section id="what-the-rewards-layer-is">
+<h2>1. What the rewards layer is<a class="headerlink" href="#what-the-rewards-layer-is" title="Link to this heading"></a></h2>
+<p>The preference layer. A shopper doesn’t only chase the lowest shelf price — they
+also earn <strong>loyalty points</strong> (PC Optimum at Loblaws/No Frills/Superstore, Scene+
+at Sobeys/FreshCo/Safeway, Metro’s Moi, Air Miles, …) and often <em>prefer</em> the
+grocers where those points are worth the most to them. This layer lets that
+preference change which stores SmartSaver recommends.</p>
+<p>It does so <strong>without adding a second, incomparable ranking</strong>. <code class="docutils literal notranslate"><span class="pre">WORTH_IT.md</span></code> put
+savings, fuel, and time on one scale — dollars — and decided keep/skip on net
+benefit. Rewards are just <strong>one more dollar-denominated term</strong> on that same
+scale: points earned at a store, valued at a user-set $/point, tilt the net
+benefit toward the grocers the user prefers. “Prefer store X” becomes “store X
+earns me $Y in points I actually value,” not a magic bias the arithmetic can’t
+explain.</p>
+</section>
+<section id="where-it-fits-the-full-data-flow">
+<h2>2. Where it fits (the full data flow)<a class="headerlink" href="#where-it-fits-the-full-data-flow" title="Link to this heading"></a></h2>
+<pre  class="mermaid">
+        graph TD
+  GL[&quot;Grocery list (demand)&quot;] --&gt; M[&quot;Matching&quot;]
+  DL[&quot;Deals per store (supply)&quot;] --&gt; M
+  M --&gt; BS[&quot;per-store basket + spend&quot;]
+  RT[&quot;Route + fuel/time model (ARCHITECTURE §4)&quot;] --&gt; DC[&quot;marginal detour cost&quot;]
+  MER[&quot;merchant → loyalty program → REWARDS&quot;] --&gt; PV[&quot;points value&quot;]
+  BS --&gt; WI[&quot;WORTH-IT ENGINE&quot;]
+  DC --&gt; WI
+  PV --&gt; WI
+  WI --&gt; NB[&quot;net benefit (savings + rewards − detour) → keep/skip → ranked stops&quot;]
+    </pre><p>Rewards sit <strong>beside matching and routing</strong> and feed the <em>same</em> Worth-It engine.
+The engine’s <code class="docutils literal notranslate"><span class="pre">netBenefit</span></code> gains one term; everything downstream (<code class="docutils literal notranslate"><span class="pre">recommendedStops</span></code>
+→ <code class="docutils literal notranslate"><span class="pre">Trip.stops</span></code> → OSRM <code class="docutils literal notranslate"><span class="pre">/trip</span></code>) is unchanged.</p>
+</section>
+<section id="the-core-idea-rewards-are-earned-dollars-opt-in-and-marginal">
+<h2>3. The core idea: rewards are earned dollars, opt-in and marginal<a class="headerlink" href="#the-core-idea-rewards-are-earned-dollars-opt-in-and-marginal" title="Link to this heading"></a></h2>
+<p>Two principles carried straight over from <code class="docutils literal notranslate"><span class="pre">WORTH_IT.md</span></code>:</p>
+<ul class="simple">
+<li><p><strong>Same scale — dollars.</strong> A point is only worth something once the user says
+what it’s worth. <code class="docutils literal notranslate"><span class="pre">rewardsValue(s)</span> <span class="pre">=</span> <span class="pre">pointsEarned(s)</span> <span class="pre">×</span> <span class="pre">valuePerPoint(program)</span></code>.
+We convert points to dollars once, then let the existing net-benefit math do
+the rest. No parallel “points score” competing with the dollar decision.</p></li>
+<li><p><strong>Marginal, not absolute (<code class="docutils literal notranslate"><span class="pre">WORTH_IT.md</span> <span class="pre">§3</span></code>).</strong> Points count only on the
+<strong>incremental basket you’d actually buy at <code class="docutils literal notranslate"><span class="pre">s</span></code></strong> — the same items whose savings
+the engine already attributes to <code class="docutils literal notranslate"><span class="pre">s</span></code>. Points you’d have earned anyway at your
+baseline store are <em>not</em> a reason to detour.</p></li>
+</ul>
+<p>And one principle carried over from <code class="docutils literal notranslate"><span class="pre">valueOfTime</span></code> (<code class="docutils literal notranslate"><span class="pre">WORTH_IT.md</span> <span class="pre">§4</span></code>):</p>
+<ul class="simple">
+<li><p><strong>We never invent a dollar value silently.</strong> The rewards term defaults to
+<strong>$0</strong> (program disabled) exactly like <code class="docutils literal notranslate"><span class="pre">valueOfTime</span></code>. Points move the decision
+only after the user enables a program and sets — or accepts a preset for — what
+a point is worth to <em>them</em>. The strict fuel-vs-savings decision is the honest
+default.</p></li>
+</ul>
+</section>
+<section id="the-decision-extended-one-new-term">
+<h2>4. The decision, extended (one new term)<a class="headerlink" href="#the-decision-extended-one-new-term" title="Link to this heading"></a></h2>
+<p>The Worth-It decision (<code class="docutils literal notranslate"><span class="pre">WORTH_IT.md</span> <span class="pre">§4</span></code>) gains a single additive term:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>netBenefit(s) = savings(s) + rewardsValue(s) − fuelCost(Δdistance) − timeCost(Δduration)
+
+keep s  ⟺  netBenefit(s) ≥ minWorthItThreshold
+</pre></div>
+</div>
+<p>Where the one new term is:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>rewardsValue(s) = pointsEarned(s) × valuePerPoint(program(s))
+
+pointsEarned(s) = basketSpend(s) × earnRate(program(s))        // base earn
+                + Σ targeted offers matched at s               // optional, v2 (§5)
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">basketSpend(s)</span></code></strong> — the dollars you’d spend on <code class="docutils literal notranslate"><span class="pre">s</span></code>’s incremental items
+(the deal prices the matching layer already produced, <code class="docutils literal notranslate"><span class="pre">GROCERY_LIST</span> <span class="pre">§7</span></code>). Reuse
+it; don’t recompute a basket.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">earnRate(program)</span></code></strong> — base points per dollar for the loyalty program
+behind the merchant (§6), a user-editable setting with sane presets (§5).</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">valuePerPoint(program)</span></code></strong> — dollars a point is worth <em>to this user</em>, set in
+settings (§5). This is the knob that encodes preference: value PC Optimum
+highly and No Frills rises in the ranking automatically.</p></li>
+</ul>
+<p>Nothing else in the engine changes: greedy marginal selection (<code class="docutils literal notranslate"><span class="pre">WORTH_IT.md</span> <span class="pre">§7</span></code>)
+already maximizes net benefit, so a bigger <code class="docutils literal notranslate"><span class="pre">netBenefit</span></code> simply makes preferred
+grocers more likely to clear the threshold and be picked — no new selection code.</p>
+<section id="the-soft-preference-escape-hatch">
+<h3>The soft-preference escape hatch<a class="headerlink" href="#the-soft-preference-escape-hatch" title="Link to this heading"></a></h3>
+<p>Some users just want to <em>favour a chain</em> without doing points math. Support it
+<strong>inside the same dollar frame</strong>, not as a separate bias:</p>
+<ul class="simple">
+<li><p><strong>Preference premium</strong> — a small user-assigned $/visit for a grocer they like
+(“I’ll pay up to $3 of detour to shop at my Sobeys”). Folds into
+<code class="docutils literal notranslate"><span class="pre">rewardsValue(s)</span></code> as a flat addend and stays visible in the breakdown.</p></li>
+<li><p><strong>Tie-break only</strong> — when two stores land within a configurable epsilon of each
+other on net benefit, prefer the higher-ranked grocer. No dollar fiction; just
+breaks ties.</p></li>
+</ul>
+<p>Both are opt-in; default is neither (pure earned-points value). Whichever a user
+picks, the “why” panel (§8, <code class="docutils literal notranslate"><span class="pre">WORTH_IT</span> <span class="pre">§10</span></code>) shows the arithmetic — a preference
+never hides in a verdict.</p>
+</section>
+</section>
+<section id="rewards-model-settings-explicit-like-the-fuel-model">
+<h2>5. Rewards model &amp; settings (explicit, like the fuel model)<a class="headerlink" href="#rewards-model-settings-explicit-like-the-fuel-model" title="Link to this heading"></a></h2>
+<p>Per <code class="docutils literal notranslate"><span class="pre">WORTH_IT.md</span> <span class="pre">§5</span></code>, these are <strong>user-supplied, surfaced, and editable</strong> — never
+hidden constants. Per program, with presets to avoid a blank form:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Input</p></th>
+<th class="head"><p>Default (prototype)</p></th>
+<th class="head"><p>Notes</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Program enabled</p></td>
+<td><p><strong>off</strong></p></td>
+<td><p>$0 rewards term until enabled — the honest default (§3)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Earn rate</p></td>
+<td><p>program preset (e.g. PC Optimum ~10 pts/$1 base)</p></td>
+<td><p>Points per $1 of base spend; user-editable</p></td>
+</tr>
+<tr class="row-even"><td><p>Value per point</p></td>
+<td><p>program preset (e.g. PC Optimum ~$0.001/pt → 1000 pts ≈ $1)</p></td>
+<td><p>The core preference knob (§4)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Preference premium</p></td>
+<td><p><strong>$0/visit</strong></p></td>
+<td><p>Optional flat “I like this grocer” addend (§4)</p></td>
+</tr>
+<tr class="row-even"><td><p>Tie-break rank</p></td>
+<td><p>none</p></td>
+<td><p>Optional ordering used only within the net-benefit epsilon (§4)</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Presets ship as reference data, not gospel.</strong> Real earn/redemption rates vary
+by program, tier, and redemption path; we seed reasonable defaults and let the
+user correct them, mirroring “estimates, not bills” everywhere else. Category
+multipliers and personalized targeted offers are <strong>v2</strong> — the base earn rate is
+enough to make the preference feature work and stays defensible.</p>
+</section>
+<section id="merchant-loyalty-program-the-join-behind-an-adapter">
+<h2>6. Merchant → loyalty program (the join, behind an adapter)<a class="headerlink" href="#merchant-loyalty-program-the-join-behind-an-adapter" title="Link to this heading"></a></h2>
+<p>The engine knows a store only as <code class="docutils literal notranslate"><span class="pre">Deal.merchant</span></code> (<code class="docutils literal notranslate"><span class="pre">DEALS.md</span> <span class="pre">§6</span></code>) — a string like
+“No Frills”. Rewards needs to resolve that to a <strong>loyalty program</strong> so it can pick
+the right earn rate and value:</p>
+<ul class="simple">
+<li><p><strong>Prototype (v1):</strong> a small static, normalized map — merchant/chain →
+<code class="docutils literal notranslate"><span class="pre">program</span></code> (e.g. <code class="docutils literal notranslate"><span class="pre">no</span> <span class="pre">frills</span> <span class="pre">|</span> <span class="pre">loblaws</span> <span class="pre">|</span> <span class="pre">real</span> <span class="pre">canadian</span> <span class="pre">superstore</span> <span class="pre">→</span> <span class="pre">pc-optimum</span></code>;
+<code class="docutils literal notranslate"><span class="pre">sobeys</span> <span class="pre">|</span> <span class="pre">freshco</span> <span class="pre">|</span> <span class="pre">safeway</span> <span class="pre">→</span> <span class="pre">scene-plus</span></code>; <code class="docutils literal notranslate"><span class="pre">metro</span> <span class="pre">→</span> <span class="pre">moi</span></code>). Cheap, covers the
+major chains, good enough to demo. Unknown merchant → no program → $0 rewards
+term (fails safe to the strict decision).</p></li>
+<li><p><strong>Production (v2):</strong> the map is reference data and can live in the catalog DB
+(<code class="docutils literal notranslate"><span class="pre">DATABASE.md</span></code> Cluster 1 is exactly this kind of seeded reference asset) or a
+<code class="docutils literal notranslate"><span class="pre">program_membership</span></code> table. Same <strong>adapter seam</strong> as everywhere else: the
+resolution upgrades behind a stable <code class="docutils literal notranslate"><span class="pre">programFor(merchant)</span> <span class="pre">→</span> <span class="pre">Program</span> <span class="pre">|</span> <span class="pre">null</span></code>
+interface and the engine never learns.</p></li>
+</ul>
+<p>This mirrors the <code class="docutils literal notranslate"><span class="pre">DEALS.md</span></code> source-swap and <code class="docutils literal notranslate"><span class="pre">lib/match</span></code> catalog-upgrade posture:
+the messy real-world mapping is isolated so the decision code stays clean.</p>
+</section>
+<section id="core-data-model">
+<h2>7. Core data model<a class="headerlink" href="#core-data-model" title="Link to this heading"></a></h2>
+<p>Extends the Worth-It shapes (<code class="docutils literal notranslate"><span class="pre">WORTH_IT.md</span> <span class="pre">§8</span></code>); additions only.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>LoyaltyProgram                      -- reference data (§6), seeded + user-tunable
+ ├─ id                              // 'pc-optimum' | 'scene-plus' | 'moi' | 'air-miles'
+ ├─ label                          // "PC Optimum"
+ ├─ merchants: [string]            // normalized chain names that earn into it
+ ├─ earnRate                       // base points per $1  (preset, user-editable)
+ └─ valuePerPoint                  // $ per point         (preset, user-editable)
+
+RewardsPrefs                        -- per-user settings (§5); part of the cost model
+ ├─ enabled: boolean               // master opt-in; false → rewards term = $0 (§3)
+ ├─ programs: { [programId]: { enabled, earnRate?, valuePerPoint? } }  // user overrides presets
+ ├─ preferencePremium: { [programId | merchant]: number }   // optional flat $/visit (§4)
+ └─ tieBreakRank?: [programId]      // optional ordering, used within net-benefit epsilon (§4)
+
+// WorthItInputs.costModel gains:
+//   rewards: RewardsPrefs          // sits beside fuelPrice / valueOfTime / units / threshold
+
+// WorthItResult.perStore[] gains:
+//   rewardsValue                   // $ points earned on the incremental basket (§4)
+//   program                        // resolved LoyaltyProgram | null (§6), for the breakdown
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">rewardsValue</span></code> joins <code class="docutils literal notranslate"><span class="pre">savings</span></code>/<code class="docutils literal notranslate"><span class="pre">fuelCost</span></code>/<code class="docutils literal notranslate"><span class="pre">timeCost</span></code> in the per-store breakdown so
+the UI can show it as its own line. <code class="docutils literal notranslate"><span class="pre">netBenefit</span></code> and the greedy selection are
+unchanged in shape — only their inputs grew by one term.</p>
+</section>
+<section id="key-flows">
+<h2>8. Key flows<a class="headerlink" href="#key-flows" title="Link to this heading"></a></h2>
+<p><strong>Configure a preference</strong>
+<code class="docutils literal notranslate"><span class="pre">settings</span> <span class="pre">→</span> <span class="pre">enable</span> <span class="pre">rewards</span> <span class="pre">→</span> <span class="pre">pick</span> <span class="pre">program(s)</span> <span class="pre">→</span> <span class="pre">accept</span> <span class="pre">preset</span> <span class="pre">or</span> <span class="pre">set</span> <span class="pre">earnRate</span> <span class="pre">/</span> <span class="pre">valuePerPoint</span> <span class="pre">(and</span> <span class="pre">optional</span> <span class="pre">preference</span> <span class="pre">premium)</span> <span class="pre">→</span> <span class="pre">persist</span> <span class="pre">(§5)</span></code></p>
+<p><strong>Evaluate one store with rewards</strong>
+<code class="docutils literal notranslate"><span class="pre">candidate</span> <span class="pre">→</span> <span class="pre">programFor(merchant)</span> <span class="pre">(§6)</span> <span class="pre">→</span> <span class="pre">pointsEarned</span> <span class="pre">=</span> <span class="pre">basketSpend</span> <span class="pre">×</span> <span class="pre">earnRate</span> <span class="pre">→</span> <span class="pre">rewardsValue</span> <span class="pre">=</span> <span class="pre">points</span> <span class="pre">×</span> <span class="pre">valuePerPoint</span> <span class="pre">→</span> <span class="pre">netBenefit</span> <span class="pre">=</span> <span class="pre">savings</span> <span class="pre">+</span> <span class="pre">rewardsValue</span> <span class="pre">−</span> <span class="pre">fuelCost</span> <span class="pre">−</span> <span class="pre">timeCost</span></code></p>
+<p><strong>Rank &amp; recommend (unchanged engine)</strong>
+<code class="docutils literal notranslate"><span class="pre">candidates</span> <span class="pre">→</span> <span class="pre">greedy</span> <span class="pre">marginal</span> <span class="pre">selection</span> <span class="pre">(WORTH_IT</span> <span class="pre">§7)</span> <span class="pre">now</span> <span class="pre">maximizing</span> <span class="pre">the</span> <span class="pre">rewards-inclusive</span> <span class="pre">netBenefit</span> <span class="pre">→</span> <span class="pre">recommendedStops</span> <span class="pre">→</span> <span class="pre">Trip.stops</span> <span class="pre">→</span> <span class="pre">OSRM</span> <span class="pre">/trip</span></code></p>
+<p><strong>Explain the call (why we preferred this grocer)</strong>
+<code class="docutils literal notranslate"><span class="pre">perStore</span> <span class="pre">→</span> <span class="pre">panel:</span> <span class="pre">&quot;Save</span> <span class="pre">\$8</span> <span class="pre">+</span> <span class="pre">\$1.20</span> <span class="pre">PC</span> <span class="pre">Optimum</span> <span class="pre">points,</span> <span class="pre">−\$4.10</span> <span class="pre">detour</span> <span class="pre">→</span> <span class="pre">net</span> <span class="pre">+\$5.10</span> <span class="pre">✓</span> <span class="pre">(vs.</span> <span class="pre">your</span> <span class="pre">usual</span> <span class="pre">store)&quot;</span></code> — the rewards line is always shown, never folded silently into the verdict (<code class="docutils literal notranslate"><span class="pre">WORTH_IT</span> <span class="pre">§10</span></code>).</p>
+<p><strong>Interface (stable):</strong> the Worth-It contract <code class="docutils literal notranslate"><span class="pre">decide(inputs)</span> <span class="pre">→</span> <span class="pre">WorthItResult</span></code>
+(<code class="docutils literal notranslate"><span class="pre">WORTH_IT</span> <span class="pre">§9</span></code>) is unchanged — rewards ride in via <code class="docutils literal notranslate"><span class="pre">inputs.costModel.rewards</span></code>.</p>
+</section>
+<section id="known-constraints-to-design-around">
+<h2>9. Known constraints to design around<a class="headerlink" href="#known-constraints-to-design-around" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>Points are not savings — don’t double-count.</strong> <code class="docutils literal notranslate"><span class="pre">savings(s)</span></code> compares shelf
+prices; <code class="docutils literal notranslate"><span class="pre">rewardsValue(s)</span></code> is points <em>on top</em>. They’re separate terms on the
+same basket and must both be surfaced separately, never merged into one number.</p></li>
+<li><p><strong>A point’s value is personal and fuzzy.</strong> Redemption rates, tiers, and paths
+vary; our $/point is a user-set estimate. Default off (§3); when on, show it in
+the breakdown so a wrong number is obvious — same as fuel price and value-of-time.</p></li>
+<li><p><strong>Marginal only (§3).</strong> Count points on the <em>incremental</em> basket bought at <code class="docutils literal notranslate"><span class="pre">s</span></code>,
+not points you’d earn at your baseline anyway. Absolute lifetime points are a
+vanity metric, not a routing input.</p></li>
+<li><p><strong>Preference must never override safety of the math.</strong> Even a strong preference
+is capped by what the user assigns it (a $/point value or a $/visit premium);
+it can tip a close call, but it can’t send someone 30 km to net a loss unless
+they explicitly priced it that way. <code class="docutils literal notranslate"><span class="pre">minWorthItThreshold</span></code> still governs.</p></li>
+<li><p><strong>Merchant→program mapping is incomplete and drifts.</strong> Unknown or mis-mapped
+merchants must fail safe to $0 rewards (strict decision), and the mapping must
+be correctable — same stance as <code class="docutils literal notranslate"><span class="pre">flyer_term_map</span></code> staleness in <code class="docutils literal notranslate"><span class="pre">DATABASE.md</span> <span class="pre">§8</span></code>.</p></li>
+<li><p><strong>Targeted offers / multipliers are v2.</strong> Base earn rate keeps v1 honest and
+simple; personalized offers need account-linked loyalty data we don’t have in
+the prototype. Don’t model them until that data source exists.</p></li>
+<li><p><strong>No account-linked point balances in the prototype.</strong> We estimate <em>earned</em>
+value from spend × rate; we do <strong>not</strong> read a user’s real balance or expiry.
+That would need official loyalty-program integration — a production concern with
+the same “unofficial vs licensed” risk as <code class="docutils literal notranslate"><span class="pre">DEALS.md</span> <span class="pre">§10</span></code>.</p></li>
+</ul>
+</section>
+<section id="how-it-plugs-in-behind-existing-seams">
+<h2>10. How it plugs in (behind existing seams)<a class="headerlink" href="#how-it-plugs-in-behind-existing-seams" title="Link to this heading"></a></h2>
+<p>Nothing here forks the pipeline; it extends one formula and adds reference data.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Existing seam</p></th>
+<th class="head"><p>What rewards adds</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">WorthItInputs.costModel</span></code> (<code class="docutils literal notranslate"><span class="pre">WORTH_IT</span> <span class="pre">§8</span></code>)</p></td>
+<td><p>new <code class="docutils literal notranslate"><span class="pre">rewards:</span> <span class="pre">RewardsPrefs</span></code> beside fuel/time settings</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">netBenefit</span></code> (<code class="docutils literal notranslate"><span class="pre">WORTH_IT</span> <span class="pre">§4</span></code>)</p></td>
+<td><p>one additive <code class="docutils literal notranslate"><span class="pre">+</span> <span class="pre">rewardsValue(s)</span></code> term; selection code unchanged</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Deal.merchant</span></code> (<code class="docutils literal notranslate"><span class="pre">DEALS</span> <span class="pre">§6</span></code>)</p></td>
+<td><p>the join key into <code class="docutils literal notranslate"><span class="pre">programFor(merchant)</span></code> (§6)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Settings persistence (<code class="docutils literal notranslate"><span class="pre">WORTH_IT</span> <span class="pre">§5</span></code>, <code class="docutils literal notranslate"><span class="pre">GROCERY_LIST</span> <span class="pre">§8</span></code>)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">RewardsPrefs</span></code> persists with the rest of the cost model — localStorage (prototype) → account (production)</p></td>
+</tr>
+<tr class="row-even"><td><p>Catalog/reference DB (<code class="docutils literal notranslate"><span class="pre">DATABASE</span> <span class="pre">§5</span></code>)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">LoyaltyProgram</span></code> map is seedable reference data if/when it graduates to the DB</p></td>
+</tr>
+<tr class="row-odd"><td><p>Worth-It “why” panel (<code class="docutils literal notranslate"><span class="pre">WORTH_IT</span> <span class="pre">§9</span></code>)</p></td>
+<td><p>a rewards line in the per-store breakdown</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="proposed-folder-shape-additions">
+<h2>11. Proposed folder shape (additions)<a class="headerlink" href="#proposed-folder-shape-additions" title="Link to this heading"></a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>smartsaver/
+├─ ARCHITECTURE.md
+├─ DEALS.md
+├─ GROCERY_LIST.md
+├─ WORTH_IT.md
+├─ REWARDS.md           ← this document
+└─ src/
+   └─ lib/rewards       ← LoyaltyProgram presets, programFor(merchant) adapter (§6),
+                           rewardsValue() term + RewardsPrefs (consumed by lib/worthit)
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">lib/rewards</span></code> is framework-agnostic like the other <code class="docutils literal notranslate"><span class="pre">lib/</span></code> modules (reusable for a
+future mobile app). It produces the <code class="docutils literal notranslate"><span class="pre">rewardsValue</span></code> term and program resolution
+that <code class="docutils literal notranslate"><span class="pre">lib/worthit</span></code> folds into <code class="docutils literal notranslate"><span class="pre">netBenefit</span></code>; it owns no routing or matching logic.</p>
+</section>
+<section id="suggested-build-order-later">
+<h2>12. Suggested build order (later)<a class="headerlink" href="#suggested-build-order-later" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">LoyaltyProgram</span></code> presets + normalized <code class="docutils literal notranslate"><span class="pre">programFor(merchant)</span></code> map for the major
+chains (§6); unknown → null → $0 term.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">RewardsPrefs</span></code> settings (master opt-in, per-program earn rate + value-per-point)
+with presets and unit-safe persistence beside the existing cost model (§5).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rewardsValue(s)</span></code> on the incremental basket; add the <code class="docutils literal notranslate"><span class="pre">+</span> <span class="pre">rewardsValue</span></code> term to
+<code class="docutils literal notranslate"><span class="pre">netBenefit</span></code> (§4) — verify greedy selection needs no change.</p></li>
+<li><p>Rewards line in the per-store breakdown + “why we preferred this grocer” copy
+(§8, <code class="docutils literal notranslate"><span class="pre">WORTH_IT</span> <span class="pre">§10</span></code>).</p></li>
+<li><p>Optional soft preference: preference premium ($/visit) and/or net-benefit
+tie-break rank (§4).</p></li>
+<li><p>v2: category multipliers + targeted offers, once account-linked loyalty data
+exists; graduate the merchant→program map into the catalog DB (<code class="docutils literal notranslate"><span class="pre">DATABASE</span> <span class="pre">§5</span></code>).</p></li>
+<li><p>Production: pursue official/licensed loyalty integration for real balances and
+redemption values, behind the same <code class="docutils literal notranslate"><span class="pre">lib/rewards</span></code> interface (source-swap free).</p></li>
+</ol>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="WORTH_IT.html" class="btn btn-neutral float-left" title="SmartSaver — Worth-It Engine (Addendum to ARCHITECTURE.md)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="SETTINGS.html" class="btn btn-neutral float-right" title="SmartSaver — Cost-Model Settings (Addendum to WORTH_IT.md)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

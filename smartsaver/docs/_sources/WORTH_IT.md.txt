@@ -1,0 +1,263 @@
+# SmartSaver — Worth-It Engine (Addendum to ARCHITECTURE.md)
+
+> Planning document. No application code yet — this captures the design for the
+> "is this store worth the trip?" decision layer so we can build against it
+> later. Read alongside `ARCHITECTURE.md`, `DEALS.md`, and `GROCERY_LIST.md`.
+> This is the layer that turns *matched savings* into a *keep-or-skip* decision.
+
+## 1. What the Worth-It Engine is
+
+The judgment layer. `GROCERY_LIST.md` tells us **how much a store saves** on your
+basket; `ARCHITECTURE.md` tells us **what a detour costs** in fuel and time. The
+Worth-It Engine puts them on the same scale — dollars — and answers the only
+question a shopper actually cares about:
+
+> **"I could save \$8 on my list at the No Frills across town — but is it worth
+> the extra 12 km and 20 minutes to get there?"**
+
+It ranks candidate stores by **net benefit** (savings minus the cost of reaching
+them) and recommends the set of stops that maximizes net savings — so we never
+send someone 15 minutes out of their way to save \$1.50.
+
+## 2. Where it fits (the full data flow)
+
+```mermaid
+graph TD
+  GL["Grocery list (demand)"] --> M["Matching"]
+  DL["Deals per store (supply)"] --> M
+  M --> BS["per-store basket savings"]
+  RT["Route + fuel/time model (ARCHITECTURE §4)"] --> DC["marginal detour cost"]
+  BS --> WI["WORTH-IT ENGINE"]
+  DC --> WI
+  WI --> NB["net benefit per store → keep/skip → ranked stops"]
+  NB --> TS["Trip.stops → OSRM /trip → route + handoff"]
+```
+
+The engine sits **after** matching (it needs savings) and **beside** routing (it
+needs marginal distance/time), and its output feeds the same `Trip.stops` the
+optimizer already consumes.
+
+## 3. The core idea: marginal, not absolute
+
+Everything here is **marginal** — measured against a baseline of *not making the
+stop*. This is the single most important design decision, because absolute
+numbers lie:
+
+| Naïve (wrong) | Marginal (right) |
+|---|---|
+| Distance from home to the store | Extra distance this stop **adds to the optimized route** |
+| Total basket price at the store | Savings **vs. what you'd pay without this stop** (your next-best option) |
+| "Store B is cheap" | "Store B is cheaper *than where you'd otherwise buy these items*" |
+
+A store 10 km away that's already on your route costs ~0 extra to visit. A store
+1 km away that forces a U-turn adds real distance. The decision must use the
+**delta the stop introduces**, not raw geography.
+
+## 4. The decision, in one line
+
+For a candidate store `s`, given the plan you'd otherwise run:
+
+```
+netBenefit(s) = savings(s) − fuelCost(Δdistance) − timeCost(Δduration)
+
+keep s  ⟺  netBenefit(s) ≥ minWorthItThreshold
+```
+
+> **Extended by `REWARDS.md`:** grocer preference adds one dollar-denominated
+> term, `+ rewardsValue(s)` (loyalty points earned on the incremental basket,
+> valued at a user-set \$/point). It defaults to \$0 — like `valueOfTime` — and
+> rides in via `costModel.rewards`, leaving this formula's shape and the greedy
+> selection unchanged.
+
+Where:
+
+```
+fuelCost(Δdistance) = Δdistance × fuelPrice / efficiency        // $ of gas burned on the detour
+timeCost(Δduration) = Δduration × valueOfTime                   // $ you implicitly pay in time
+savings(s)          = Σ items bought at s ( baselinePrice(item) − price(item @ s) )
+```
+
+- **`Δdistance`, `Δduration`** — the *extra* km and minutes this stop adds to the
+  route (route-with-s minus route-without-s), from OSRM. See §6.
+- **`baselinePrice(item)`** — what the same item would cost on your next-best
+  option: the cheapest place already on your route, else your default store, else
+  a reference/regular price. The counterfactual is what makes savings honest.
+- **`valueOfTime`** — user-set \$/hour (default **\$0** → pure fuel-vs-savings;
+  the strictest, most defensible mode). Users who want it can opt into valuing
+  time; we never invent a dollar value for their hour silently.
+- **`minWorthItThreshold`** — small positive floor (e.g. \$2) so we don't route
+  someone across town to net a nickel; covers estimate error too.
+
+## 5. Fuel & time model (the assumptions we make explicit)
+
+Per `ARCHITECTURE.md §10`, these are **user-supplied approximations**, surfaced
+and editable — never hidden constants:
+
+| Input | Default (prototype) | Notes |
+|---|---|---|
+| Fuel price | user's region \$/L (or \$/gal) | Single largest driver of cost; let user set it |
+| Fuel efficiency | e.g. 8.9 L/100km (~26 mpg) | User's vehicle; store in settings |
+| Value of time | **\$0/hr** (opt-in above that) | \$0 = decide on fuel alone; conservative default |
+| Units | metric or imperial | One toggle drives both fuel price and efficiency |
+| Round-trip? | **yes** — a detour adds distance *there and back* onto the route | Δ already captures this via route-with vs route-without |
+
+**Unit-safe formula (canonical, metric):**
+
+```
+fuelCost = (ΔdistanceKm / 100) × litresPer100km × pricePerLitre
+```
+
+**Imperial:**
+
+```
+fuelCost = (ΔdistanceMiles / mpg) × pricePerGallon
+```
+
+The engine works in one canonical unit internally (metres + seconds from OSRM,
+converted once) so the two formulas above are just presentation of the same math.
+
+## 6. Getting Δdistance and Δduration (the routing seam)
+
+The marginal cost of a stop = how much longer the trip gets if we insert it.
+
+- **Source:** OSRM (`ARCHITECTURE.md §4`). We already compute the route; the
+  engine asks for the route **with** the candidate and **without** it and takes
+  the difference.
+- **Cheap approximation (prototype):** cheapest-insertion delta — for each
+  candidate, find the best position to slot it into the current ordered stops and
+  measure the added leg length/time. Avoids re-optimizing the whole trip per
+  candidate.
+- **Accurate (later):** re-run OSRM `/trip` on the chosen set and reconcile.
+  Contained behind the same interface so the upgrade is invisible upstream.
+- **Discipline:** mirror "only re-route when stops actually change"
+  (`ARCHITECTURE.md §10`) — batch candidate evaluation; don't fire OSRM per
+  keystroke.
+
+## 7. One store vs. many: the cherry-picking tradeoff
+
+The interesting case isn't a single store — it's **should I split my list across
+several stores to chase deals, or one-stop-shop?** Each extra store adds its own
+Δdistance/Δduration but only earns savings on the items you actually buy there.
+
+**Greedy marginal selection (prototype):**
+
+```
+1. Start from the baseline plan (e.g. your usual single store, or none).
+2. For each candidate store, compute netBenefit assuming its items are bought
+   there instead of at their current baseline source.
+3. Add the store with the highest positive netBenefit; re-assign those items'
+   baseline to this store (so the next round measures against the improved plan).
+4. Repeat until no remaining store clears minWorthItThreshold.
+```
+
+This naturally stops adding stores once detour cost outruns extra savings — the
+"worth it" line falls out of the loop, no magic constant beyond the threshold.
+
+**Diminishing returns are automatic:** each added store shrinks the savings left
+for the next one (items already claimed) while still costing a full detour, so
+the greedy loop converges on a small, sensible set of stops — usually 1–3.
+
+**Later (v2):** this is a prize-collecting routing problem (visit a subset of
+stores to maximize savings − travel cost). Greedy is a good, explainable
+approximation; an optimizer can refine it. Kept behind the interface in §9.
+
+## 8. Core data model
+
+```
+WorthItInputs
+ ├─ plan: Trip                    // current ordered stops (ARCHITECTURE §5)
+ ├─ candidates: [ CandidateStore ]
+ ├─ costModel: {
+ │     fuelPrice, efficiency,     // §5 — user settings
+ │     valueOfTime,               // $/hr, default 0
+ │     units,                     // metric | imperial
+ │     minWorthItThreshold        // $ floor, default ~2
+ │   }
+ └─ baseline: BaselineStrategy    // how baselinePrice is chosen (§4)
+
+CandidateStore
+ ├─ store: { label, lat, lng, postalCode }   // from a deal's store (DEALS §6)
+ ├─ matchedItems: [ { itemId, price } ]       // list ∩ deals (GROCERY_LIST §7)
+ └─ deltas: { distance, duration } | null     // filled by routing seam (§6)
+
+WorthItResult
+ ├─ perStore: [ {
+ │     store,
+ │     savings,                   // $ marginal savings on items bought here
+ │     fuelCost, timeCost,        // $ marginal detour cost
+ │     netBenefit,                // savings − fuelCost − timeCost
+ │     worthIt: boolean,          // netBenefit ≥ threshold
+ │     breakdown                  // itemized, for honest UI (§10)
+ │   } ]
+ ├─ recommendedStops: [ store ]   // greedy-selected set (§7) → become Trip.stops
+ └─ summary: { totalSavings, totalDetourCost, totalNet }
+```
+
+Shapes reuse `Trip`/`store` from the existing docs so results drop straight into
+`Trip.stops` and the OSRM flow.
+
+## 9. Key flows
+
+**Evaluate one store**
+`candidate has matchedItems + deltas → savings − fuelCost − timeCost → netBenefit → worthIt`
+
+**Rank & recommend a stop set**
+`candidates → greedy marginal selection (§7) → recommendedStops → append to Trip.stops → OSRM /trip → route`
+
+**Explain the call (why we said skip)**
+`WorthItResult.perStore → panel: "Save \$8, but +12 km / +20 min ≈ \$4.10 → net +\$3.90 ✓"` — always show the arithmetic (§10).
+
+**Interface (stable across v1→v2):**
+`decide(inputs) → WorthItResult` — greedy today, optimizer later; UI unchanged.
+
+## 10. Known constraints to design around
+
+- **Garbage in, garbage out** — the call is only as good as fuel price,
+  efficiency, and matched savings. Every input is user-visible and editable; show
+  the breakdown so a wrong number is obvious, not buried in a verdict.
+- **Estimates, not bills** — ETAs carry no live traffic (`ARCHITECTURE §10`) and
+  savings depend on fuzzy matching (`GROCERY_LIST §9`). Present net benefit as a
+  guide with a margin; that's what `minWorthItThreshold` absorbs.
+- **Time has no universal price** — defaulting `valueOfTime` to \$0 keeps the
+  default decision defensible (fuel is a real, quotable cost). Anything above \$0
+  is the user's explicit choice, shown in the breakdown.
+- **Marginal, not absolute (§3)** — the most common way to get this wrong is
+  using home-to-store distance or raw basket price. Always diff against the
+  no-stop baseline.
+- **Don't over-fragment the trip** — chasing every deal into a 5-store crawl
+  usually loses on fuel and time; the greedy threshold (§7) is what keeps the
+  recommendation to a sane 1–3 stops.
+- **Baseline honesty** — savings are meaningless without a stated counterfactual;
+  surface *what we compared against* ("vs. your usual store"), never a bare "save
+  \$8."
+
+## 11. Proposed folder shape (additions)
+
+```
+smartsaver/
+├─ ARCHITECTURE.md
+├─ DEALS.md
+├─ GROCERY_LIST.md
+├─ WORTH_IT.md          ← this document
+└─ src/
+   └─ lib/worthit       ← cost model, marginal deltas, netBenefit,
+                           greedy store selection (decide(inputs) → WorthItResult)
+```
+
+`lib/worthit` is framework-agnostic (like the other `lib/` modules) so it's
+reusable for a future mobile app; it consumes `lib/match` output and `lib/route`
+deltas and produces `Trip.stops`.
+
+## 12. Suggested build order (later)
+
+1. Cost model + settings (fuel price, efficiency, value of time, units) with
+   sane defaults and unit-safe conversion (§5)
+2. `netBenefit` for a single candidate given savings + deltas (§4)
+3. Routing seam: cheapest-insertion Δdistance/Δduration approximation (§6)
+4. Per-store `WorthItResult` + itemized breakdown for the panel (§8, §10)
+5. Greedy marginal store selection → `recommendedStops` (§7)
+6. Wire `recommendedStops` into `Trip.stops` → OSRM `/trip` → route + handoff
+7. "Why" UI: show savings vs. detour cost vs. net, with the baseline stated (§9)
+8. v2: accurate re-route reconciliation + prize-collecting optimizer, behind the
+   `decide(inputs)` interface (§7)
+```

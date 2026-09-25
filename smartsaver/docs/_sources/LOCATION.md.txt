@@ -1,0 +1,218 @@
+# SmartSaver — Location & Store Discovery (Addendum to ARCHITECTURE.md)
+
+> Planning document. No application code yet — this captures the design for the
+> **origin + nearby-grocer discovery** layer. Read alongside `ARCHITECTURE.md`,
+> `DEALS.md`, `GROCERY_LIST.md`, and `WORTH_IT.md`. This is the **head** of the
+> pipeline: it turns an approximate location into the *candidate stores* every
+> downstream doc already assumes it was handed.
+
+## 1. What this layer is
+
+The piece that answers **"which grocers are even near me?"** — the step that runs
+right after the list is built and before anything is priced, ranked, or routed.
+
+Every other doc consumes candidate stores it never produced:
+
+- `WORTH_IT.md §8` takes `candidates: [CandidateStore]` as an **input**.
+- `DEALS.md §6` keys deals off a `postalCode` "derived from a stop."
+- `ARCHITECTURE.md §5` says `stops[0] = origin` but never says how the origin is set.
+
+This layer closes that gap. It (a) obtains the user's **approximate location** and
+makes it the trip origin, and (b) **discovers the grocers around it** to form the
+candidate pool. Selecting the *worth-it subset*, pricing it, and drawing the path
+are downstream jobs (§2) — this layer only supplies the geographic starting point.
+
+## 2. Where it fits (the full data flow)
+
+```mermaid
+graph TD
+  GL["Grocery list built (GROCERY_LIST)"] --> OUT0
+  LOC["Approximate location<br/>(geolocate / manual)"] --> LAYER["THIS LAYER"]
+  LAYER --> OUT0["origin (Trip.stops[0]) + nearby grocers = CandidateStore[]"]
+  OUT0 --> DEALS["DEALS — prices per store, keyed by postalCode"]
+  DEALS --> MATCH["MATCH (list ∩ deals) → per-store basket savings"]
+  MATCH --> WI["WORTH-IT (net benefit) → recommended SUBSET of stores"]
+  WI --> TS["Trip.stops → OSRM /trip + /route → PATH + TRAVEL COST + handoff"]
+```
+
+This layer is the **only new supply source**: candidate *store locations*.
+`DEALS.md` supplies *prices*, `WORTH_IT.md` supplies the *keep/skip subset*,
+`ARCHITECTURE.md` supplies the *path and cost*. We hand off; we don't duplicate.
+
+## 3. Scope decisions
+
+| Decision | Choice | Consequence |
+|---|---|---|
+| Location precision | **Approximate on purpose** | Coarse geolocation / postal centroid is enough; privacy-friendly; tolerates `ARCHITECTURE §10` fuzziness |
+| How we get location | **Browser Geolocation first, manual (address/postal) fallback** | Works with one tap; degrades gracefully when denied/unavailable |
+| Store discovery source | **OSM Overpass API** | Free, fits the OSM stack (Nominatim + OSRM + Overpass); no paid Places API |
+| Where discovery lives | **Behind our thin backend + cache** | Same posture as `DEALS.md §2`; Overpass is rate-limited and CORS-unfriendly |
+| Candidate scope | **Radius around origin, capped count** | Keeps the pool small enough for `WORTH_IT` to evaluate cheaply |
+| Postal code for deals | **Reverse-geocode each store (Nominatim)** | Produces the `postalCode` key `DEALS.md §6` already expects |
+
+## 4. Architecture at a glance
+
+```mermaid
+graph TB
+  FE["FRONTEND (browser / mobile web)<br/>'Use my location' (Geolocation API, on-device)<br/>manual address / postal box (fallback)<br/>nearby-store list → seed candidates"]
+  GEO["Geolocation API (device, $0)<br/>manual → Nominatim"]
+  API["SmartSaver Stores API (our thin backend)<br/>query Overpass for grocers in radius<br/>normalize to CandidateStore<br/>reverse-geocode postalCode (Nominatim)<br/>cache per (rounded lat,lng,radius)"]
+  OVER["Overpass API (OSM POIs)<br/>shop = supermarket / grocery / convenience"]
+  FE -->|"origin (lat,lng)"| GEO
+  FE -->|"GET /stores?lat=&lng=&radius="| API
+  API -->|"cache miss only"| OVER
+```
+
+The frontend never calls Overpass directly — same reasons as `DEALS.md §4`
+(rate limits, CORS, source-swap freedom). The origin itself stays client-side
+until a route is computed.
+
+## 5. Component responsibilities
+
+| Concern | Choice | Role |
+|---|---|---|
+| Approximate location | Browser Geolocation API | One-tap `(lat, lng)` on-device, no server |
+| Manual location | Nominatim (existing) | Address / postal → `(lat, lng)` when geolocation denied |
+| Store discovery | Overpass API | POIs tagged `shop=supermarket\|grocery\|convenience` within radius |
+| Our stores backend | Thin server (adapter + cache) | Normalize → `CandidateStore`, reverse-geocode postal, cache, hide upstream |
+| Client integration | `lib/location` + `lib/stores` | Framework-agnostic location capture + `/stores` fetch (reusable for mobile) |
+| Candidate → downstream | Existing models | `CandidateStore` feeds `DEALS` (postalCode) and `WORTH_IT` (candidates) unchanged |
+
+## 6. Core data model
+
+```
+OriginLocation                       // becomes Trip.stops[0]
+ ├─ lat, lng
+ ├─ source      // 'geolocation' | 'manual'
+ ├─ accuracyM?  // from Geolocation API; informs radius / "approximate" copy
+ ├─ label?      // "Near King St W" (reverse-geocoded, optional)
+ └─ postalCode? // reverse-geocoded; origin's own deals key if ever needed
+
+StoreQuery
+ ├─ lat, lng         // origin (rounded for cache key)
+ ├─ radiusM          // search radius, default ~5000 m
+ ├─ kinds?           // ['supermarket','grocery','convenience'] default
+ └─ limit?           // cap on candidates returned (default ~15)
+
+CandidateStore                       // the shape WORTH_IT.md §8 already consumes
+ ├─ store: { label, lat, lng, postalCode }   // reuses DEALS §6 store shape
+ ├─ kind             // 'supermarket' | 'grocery' | 'convenience'
+ ├─ distanceM        // straight-line from origin (rough pre-filter, NOT route Δ)
+ ├─ routeDistanceM?  // road distance origin→store (OSRM /table); barrier filter
+ └─ (matchedItems / deltas filled downstream by MATCH / routing seam)
+```
+
+`CandidateStore` is intentionally the **same shape `WORTH_IT.md §8` declares as
+input** — discovery fills `store` + `kind` + `distanceM`; matching fills
+`matchedItems`; the routing seam fills `deltas`. No adapter needed between layers.
+
+`distanceM` here is a cheap crow-flies pre-filter/sort only. The **real** cost is
+the marginal route delta (`WORTH_IT.md §3, §6`) — never present straight-line
+distance as travel cost.
+
+Crow-flies alone is not a safe filter: a store 10 km away across a river can be
+75 km by road. So after discovery, one OSRM `/table` call (origin → all
+candidates, one request) fills `routeDistanceM`, and candidates whose road
+distance exceeds `max(radiusM × k, floor)` (k ≈ 2–3) are dropped **before** the
+pool reaches `DEALS`/`WORTH_IT`. This is a reachability gate only — ranking and
+keep/skip stay with `WORTH_IT` on marginal route deltas.
+
+## 7. Upstream reference (prototype source)
+
+Overpass QL — grocers within `radius` metres of the origin:
+
+```
+[out:json][timeout:25];
+(
+  node["shop"~"supermarket|grocery|convenience"](around:<radius>,<lat>,<lng>);
+  way ["shop"~"supermarket|grocery|convenience"](around:<radius>,<lat>,<lng>);
+);
+out center tags;
+```
+
+Public endpoint (prototype): `https://overpass-api.de/api/interpreter`.
+Returns `tags.name`, `tags.brand`, and coordinates (`out center` gives ways a
+point). Missing/blank `name` → fall back to `brand`, else drop the POI.
+
+## 8. Key flows
+
+**Set the origin**
+`"Use my location" → Geolocation API → (lat,lng,accuracy)` — *or* —
+`manual entry → Nominatim → (lat,lng)`. Origin becomes `Trip.stops[0]`.
+
+**Discover nearby grocers**
+`origin → GET /stores?lat=&lng=&radius= → (cache hit? serve) : (Overpass → normalize → OSRM /table routeDistanceM → drop unreachable → reverse-geocode postal → cache → serve) → CandidateStore[]`
+
+**Hand off to the rest of the pipeline**
+`CandidateStore[] → DEALS (postalCode) → MATCH (list ∩ deals) → WORTH_IT.decide() → recommendedStops → Trip.stops → OSRM /trip → path + travel cost + "Open in Maps"`
+
+The **subset** of grocers the user actually visits is `WORTH_IT`'s
+`recommendedStops`; this layer supplies the pool it chooses from.
+
+## 9. The cost split (why this stays free)
+
+| Job | Handled by | Cost |
+|---|---|---|
+| Get approximate location | Device Geolocation (or existing Nominatim) | $0 |
+| Discover nearby grocers | Overpass (OSM), cached per area | Low (few upstream calls) |
+| Reverse-geocode postal | Existing Nominatim | $0 |
+| Price / rank subset / route | DEALS + WORTH_IT + OSRM (existing) | $0–low |
+
+Same discipline as everywhere else: cache per rounded-coordinate area and only
+re-query when the origin or radius actually changes (`ARCHITECTURE.md §10`).
+
+## 10. Known constraints to design around
+
+- **Approximate is a feature, not a bug** — coarse location protects privacy and
+  matches Nominatim's "close but not exact" reality (`ARCHITECTURE §10`). Show the
+  origin on the map and let the user nudge it; never imply pinpoint accuracy.
+- **Geolocation can be denied/unavailable** — always keep the manual address/postal
+  path as a first-class fallback, not an error state.
+- **OSM store data is uneven** — some POIs lack `name`, hours, or exact position;
+  ways need `out center`. Tolerate gaps; fall back name→brand; drop the unusable.
+- **Discovery ≠ selection** — this layer returns *everything nearby*; it must not
+  pre-judge worth. Narrowing to the visited subset is `WORTH_IT`'s job, on
+  marginal net benefit, so the reasoning stays in one place.
+- **Straight-line ≠ travel cost** — `distanceM` is only a pre-filter/sort. Real
+  path length and travel cost come from OSRM route deltas (`WORTH_IT §6`).
+- **Physical barriers break the radius** — rivers, rail corridors, highways: a
+  store inside `radiusM` crow-flies can be many times that by road. The
+  `/table` reachability gate (§6) drops these so they never inflate the
+  candidate pool or win on savings before the detour is priced.
+- **Overpass is unofficial-ish / rate-limited** — cache aggressively; for
+  production, self-host Overpass on the same OSM extract as OSRM/Nominatim
+  (`ARCHITECTURE §9`). Frontend contract (`/stores`) is unchanged either way.
+- **Radius is a tradeoff** — too small misses good stores, too large floods
+  `WORTH_IT` and Overpass. Default ~5 km, cap the count, make it adjustable.
+
+## 11. Proposed folder shape (additions)
+
+```
+smartsaver/
+├─ ARCHITECTURE.md
+├─ DEALS.md
+├─ GROCERY_LIST.md
+├─ WORTH_IT.md
+├─ DATABASE.md
+├─ LOCATION.md          ← this document
+├─ server/
+│  └─ stores.route      ← GET /stores?lat=&lng=&radius=  (Overpass adapter + cache)
+│     └─ adapters/overpass  ← Overpass QL + map → CandidateStore (only file that knows Overpass)
+└─ src/
+   ├─ lib/location      ← geolocation capture + manual (Nominatim) fallback → OriginLocation
+   ├─ lib/stores        ← client fetch of our /stores → CandidateStore[]
+   └─ components/       ← UseMyLocation, LocationInput, NearbyStores
+```
+
+## 12. Suggested build order (later)
+
+1. `lib/location` — Geolocation API capture + manual Nominatim fallback → `OriginLocation`; set as `Trip.stops[0]`
+2. `server/adapters/overpass` — query grocers in radius, normalize → `CandidateStore[]`
+3. Reachability gate — OSRM `/table` origin→candidates, fill `routeDistanceM`, drop road-distance outliers
+4. Reverse-geocode each store's `postalCode` (Nominatim) so `DEALS` can key off it
+5. Cache layer (per rounded lat/lng/radius) in front of the adapter
+6. `GET /stores` endpoint (CORS-clean, serves normalized `CandidateStore[]`)
+7. `lib/stores` client + `UseMyLocation` / `NearbyStores` in the panel
+8. Feed `CandidateStore[]` into the existing `DEALS → MATCH → WORTH_IT → OSRM` chain
+9. Radius control + "nudge the origin" map interaction; swap public Overpass → self-hosted
+```

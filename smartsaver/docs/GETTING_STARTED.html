@@ -1,0 +1,263 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Getting Started &mdash; SmartSaver  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=3b126f1a" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Packages" href="PACKAGES.html" />
+    <link rel="prev" title="SmartSaver" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #1b1a3a" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            SmartSaver
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Guide</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#install">Install</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#scripts-repo-root">Scripts (repo root)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ports">Ports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mobile-expo">Mobile (Expo)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#smoke-test-live-network">Smoke test (live network)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ci-and-releases">CI and releases</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#building-these-docs">Building these docs</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="PACKAGES.html">Packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="API.html">API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Design</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="ARCHITECTURE.html">SmartSaver — Multi-Platform Architecture &amp; Planning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DIAGRAMS.html">SmartSaver — Architecture Diagrams (for audit)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DEALS.html">SmartSaver — Deals Layer (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="GROCERY_LIST.html">SmartSaver — Grocery List (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="GROCERY_EDITOR.html">SmartSaver — Grocery List Editor UI (Addendum to GROCERY_LIST.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LOCATION.html">SmartSaver — Location &amp; Store Discovery (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="WORTH_IT.html">SmartSaver — Worth-It Engine (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="REWARDS.html">SmartSaver — Rewards &amp; Grocer Preference (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SETTINGS.html">SmartSaver — Cost-Model Settings (Addendum to WORTH_IT.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DATABASE.html">SmartSaver — Database (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DEFENSIVE.html">SmartSaver — Defensive Programming Rules</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Clients</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="WEBAPP.html">SmartSaver — Web App Build Plan (<code class="docutils literal notranslate"><span class="pre">apps/web</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MOBILE.html">SmartSaver — Mobile App Build Plan (<code class="docutils literal notranslate"><span class="pre">apps/mobile</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="STYLE_GUIDE.html">SmartSaver — Style Guide (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="USER_STATES.html">User States</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #1b1a3a" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">SmartSaver</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Getting Started</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/GETTING_STARTED.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="getting-started">
+<h1>Getting Started<a class="headerlink" href="#getting-started" title="Link to this heading"></a></h1>
+<p>Covers what runs today. Planned design lives in <a class="reference internal" href="ARCHITECTURE.html"><span class="std std-doc">SmartSaver — Multi-Platform Architecture &amp; Planning</span></a>.</p>
+<section id="prerequisites">
+<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Node &gt;= 20 (<code class="docutils literal notranslate"><span class="pre">engines</span></code> in root <code class="docutils literal notranslate"><span class="pre">package.json</span></code>), npm.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">.npmrc</span></code> sets <code class="docutils literal notranslate"><span class="pre">legacy-peer-deps=true</span></code>; no extra flags needed.</p></li>
+</ul>
+</section>
+<section id="install">
+<h2>Install<a class="headerlink" href="#install" title="Link to this heading"></a></h2>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">npm</span> <span class="n">install</span>
+</pre></div>
+</div>
+</section>
+<section id="scripts-repo-root">
+<h2>Scripts (repo root)<a class="headerlink" href="#scripts-repo-root" title="Link to this heading"></a></h2>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Script</p></th>
+<th class="head"><p>Does</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">npm</span> <span class="pre">run</span> <span class="pre">dev</span></code></p></td>
+<td><p>Builds <code class="docutils literal notranslate"><span class="pre">packages/core</span></code>, then runs API (<code class="docutils literal notranslate"><span class="pre">tsx</span> <span class="pre">watch</span></code>) and web (Vite) concurrently</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">npm</span> <span class="pre">run</span> <span class="pre">build</span></code></p></td>
+<td><p>Builds core, api, web (<code class="docutils literal notranslate"><span class="pre">tsc</span> <span class="pre">--noEmit</span> <span class="pre">&amp;&amp;</span> <span class="pre">vite</span> <span class="pre">build</span></code>), then typechecks mobile</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">npm</span> <span class="pre">test</span></code></p></td>
+<td><p>Runs <code class="docutils literal notranslate"><span class="pre">test:api</span></code> then <code class="docutils literal notranslate"><span class="pre">test:core</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">npm</span> <span class="pre">run</span> <span class="pre">test:api</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">vitest</span></code> in <code class="docutils literal notranslate"><span class="pre">packages/api</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">npm</span> <span class="pre">run</span> <span class="pre">test:core</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">vitest</span></code> in <code class="docutils literal notranslate"><span class="pre">packages/core</span></code> (estimate, route, maplinks, stores, list, match, trip store; all mocked, no network)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">npm</span> <span class="pre">run</span> <span class="pre">typecheck:mobile</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">tsc</span> <span class="pre">--noEmit</span></code> in <code class="docutils literal notranslate"><span class="pre">apps/mobile</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">npm</span> <span class="pre">run</span> <span class="pre">docs:build</span></code></p></td>
+<td><p>Sphinx HTML build</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">npm</span> <span class="pre">run</span> <span class="pre">docs:screenshots</span></code></p></td>
+<td><p>Playwright screenshots of the running web app</p></td>
+</tr>
+</tbody>
+</table>
+<p>Per-package builds: <code class="docutils literal notranslate"><span class="pre">build:core</span></code>, <code class="docutils literal notranslate"><span class="pre">build:api</span></code>, <code class="docutils literal notranslate"><span class="pre">build:web</span></code>.</p>
+</section>
+<section id="ports">
+<h2>Ports<a class="headerlink" href="#ports" title="Link to this heading"></a></h2>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Service</p></th>
+<th class="head"><p>Port</p></th>
+<th class="head"><p>Config</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>API (Express)</p></td>
+<td><p>8787</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">API_PORT</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Web (Vite)</p></td>
+<td><p>5173</p></td>
+<td><p>Vite default</p></td>
+</tr>
+</tbody>
+</table>
+<p>Vite proxies <code class="docutils literal notranslate"><span class="pre">/api</span></code> to <code class="docutils literal notranslate"><span class="pre">http://localhost:8787</span></code> (<code class="docutils literal notranslate"><span class="pre">apps/web/vite.config.ts</span></code>). The API allows CORS from <code class="docutils literal notranslate"><span class="pre">ALLOWED_ORIGIN</span></code> (default <code class="docutils literal notranslate"><span class="pre">http://localhost:5173</span></code>). Upstream flyer URL is overridable with <code class="docutils literal notranslate"><span class="pre">FLIPP_URL</span></code>. See <a class="reference internal" href="API.html"><span class="std std-doc">API</span></a>.</p>
+</section>
+<section id="mobile-expo">
+<h2>Mobile (Expo)<a class="headerlink" href="#mobile-expo" title="Link to this heading"></a></h2>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">npm</span> <span class="n">run</span> <span class="nb">start </span><span class="n">-w</span> <span class="n">apps</span><span class="p">/</span><span class="n">mobile</span>      <span class="c"># expo start</span>
+<span class="n">npm</span> <span class="n">run</span> <span class="n">android</span> <span class="n">-w</span> <span class="n">apps</span><span class="p">/</span><span class="n">mobile</span>
+<span class="n">npm</span> <span class="n">run</span> <span class="n">ios</span> <span class="n">-w</span> <span class="n">apps</span><span class="p">/</span><span class="n">mobile</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">apps/mobile</span></code> is a blank shell; see <a class="reference internal" href="PACKAGES.html"><span class="std std-doc">Packages</span></a>.</p>
+</section>
+<section id="smoke-test-live-network">
+<h2>Smoke test (live network)<a class="headerlink" href="#smoke-test-live-network" title="Link to this heading"></a></h2>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">npm</span> <span class="n">run</span> <span class="n">smoke</span><span class="p">:</span><span class="n">deal-options</span> <span class="n">-w</span> <span class="n">packages</span><span class="p">/</span><span class="n">api</span>
+</pre></div>
+</div>
+<p>Builds the API, then hits live Flipp for 15 Canadian postal codes and flags substring-only keyword matches.</p>
+</section>
+<section id="ci-and-releases">
+<h2>CI and releases<a class="headerlink" href="#ci-and-releases" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">.github/workflows/ci.yml</span></code>, triggered on push to <code class="docutils literal notranslate"><span class="pre">master</span></code> and on pull requests:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">build</span></code>: Node 20, <code class="docutils literal notranslate"><span class="pre">npm</span> <span class="pre">ci</span></code>, <code class="docutils literal notranslate"><span class="pre">npm</span> <span class="pre">run</span> <span class="pre">build</span></code>, <code class="docutils literal notranslate"><span class="pre">npm</span> <span class="pre">test</span></code> (api + core Vitest suites).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">docs</span></code>: Python 3.12, installs <code class="docutils literal notranslate"><span class="pre">docs/sphinx/requirements.txt</span></code>, builds Sphinx HTML, uploads it as the <code class="docutils literal notranslate"><span class="pre">docs-html</span></code> artifact. Build locally with <code class="docutils literal notranslate"><span class="pre">npm</span> <span class="pre">run</span> <span class="pre">docs:build</span></code> (output in <code class="docutils literal notranslate"><span class="pre">docs/sphinx/_build/html</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">publish-docs</span></code>: push to <code class="docutils literal notranslate"><span class="pre">master</span></code> only, after <code class="docutils literal notranslate"><span class="pre">docs</span></code>. Syncs the HTML into <code class="docutils literal notranslate"><span class="pre">smartsaver/docs/</span></code> of the <code class="docutils literal notranslate"><span class="pre">AndrewCMoore/Documentation-Viewer</span></code> repo and pushes, so it is served at <a class="reference external" href="https://andrewcmoore.github.io/Documentation-Viewer/smartsaver/docs/">https://andrewcmoore.github.io/Documentation-Viewer/smartsaver/docs/</a>. Authenticates with a write deploy key on that repo, stored here as the <code class="docutils literal notranslate"><span class="pre">DOCS_DEPLOY_KEY</span></code> secret.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">release</span></code>: push to <code class="docutils literal notranslate"><span class="pre">master</span></code> only, after <code class="docutils literal notranslate"><span class="pre">build</span></code>. Bumps the patch of the latest <code class="docutils literal notranslate"><span class="pre">vX.Y.Z</span></code> tag, commits <code class="docutils literal notranslate"><span class="pre">chore(release):</span> <span class="pre">vX.Y.Z</span> <span class="pre">[skip</span> <span class="pre">ci]</span></code>, tags, and creates a GitHub Release. Minor/major bumps are manual (push a <code class="docutils literal notranslate"><span class="pre">vX.Y.0</span></code> tag).</p></li>
+</ul>
+<p>Note: CI <code class="docutils literal notranslate"><span class="pre">build</span></code> does not run <code class="docutils literal notranslate"><span class="pre">npm</span> <span class="pre">test</span></code>.</p>
+</section>
+<section id="building-these-docs">
+<h2>Building these docs<a class="headerlink" href="#building-these-docs" title="Link to this heading"></a></h2>
+<p>Requirements: <code class="docutils literal notranslate"><span class="pre">sphinx</span></code>, <code class="docutils literal notranslate"><span class="pre">myst-parser</span></code>, <code class="docutils literal notranslate"><span class="pre">furo</span></code>, <code class="docutils literal notranslate"><span class="pre">sphinxcontrib-mermaid</span></code>.</p>
+<p>Option A: use the venv in <code class="docutils literal notranslate"><span class="pre">docs/sphinx/.venv</span></code>. From repo root in PowerShell:</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$env:PATH</span> <span class="p">=</span> <span class="s2">"$PWD\docs\sphinx\.venv\Scripts;$env:PATH"</span>
+<span class="n">npm</span> <span class="n">run</span> <span class="n">docs</span><span class="p">:</span><span class="n">build</span>
+</pre></div>
+</div>
+<p>Option B: install into your own Python:</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">-r</span> <span class="n">docs</span><span class="p">/</span><span class="n">sphinx</span><span class="p">/</span><span class="n">requirements</span><span class="p">.</span><span class="n">txt</span>
+<span class="n">npm</span> <span class="n">run</span> <span class="n">docs</span><span class="p">:</span><span class="n">build</span>
+</pre></div>
+</div>
+<p>Output: <code class="docutils literal notranslate"><span class="pre">docs/sphinx/_build/html</span></code>.</p>
+<p>Screenshots: start <code class="docutils literal notranslate"><span class="pre">npm</span> <span class="pre">run</span> <span class="pre">dev</span></code>, then <code class="docutils literal notranslate"><span class="pre">npm</span> <span class="pre">run</span> <span class="pre">docs:screenshots</span></code>. Writes to <code class="docutils literal notranslate"><span class="pre">docs/_static/screenshots/</span></code>; base URL overridable with <code class="docutils literal notranslate"><span class="pre">WEB_URL</span></code>. Currently captures only <code class="docutils literal notranslate"><span class="pre">/</span></code> (<code class="docutils literal notranslate"><span class="pre">home</span></code>).</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="ARCHITECTURE.html"><span class="std std-doc">SmartSaver — Multi-Platform Architecture &amp; Planning</span></a>, <a class="reference internal" href="WEBAPP.html"><span class="std std-doc">SmartSaver — Web App Build Plan (apps/web)</span></a>, <a class="reference internal" href="MOBILE.html"><span class="std std-doc">SmartSaver — Mobile App Build Plan (apps/mobile)</span></a>, <a class="reference internal" href="DEALS.html"><span class="std std-doc">SmartSaver — Deals Layer (Addendum to ARCHITECTURE.md)</span></a>, <a class="reference internal" href="DATABASE.html"><span class="std std-doc">SmartSaver — Database (Addendum to ARCHITECTURE.md)</span></a>, <a class="reference internal" href="PACKAGES.html"><span class="std std-doc">Packages</span></a>, <a class="reference internal" href="API.html"><span class="std std-doc">API</span></a>, <a class="reference internal" href="USER_STATES.html"><span class="std std-doc">User States</span></a></p>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="SmartSaver" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="PACKAGES.html" class="btn btn-neutral float-right" title="Packages" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

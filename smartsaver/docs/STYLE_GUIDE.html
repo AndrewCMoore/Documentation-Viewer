@@ -1,0 +1,931 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SmartSaver — Style Guide (Addendum to ARCHITECTURE.md) &mdash; SmartSaver  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=3b126f1a" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="User States" href="USER_STATES.html" />
+    <link rel="prev" title="SmartSaver — Mobile App Build Plan (apps/mobile)" href="MOBILE.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #1b1a3a" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            SmartSaver
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="GETTING_STARTED.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PACKAGES.html">Packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="API.html">API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Design</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="ARCHITECTURE.html">SmartSaver — Multi-Platform Architecture &amp; Planning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DIAGRAMS.html">SmartSaver — Architecture Diagrams (for audit)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DEALS.html">SmartSaver — Deals Layer (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="GROCERY_LIST.html">SmartSaver — Grocery List (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="GROCERY_EDITOR.html">SmartSaver — Grocery List Editor UI (Addendum to GROCERY_LIST.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LOCATION.html">SmartSaver — Location &amp; Store Discovery (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="WORTH_IT.html">SmartSaver — Worth-It Engine (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="REWARDS.html">SmartSaver — Rewards &amp; Grocer Preference (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SETTINGS.html">SmartSaver — Cost-Model Settings (Addendum to WORTH_IT.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DATABASE.html">SmartSaver — Database (Addendum to ARCHITECTURE.md)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DEFENSIVE.html">SmartSaver — Defensive Programming Rules</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Clients</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="WEBAPP.html">SmartSaver — Web App Build Plan (<code class="docutils literal notranslate"><span class="pre">apps/web</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MOBILE.html">SmartSaver — Mobile App Build Plan (<code class="docutils literal notranslate"><span class="pre">apps/mobile</span></code>)</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">SmartSaver — Style Guide (Addendum to ARCHITECTURE.md)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#design-intent-the-four-brand-synthesis">1. Design intent — the four-brand synthesis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#core-color-decisions-locked">2. Core color decisions (locked)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#theme-posture">3. Theme posture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#color-tokens">4. Color tokens</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#brand-indigo-violet">4.1 Brand (indigo/violet)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#money-status">4.2 Money &amp; status</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#neutrals-warm">4.3 Neutrals (warm)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#map-surface-non-ui-illustrative">4.4 Map surface (non-UI, illustrative)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#typography">5. Typography</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#spacing-radius-elevation">6. Spacing, radius, elevation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#component-specs">7. Component specs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#focus-states-accessibility">8. Focus, states, accessibility</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#motion">9. Motion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#responsive-ties-to-architecture-md-3">10. Responsive (ties to ARCHITECTURE.md §3)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#using-the-tokens-integration">11. Using the tokens (integration)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#do-don-t">12. Do / Don’t</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#files-in-this-system">13. Files in this system</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#open-follow-ups-not-yet-decided">14. Open follow-ups (not yet decided)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#cross-platform-notes-web-react-native">15. Cross-platform notes (web ↔ React Native)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#empty-error-loading-states">16. Empty, error &amp; loading states</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#loading-skeletons-not-spinners">16.1 Loading — skeletons, not spinners</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#empty-two-tiers-and-never-dishonest">16.2 Empty — two tiers, and never dishonest</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#error-one-path-plain-language-a-way-forward">16.3 Error — one path, plain language, a way forward</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#cross-platform-extends-15">16.4 Cross-platform (extends §15)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="USER_STATES.html">User States</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #1b1a3a" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">SmartSaver</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">SmartSaver — Style Guide (Addendum to ARCHITECTURE.md)</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/STYLE_GUIDE.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="smartsaver-style-guide-addendum-to-architecture-md">
+<h1>SmartSaver — Style Guide (Addendum to ARCHITECTURE.md)<a class="headerlink" href="#smartsaver-style-guide-addendum-to-architecture-md" title="Link to this heading"></a></h1>
+<blockquote>
+<div><p>Planning document. No application code yet — this captures the visual design
+system so we build against one consistent look. Read alongside
+<code class="docutils literal notranslate"><span class="pre">ARCHITECTURE.md</span></code> (layout: panel + map), <code class="docutils literal notranslate"><span class="pre">DEALS.md</span></code>, <code class="docutils literal notranslate"><span class="pre">GROCERY_LIST.md</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">WORTH_IT.md</span></code>. Canonical tokens live in <code class="docutils literal notranslate"><span class="pre">style-guide/tokens.mjs</span></code> (platform-neutral
+data, consumed directly by React Native); <code class="docutils literal notranslate"><span class="pre">style-guide/tokens.css</span></code> is <strong>generated</strong>
+from it via <code class="docutils literal notranslate"><span class="pre">node</span> <span class="pre">style-guide/build-tokens.mjs</span></code>. A living, toggleable reference is
+<code class="docutils literal notranslate"><span class="pre">style-guide/style-guide.html</span></code>.</p>
+</div></blockquote>
+<section id="design-intent-the-four-brand-synthesis">
+<h2>1. Design intent — the four-brand synthesis<a class="headerlink" href="#design-intent-the-four-brand-synthesis" title="Link to this heading"></a></h2>
+<p>SmartSaver borrows a specific strength from each reference rather than copying one
+wholesale. The blend is deliberate; when they conflict, the rule in the last
+column wins.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>From</p></th>
+<th class="head"><p>What we take</p></th>
+<th class="head"><p>Where it shows up</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Airbnb</strong></p></td>
+<td><p>Warmth, rounded forms, soft shadows, card-driven layout, generous whitespace</p></td>
+<td><p>Deal cards, the Worth-It card, overall friendliness</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Lattice</strong></p></td>
+<td><p>Calm, professional data density; color used sparingly</p></td>
+<td><p>The panel: stop list, breakdowns, summaries</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Revolut</strong></p></td>
+<td><p>Precise, confident treatment of money; strong dark mode</p></td>
+<td><p>Savings figures, net-benefit total, tabular numerics</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Slack</strong></p></td>
+<td><p>A distinctive accent + clear information architecture</p></td>
+<td><p>Indigo brand color, section rhythm, primary actions</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>One-line personality:</strong> <em>warm and human, but precise about money.</em> Friendly
+enough to enjoy, trustworthy enough to act on a dollar figure.</p>
+</section>
+<section id="core-color-decisions-locked">
+<h2>2. Core color decisions (locked)<a class="headerlink" href="#core-color-decisions-locked" title="Link to this heading"></a></h2>
+<p>Two decisions drive the whole palette:</p>
+<ol class="arabic simple">
+<li><p><strong>Brand accent = indigo/violet.</strong> Brand mark, primary buttons, links, route
+line, map pins, stop numbers, focus rings. Distinctive (Slack-aubergine meets
+Revolut-violet) and, crucially, <em>not</em> green — so it never competes with money.</p></li>
+<li><p><strong>Money = green, always and only.</strong> Savings amounts, sale prices, and the
+“Worth it ✓” verdict are green everywhere. Green is reserved for <em>positive
+money</em>; it is never a brand or decorative color. This is what lets a user scan
+the screen and trust that “green = you saved.”</p></li>
+</ol>
+<p>Everything else is warm-neutral so those two signals stand out.</p>
+</section>
+<section id="theme-posture">
+<h2>3. Theme posture<a class="headerlink" href="#theme-posture" title="Link to this heading"></a></h2>
+<p><strong>Light-first, dark-ready.</strong> Light is primary (matches Airbnb / Lattice / Slack);
+dark is fully specified via token <em>pairs</em> (Revolut-grade), not an afterthought.
+Every color token below has a light and a dark value. Components must reference
+tokens only — never hard-coded hex — so a theme swap is free.</p>
+<p>The dark theme applies via <code class="docutils literal notranslate"><span class="pre">prefers-color-scheme</span></code> and can be forced with a
+<code class="docutils literal notranslate"><span class="pre">data-theme=&quot;light|dark&quot;</span></code> attribute on the root (user override wins).</p>
+</section>
+<section id="color-tokens">
+<h2>4. Color tokens<a class="headerlink" href="#color-tokens" title="Link to this heading"></a></h2>
+<p>Hex pairs are the source of truth (defined in <code class="docutils literal notranslate"><span class="pre">tokens.mjs</span></code>, generated into
+<code class="docutils literal notranslate"><span class="pre">tokens.css</span></code>). “AA” = meets WCAG
+2.1 contrast ≥ 4.5:1 as body text on the adjacent surface; “AA-large / non-text”
+= use only for ≥ 19px bold text, icons, borders, or fills.</p>
+<section id="brand-indigo-violet">
+<h3>4.1 Brand (indigo/violet)<a class="headerlink" href="#brand-indigo-violet" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Token</p></th>
+<th class="head"><p>Role</p></th>
+<th class="head"><p>Light</p></th>
+<th class="head"><p>Dark</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--brand</span></code></p></td>
+<td><p>Primary fill (buttons, route, pins). White text on it is AA in both themes.</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">#5A50E1</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">#5A50E1</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--brand-strong</span></code></p></td>
+<td><p>Hover / pressed</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">#4840CE</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">#7A70EC</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--brand-weak</span></code></p></td>
+<td><p>Tinted background (selected rows, “add stop” hover, pin bg)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">#ECEBFB</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">#232048</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--brand-text</span></code></p></td>
+<td><p>Indigo used <em>as text/icon/link</em> on a surface (AA)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">#4840CE</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">#A79FEE</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--on-brand</span></code></p></td>
+<td><p>Text/icon on a <code class="docutils literal notranslate"><span class="pre">--brand</span></code> fill</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">#FFFFFF</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">#FFFFFF</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="money-status">
+<h3>4.2 Money &amp; status<a class="headerlink" href="#money-status" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Token</p></th>
+<th class="head"><p>Role</p></th>
+<th class="head"><p>Light</p></th>
+<th class="head"><p>Dark</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--money</span></code></p></td>
+<td><p>Savings / sale prices / positive delta (AA as bold numerics)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">#0E9F6E</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">#35C793</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--money-strong</span></code></p></td>
+<td><p>Emphasis (net-benefit total)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">#0B845C</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">#4FD6A6</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--money-weak</span></code></p></td>
+<td><p>“Worth it” badge bg, positive tint</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">#E6F7F0</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">#12271E</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--cost</span></code></p></td>
+<td><p>Fuel / detour cost (a debit, not an error)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">#B26A2B</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">#E0A860</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--cost-weak</span></code></p></td>
+<td><p>Cost tint</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">#FBEEDD</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">#2A2113</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--danger</span></code></p></td>
+<td><p>“Skip”, errors, destructive</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">#C93741</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">#F0868D</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--danger-weak</span></code></p></td>
+<td><p>Danger tint</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">#FBE9EA</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">#2E1618</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<div><p>Cost is amber, not red. A detour cost is an honest debit in the arithmetic
+(<code class="docutils literal notranslate"><span class="pre">WORTH_IT.md</span> <span class="pre">§4</span></code>), not a failure — red is reserved for genuine “skip / error”.</p>
+</div></blockquote>
+</section>
+<section id="neutrals-warm">
+<h3>4.3 Neutrals (warm)<a class="headerlink" href="#neutrals-warm" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Token</p></th>
+<th class="head"><p>Role</p></th>
+<th class="head"><p>Light</p></th>
+<th class="head"><p>Dark</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--canvas</span></code></p></td>
+<td><p>App background</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">#F6F6F4</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">#0F0F12</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--surface</span></code></p></td>
+<td><p>Cards, panel, sheets</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">#FFFFFF</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">#17171B</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--surface-2</span></code></p></td>
+<td><p>Inset / subtle raised (search, summaries)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">#FBFBFA</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">#1E1E23</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--surface-3</span></code></p></td>
+<td><p>Deeper inset / hover fill</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">#F2F2EF</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">#26262C</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--border</span></code></p></td>
+<td><p>Default hairline</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">#EAEAE6</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">#2A2A31</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--border-strong</span></code></p></td>
+<td><p>Emphasised divider / control border</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">#DDDDD8</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">#3A3A42</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--text</span></code></p></td>
+<td><p>Primary text (AA)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">#1D1D1F</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">#F4F4F5</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--text-2</span></code></p></td>
+<td><p>Secondary text (AA)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">#6B6B70</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">#A7A7AE</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--text-3</span></code></p></td>
+<td><p>Tertiary / placeholder (AA-large / non-text)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">#9C9CA2</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">#6E6E77</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="map-surface-non-ui-illustrative">
+<h3>4.4 Map surface (non-UI, illustrative)<a class="headerlink" href="#map-surface-non-ui-illustrative" title="Link to this heading"></a></h3>
+<p>The MapLibre canvas isn’t themed by these tokens (tiles come from OSM), but our
+<em>overlays</em> are: route line = <code class="docutils literal notranslate"><span class="pre">--brand</span></code>, with a white/<code class="docutils literal notranslate"><span class="pre">--surface</span></code> casing beneath
+for legibility on any tile; markers use <code class="docutils literal notranslate"><span class="pre">--brand</span></code> fill + <code class="docutils literal notranslate"><span class="pre">--on-brand</span></code> text; the
+origin pin uses <code class="docutils literal notranslate"><span class="pre">--text</span></code>. The floating savings chip uses <code class="docutils literal notranslate"><span class="pre">--surface</span></code> + <code class="docutils literal notranslate"><span class="pre">--money</span></code>.</p>
+</section>
+</section>
+<section id="typography">
+<h2>5. Typography<a class="headerlink" href="#typography" title="Link to this heading"></a></h2>
+<p><strong>Font:</strong> <strong>Inter</strong> (brand face, decided — §14), with the system stack as
+fallback until it loads. Chosen over the alternatives (Geist, staying on the
+system stack) because Inter ships <strong>proven tabular figures on every platform</strong> —
+the trust anchor for money, since the system default doesn’t guarantee them on
+Android (§15) — and is optimised for the 12–17px UI sizes that dominate the panel.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">--</span><span class="n">font</span><span class="o">-</span><span class="n">sans</span><span class="p">:</span> <span class="s2">"Inter"</span><span class="p">,</span> <span class="o">-</span><span class="n">apple</span><span class="o">-</span><span class="n">system</span><span class="p">,</span> <span class="n">BlinkMacSystemFont</span><span class="p">,</span> <span class="s2">"Segoe UI"</span><span class="p">,</span> <span class="n">Roboto</span><span class="p">,</span>
+             <span class="s2">"Helvetica Neue"</span><span class="p">,</span> <span class="n">Arial</span><span class="p">,</span> <span class="n">sans</span><span class="o">-</span><span class="n">serif</span><span class="p">;</span>
+<span class="o">--</span><span class="n">font</span><span class="o">-</span><span class="n">mono</span><span class="p">:</span> <span class="n">ui</span><span class="o">-</span><span class="n">monospace</span><span class="p">,</span> <span class="n">SFMono</span><span class="o">-</span><span class="n">Regular</span><span class="p">,</span> <span class="n">Menlo</span><span class="p">,</span> <span class="n">Consolas</span><span class="p">,</span> <span class="n">monospace</span><span class="p">;</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>Inter must be <strong>bundled/self-hosted</strong> — web via <code class="docutils literal notranslate"><span class="pre">&#64;font-face</span></code>, native via the
+app’s font assets (family name <code class="docutils literal notranslate"><span class="pre">Inter</span></code>) — not pulled from a CDN at runtime.
+Ship the same weights used below (400–800). Swap the face later by changing
+<code class="docutils literal notranslate"><span class="pre">fontFamily.sans</span></code> in <code class="docutils literal notranslate"><span class="pre">tokens.mjs</span></code> (→ <code class="docutils literal notranslate"><span class="pre">--font-sans</span></code>) only.</p>
+</div></blockquote>
+<p><strong>Weights used:</strong> 400 / 500 / 600 / 700 / 800 (avoid in-between weights so
+non-variable fallbacks render identically).</p>
+<p><strong>Scale</strong> (name · size / line-height · weight · use):</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Token</p></th>
+<th class="head"><p>Size / LH</p></th>
+<th class="head"><p>Weight</p></th>
+<th class="head"><p>Use</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">display</span></code></p></td>
+<td><p>32 / 38</p></td>
+<td><p>800</p></td>
+<td><p>Marketing / empty states</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">h1</span></code></p></td>
+<td><p>26 / 32</p></td>
+<td><p>800</p></td>
+<td><p>Page title</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">h2</span></code></p></td>
+<td><p>20 / 26</p></td>
+<td><p>700</p></td>
+<td><p>Section header</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">h3</span></code></p></td>
+<td><p>17 / 22</p></td>
+<td><p>700</p></td>
+<td><p>Card title, brand wordmark</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">body-lg</span></code></p></td>
+<td><p>16 / 24</p></td>
+<td><p>400</p></td>
+<td><p>Emphasis body</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">body</span></code></p></td>
+<td><p>14 / 20</p></td>
+<td><p>400</p></td>
+<td><p><strong>Base</strong> UI text</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">body-sm</span></code></p></td>
+<td><p>13 / 18</p></td>
+<td><p>400</p></td>
+<td><p>Dense meta</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">caption</span></code></p></td>
+<td><p>12 / 16</p></td>
+<td><p>500</p></td>
+<td><p>Timestamps, helper</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">overline</span></code></p></td>
+<td><p>11 / 14</p></td>
+<td><p>700</p></td>
+<td><p>Section labels — UPPERCASE, <code class="docutils literal notranslate"><span class="pre">letter-spacing:.06em</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Numerics (money):</strong> always <code class="docutils literal notranslate"><span class="pre">font-variant-numeric:</span> <span class="pre">tabular-nums</span></code> so figures
+align in columns and don’t jitter as they update. The net-benefit total is the
+one oversized numeric — <code class="docutils literal notranslate"><span class="pre">28</span> <span class="pre">/</span> <span class="pre">800</span></code>, colored <code class="docutils literal notranslate"><span class="pre">--money</span></code>.</p>
+</section>
+<section id="spacing-radius-elevation">
+<h2>6. Spacing, radius, elevation<a class="headerlink" href="#spacing-radius-elevation" title="Link to this heading"></a></h2>
+<p><strong>Spacing</strong> — 4px base grid. Use tokens, not raw px.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">--</span><span class="n">space</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="mi">4</span>  <span class="o">--</span><span class="n">space</span><span class="o">-</span><span class="mi">2</span><span class="p">:</span><span class="mi">8</span>  <span class="o">--</span><span class="n">space</span><span class="o">-</span><span class="mi">3</span><span class="p">:</span><span class="mi">12</span> <span class="o">--</span><span class="n">space</span><span class="o">-</span><span class="mi">4</span><span class="p">:</span><span class="mi">16</span> <span class="o">--</span><span class="n">space</span><span class="o">-</span><span class="mi">5</span><span class="p">:</span><span class="mi">20</span>
+<span class="o">--</span><span class="n">space</span><span class="o">-</span><span class="mi">6</span><span class="p">:</span><span class="mi">24</span> <span class="o">--</span><span class="n">space</span><span class="o">-</span><span class="mi">8</span><span class="p">:</span><span class="mi">32</span> <span class="o">--</span><span class="n">space</span><span class="o">-</span><span class="mi">10</span><span class="p">:</span><span class="mi">40</span> <span class="o">--</span><span class="n">space</span><span class="o">-</span><span class="mi">12</span><span class="p">:</span><span class="mi">48</span> <span class="o">--</span><span class="n">space</span><span class="o">-</span><span class="mi">16</span><span class="p">:</span><span class="mi">64</span>
+</pre></div>
+</div>
+<p>Panel padding <code class="docutils literal notranslate"><span class="pre">--space-5</span></code> (20); gap between cards <code class="docutils literal notranslate"><span class="pre">--space-3</span></code> (12); inside a card
+<code class="docutils literal notranslate"><span class="pre">--space-3</span></code>/<code class="docutils literal notranslate"><span class="pre">--space-4</span></code>.</p>
+<p><strong>Radius</strong> — rounded, per the warm/Airbnb lean.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">--</span><span class="n">radius</span><span class="o">-</span><span class="n">xs</span><span class="p">:</span><span class="mi">8</span>  <span class="o">--</span><span class="n">radius</span><span class="o">-</span><span class="n">sm</span><span class="p">:</span><span class="mi">11</span>  <span class="o">--</span><span class="n">radius</span><span class="o">-</span><span class="n">md</span><span class="p">:</span><span class="mi">16</span> <span class="p">(</span><span class="n">default</span><span class="p">)</span>  <span class="o">--</span><span class="n">radius</span><span class="o">-</span><span class="n">lg</span><span class="p">:</span><span class="mi">20</span>  <span class="o">--</span><span class="n">radius</span><span class="o">-</span><span class="n">pill</span><span class="p">:</span><span class="mi">999</span>
+</pre></div>
+</div>
+<p>Cards &amp; panel containers use <code class="docutils literal notranslate"><span class="pre">--radius-md</span></code>; inputs/summaries <code class="docutils literal notranslate"><span class="pre">--radius-sm</span></code>;
+badges/buttons-as-chips &amp; “Add stop” use <code class="docutils literal notranslate"><span class="pre">--radius-pill</span></code>.</p>
+<p><strong>Elevation</strong> — soft and diffuse (light); in dark, lean on surface steps + subtle
+borders rather than heavy shadows.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Light</span><span class="p">:</span>
+<span class="o">--</span><span class="n">shadow</span><span class="o">-</span><span class="n">sm</span><span class="p">:</span> <span class="mi">0</span> <span class="mi">1</span><span class="n">px</span> <span class="mi">2</span><span class="n">px</span> <span class="n">rgba</span><span class="p">(</span><span class="mi">24</span><span class="p">,</span><span class="mi">24</span><span class="p">,</span><span class="mi">32</span><span class="p">,</span><span class="mf">.05</span><span class="p">),</span> <span class="mi">0</span> <span class="mi">1</span><span class="n">px</span> <span class="mi">3</span><span class="n">px</span> <span class="n">rgba</span><span class="p">(</span><span class="mi">24</span><span class="p">,</span><span class="mi">24</span><span class="p">,</span><span class="mi">32</span><span class="p">,</span><span class="mf">.05</span><span class="p">)</span>
+<span class="o">--</span><span class="n">shadow</span><span class="o">-</span><span class="n">md</span><span class="p">:</span> <span class="mi">0</span> <span class="mi">6</span><span class="n">px</span> <span class="mi">16</span><span class="n">px</span> <span class="n">rgba</span><span class="p">(</span><span class="mi">24</span><span class="p">,</span><span class="mi">24</span><span class="p">,</span><span class="mi">32</span><span class="p">,</span><span class="mf">.08</span><span class="p">),</span> <span class="mi">0</span> <span class="mi">2</span><span class="n">px</span> <span class="mi">6</span><span class="n">px</span> <span class="n">rgba</span><span class="p">(</span><span class="mi">24</span><span class="p">,</span><span class="mi">24</span><span class="p">,</span><span class="mi">32</span><span class="p">,</span><span class="mf">.05</span><span class="p">)</span>
+<span class="o">--</span><span class="n">shadow</span><span class="o">-</span><span class="n">lg</span><span class="p">:</span> <span class="mi">0</span> <span class="mi">18</span><span class="n">px</span> <span class="mi">40</span><span class="n">px</span> <span class="n">rgba</span><span class="p">(</span><span class="mi">24</span><span class="p">,</span><span class="mi">24</span><span class="p">,</span><span class="mi">32</span><span class="p">,</span><span class="mf">.14</span><span class="p">),</span> <span class="mi">0</span> <span class="mi">6</span><span class="n">px</span> <span class="mi">14</span><span class="n">px</span> <span class="n">rgba</span><span class="p">(</span><span class="mi">24</span><span class="p">,</span><span class="mi">24</span><span class="p">,</span><span class="mi">32</span><span class="p">,</span><span class="mf">.08</span><span class="p">)</span>
+<span class="n">Dark</span><span class="p">:</span>
+<span class="o">--</span><span class="n">shadow</span><span class="o">-</span><span class="n">sm</span><span class="p">:</span> <span class="mi">0</span> <span class="mi">1</span><span class="n">px</span> <span class="mi">2</span><span class="n">px</span> <span class="n">rgba</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mf">.4</span><span class="p">)</span>
+<span class="o">--</span><span class="n">shadow</span><span class="o">-</span><span class="n">md</span><span class="p">:</span> <span class="mi">0</span> <span class="mi">6</span><span class="n">px</span> <span class="mi">18</span><span class="n">px</span> <span class="n">rgba</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mf">.5</span><span class="p">)</span>
+<span class="o">--</span><span class="n">shadow</span><span class="o">-</span><span class="n">lg</span><span class="p">:</span> <span class="mi">0</span> <span class="mi">20</span><span class="n">px</span> <span class="mi">44</span><span class="n">px</span> <span class="n">rgba</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mf">.6</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Elevation ladder: canvas → panel/cards (<code class="docutils literal notranslate"><span class="pre">sm</span></code>) → Worth-It &amp; floating map chip
+(<code class="docutils literal notranslate"><span class="pre">md</span></code>) → modals/bottom sheet (<code class="docutils literal notranslate"><span class="pre">lg</span></code>).</p>
+</section>
+<section id="component-specs">
+<h2>7. Component specs<a class="headerlink" href="#component-specs" title="Link to this heading"></a></h2>
+<p>Reference render: <code class="docutils literal notranslate"><span class="pre">style-guide/style-guide.html</span></code>. Each component references tokens
+only.</p>
+<p><strong>Button — primary.</strong> Fill <code class="docutils literal notranslate"><span class="pre">--brand</span></code>, text <code class="docutils literal notranslate"><span class="pre">--on-brand</span></code>, <code class="docutils literal notranslate"><span class="pre">--radius-sm</span></code>, padding
+<code class="docutils literal notranslate"><span class="pre">14px</span></code>, weight 700, <code class="docutils literal notranslate"><span class="pre">--shadow-sm</span></code>. Hover → <code class="docutils literal notranslate"><span class="pre">--brand-strong</span></code>. Full-width for the
+main action (“Open in Google Maps”). One primary per view.</p>
+<p><strong>Button — secondary / ghost.</strong> <code class="docutils literal notranslate"><span class="pre">--surface</span></code> fill, <code class="docutils literal notranslate"><span class="pre">1px</span> <span class="pre">--border-strong</span></code>, text
+<code class="docutils literal notranslate"><span class="pre">--text</span></code>. Hover → <code class="docutils literal notranslate"><span class="pre">--surface-2</span></code>. Used for the nav-app alternates (Apple, Waze).</p>
+<p><strong>“Add stop” chip.</strong> Transparent fill, <code class="docutils literal notranslate"><span class="pre">1px</span> <span class="pre">--brand</span></code>, text <code class="docutils literal notranslate"><span class="pre">--brand-text</span></code>,
+<code class="docutils literal notranslate"><span class="pre">--radius-pill</span></code>. Hover → <code class="docutils literal notranslate"><span class="pre">--brand-weak</span></code>. A deliberately light-weight action so it
+doesn’t outshout the primary CTA.</p>
+<p><strong>Input / search.</strong> <code class="docutils literal notranslate"><span class="pre">--surface-2</span></code> fill, <code class="docutils literal notranslate"><span class="pre">1px</span> <span class="pre">--border</span></code>, <code class="docutils literal notranslate"><span class="pre">--radius-sm</span></code>, leading
+icon in <code class="docutils literal notranslate"><span class="pre">--text-3</span></code>. Focus → <code class="docutils literal notranslate"><span class="pre">2px</span> <span class="pre">--brand</span></code> border + focus ring (see §8).</p>
+<p><strong>Card (generic + deal).</strong> <code class="docutils literal notranslate"><span class="pre">--surface</span></code>, <code class="docutils literal notranslate"><span class="pre">1px</span> <span class="pre">--border</span></code>, <code class="docutils literal notranslate"><span class="pre">--radius-md</span></code>,
+<code class="docutils literal notranslate"><span class="pre">--shadow-sm</span></code>; hover lifts to <code class="docutils literal notranslate"><span class="pre">--shadow-md</span></code> + <code class="docutils literal notranslate"><span class="pre">translateY(-1px)</span></code>. Deal card = 64px
+image tile (<code class="docutils literal notranslate"><span class="pre">--radius-sm</span></code>) + title (<code class="docutils literal notranslate"><span class="pre">body</span></code>, 600) + merchant (<code class="docutils literal notranslate"><span class="pre">caption</span></code>,
+<code class="docutils literal notranslate"><span class="pre">--text-2</span></code>) + price row (sale in <code class="docutils literal notranslate"><span class="pre">--money</span></code> 700 tabular, was-price struck in
+<code class="docutils literal notranslate"><span class="pre">--text-3</span></code>) + trailing “Add stop” chip.</p>
+<p><strong>Worth-It card (hero).</strong> The most emphasised surface: <code class="docutils literal notranslate"><span class="pre">--radius-md</span></code>,
+<code class="docutils literal notranslate"><span class="pre">--shadow-md</span></code>, subtle <code class="docutils literal notranslate"><span class="pre">surface→surface-2</span></code> gradient. Header = store + “vs. your
+usual store” counterfactual (<code class="docutils literal notranslate"><span class="pre">WORTH_IT.md</span> <span class="pre">§10</span></code>) + “Worth it ✓” badge. Itemised
+rows (savings <code class="docutils literal notranslate"><span class="pre">+</span></code> green, detour neutral, fuel <code class="docutils literal notranslate"><span class="pre">−</span></code> cost-amber) above a dashed
+divider, then the net-benefit total oversized in <code class="docutils literal notranslate"><span class="pre">--money</span></code>. <strong>Always show the
+arithmetic</strong> — never a bare verdict.</p>
+<p><strong>Badge / pill.</strong> <code class="docutils literal notranslate"><span class="pre">--radius-pill</span></code>, <code class="docutils literal notranslate"><span class="pre">caption</span></code>+ weight 700. “Worth it” =
+<code class="docutils literal notranslate"><span class="pre">--money-weak</span></code> bg / <code class="docutils literal notranslate"><span class="pre">--money</span></code> text; “Skip” = <code class="docutils literal notranslate"><span class="pre">--danger-weak</span></code> / <code class="docutils literal notranslate"><span class="pre">--danger</span></code>.</p>
+<p><strong>Stat / summary row.</strong> Horizontal group (Distance · Time · Fuel) in
+<code class="docutils literal notranslate"><span class="pre">--surface-2</span></code>; value <code class="docutils literal notranslate"><span class="pre">15/700</span></code> tabular, label <code class="docutils literal notranslate"><span class="pre">overline</span></code> in <code class="docutils literal notranslate"><span class="pre">--text-3</span></code>.</p>
+<p><strong>Stop row + pins.</strong> 24px circular pin; origin = <code class="docutils literal notranslate"><span class="pre">--text</span></code> fill / white; numbered
+stops = <code class="docutils literal notranslate"><span class="pre">--brand-weak</span></code> bg / <code class="docutils literal notranslate"><span class="pre">--brand-text</span></code>. Row hover → <code class="docutils literal notranslate"><span class="pre">--surface-2</span></code>; trailing
+drag grip in <code class="docutils literal notranslate"><span class="pre">--border-strong</span></code>.</p>
+<p><strong>Icons.</strong> Set = <strong>Lucide</strong> (<code class="docutils literal notranslate"><span class="pre">lucide-react</span></code> web, <code class="docutils literal notranslate"><span class="pre">lucide-react-native</span></code> native —
+same glyphs, satisfies §15). Chosen because its defaults <em>are</em> this system’s
+existing convention: 2px stroke, round caps/joins, 24×24 grid — so no per-icon
+overrides. ISC-licensed; maintained superset of Feather. Glyph 24px default, 20px
+in dense rows (stat row, chips); the interactive <strong>hit target</strong> stays 40/44px
+(§8), not the glyph box. Color via <code class="docutils literal notranslate"><span class="pre">currentColor</span></code> — inherit from the parent’s
+text token (<code class="docutils literal notranslate"><span class="pre">--text-2</span></code>/<code class="docutils literal notranslate"><span class="pre">--text-3</span></code> for affordances, <code class="docutils literal notranslate"><span class="pre">--brand-text</span></code> on-surface,
+<code class="docutils literal notranslate"><span class="pre">--on-brand</span></code> on fills); status glyphs use <code class="docutils literal notranslate"><span class="pre">--money</span></code>/<code class="docutils literal notranslate"><span class="pre">--danger</span></code>/cost-amber to match
+their labels. Never hard-code a hex, never mix in a second icon set.</p>
+</section>
+<section id="focus-states-accessibility">
+<h2>8. Focus, states, accessibility<a class="headerlink" href="#focus-states-accessibility" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>Focus ring</strong> (keyboard): <code class="docutils literal notranslate"><span class="pre">0</span> <span class="pre">0</span> <span class="pre">0</span> <span class="pre">3px</span></code> of <code class="docutils literal notranslate"><span class="pre">--brand</span></code> at ~35% alpha, on top of a
+solid <code class="docutils literal notranslate"><span class="pre">--brand</span></code> border. Never remove focus outlines; style them.
+<code class="docutils literal notranslate"><span class="pre">--focus-ring:</span> <span class="pre">0</span> <span class="pre">0</span> <span class="pre">0</span> <span class="pre">3px</span> <span class="pre">rgba(90,80,225,.35)</span></code> (light) / <code class="docutils literal notranslate"><span class="pre">rgba(139,129,231,.45)</span></code>
+(dark).</p></li>
+<li><p><strong>Contrast:</strong> body text meets AA (≥4.5:1); <code class="docutils literal notranslate"><span class="pre">--text-3</span></code> is for placeholder /
+non-text only. Don’t put <code class="docutils literal notranslate"><span class="pre">--money</span></code> small text on <code class="docutils literal notranslate"><span class="pre">--money-weak</span></code> without checking.</p></li>
+<li><p><strong>Color is never the only signal.</strong> “Worth it ✓” / “Skip ✕” pair color with a
+glyph and a word; deltas carry <code class="docutils literal notranslate"><span class="pre">+</span></code> / <code class="docutils literal notranslate"><span class="pre">−</span></code> signs. Col-blind-safe by construction.</p></li>
+<li><p><strong>Hit targets</strong> ≥ 40px on touch (mobile / bottom-sheet mode).</p></li>
+<li><p><strong>Reduced motion:</strong> honor <code class="docutils literal notranslate"><span class="pre">prefers-reduced-motion</span></code> — drop transforms/animation,
+keep instantaneous state changes.</p></li>
+</ul>
+</section>
+<section id="motion">
+<h2>9. Motion<a class="headerlink" href="#motion" title="Link to this heading"></a></h2>
+<p>Purposeful and quick; nothing bounces.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">--</span><span class="n">dur</span><span class="o">-</span><span class="n">fast</span><span class="p">:</span><span class="mi">120</span><span class="n">ms</span>  <span class="o">--</span><span class="n">dur</span><span class="p">:</span><span class="mi">160</span><span class="n">ms</span>  <span class="o">--</span><span class="n">dur</span><span class="o">-</span><span class="n">slow</span><span class="p">:</span><span class="mi">240</span><span class="n">ms</span>
+<span class="o">--</span><span class="n">ease</span><span class="p">:</span> <span class="n">cubic</span><span class="o">-</span><span class="n">bezier</span><span class="p">(</span><span class="mf">.2</span><span class="p">,</span><span class="mf">.7</span><span class="p">,</span><span class="mf">.3</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>   <span class="o">/*</span> <span class="n">ease</span><span class="o">-</span><span class="n">out</span><span class="p">,</span> <span class="n">confident</span> <span class="n">settle</span> <span class="o">*/</span>
+</pre></div>
+</div>
+<p>Hover lifts (cards) and color transitions use <code class="docutils literal notranslate"><span class="pre">--dur</span></code>/<code class="docutils literal notranslate"><span class="pre">--ease</span></code>. Route drawing and
+bottom-sheet transitions use <code class="docutils literal notranslate"><span class="pre">--dur-slow</span></code>. Respect §8 reduced-motion.</p>
+</section>
+<section id="responsive-ties-to-architecture-md-3">
+<h2>10. Responsive (ties to ARCHITECTURE.md §3)<a class="headerlink" href="#responsive-ties-to-architecture-md-3" title="Link to this heading"></a></h2>
+<p>Sidebar-and-map on desktop → <strong>panel becomes a bottom sheet</strong> on mobile, per the
+architecture. Breakpoints:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>--bp-sm:640   --bp-md:860 (panel ↔ bottom sheet)   --bp-lg:1080
+</pre></div>
+</div>
+<p>Panel fixed ~404px on desktop; map fills the rest. Below <code class="docutils literal notranslate"><span class="pre">--bp-md</span></code>, map goes
+full-bleed and the panel docks as a draggable bottom sheet over it.</p>
+</section>
+<section id="using-the-tokens-integration">
+<h2>11. Using the tokens (integration)<a class="headerlink" href="#using-the-tokens-integration" title="Link to this heading"></a></h2>
+<p>Framework-agnostic by design (mirrors the <code class="docutils literal notranslate"><span class="pre">lib/</span></code> philosophy). The <strong>canonical
+source is <code class="docutils literal notranslate"><span class="pre">style-guide/tokens.mjs</span></code></strong> — platform-neutral data (colors as
+light/dark pairs, dimensions as unitless numbers, platform-specific constructs
+like shadows/fonts/easing carried per-platform). <code class="docutils literal notranslate"><span class="pre">tokens.css</span></code> is generated from
+it; never hand-edit the CSS.</p>
+<p><strong>Regenerate CSS:</strong> <code class="docutils literal notranslate"><span class="pre">node</span> <span class="pre">style-guide/build-tokens.mjs</span></code> (add <code class="docutils literal notranslate"><span class="pre">--check</span></code> in CI to
+fail the build if <code class="docutils literal notranslate"><span class="pre">tokens.css</span></code> is stale).</p>
+<p><strong>Web — plain CSS / any framework</strong> — import the generated <code class="docutils literal notranslate"><span class="pre">style-guide/tokens.css</span></code>,
+then reference <code class="docutils literal notranslate"><span class="pre">var(--…)</span></code>. Theme by setting <code class="docutils literal notranslate"><span class="pre">data-theme</span></code> on <code class="docutils literal notranslate"><span class="pre">&lt;html&gt;</span></code> (or let
+<code class="docutils literal notranslate"><span class="pre">prefers-color-scheme</span></code> decide).</p>
+<p><strong>App — React Native</strong> — import <code class="docutils literal notranslate"><span class="pre">tokens.mjs</span></code> directly (no CSS, no <code class="docutils literal notranslate"><span class="pre">var()</span></code>): read
+<code class="docutils literal notranslate"><span class="pre">color.&lt;group&gt;.&lt;name&gt;[theme]</span></code>, unitless <code class="docutils literal notranslate"><span class="pre">space</span></code>/<code class="docutils literal notranslate"><span class="pre">radius</span></code>/<code class="docutils literal notranslate"><span class="pre">type</span></code> into <code class="docutils literal notranslate"><span class="pre">StyleSheet</span></code>,
+and the per-platform <code class="docutils literal notranslate"><span class="pre">elevation</span></code>/<code class="docutils literal notranslate"><span class="pre">fontFamily</span></code>/<code class="docutils literal notranslate"><span class="pre">easing</span></code> fields. Theme via
+<code class="docutils literal notranslate"><span class="pre">useColorScheme()</span></code>; breakpoints via <code class="docutils literal notranslate"><span class="pre">useWindowDimensions()</span></code> against <code class="docutils literal notranslate"><span class="pre">breakpoint</span></code>.
+Web-only tokens (<code class="docutils literal notranslate"><span class="pre">focusRing</span></code>) are ignored on native. See the header of
+<code class="docutils literal notranslate"><span class="pre">tokens.mjs</span></code> for the cross-platform caveats (multi-layer shadows, <code class="docutils literal notranslate"><span class="pre">tabular-nums</span></code>
+on Android).</p>
+<p><strong>Tailwind</strong> (if we adopt it) — map the CSS vars in <code class="docutils literal notranslate"><span class="pre">tailwind.config.js</span></code> so
+utilities resolve to tokens and inherit theming automatically:</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="c1">// tailwind.config.js — theme.extend</span>
+<span class="nx">colors</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">brand</span><span class="o">:</span><span class="w">   </span><span class="p">{</span><span class="w"> </span><span class="nx">DEFAULT</span><span class="o">:</span><span class="s1">'var(--brand)'</span><span class="p">,</span><span class="w"> </span><span class="nx">strong</span><span class="o">:</span><span class="s1">'var(--brand-strong)'</span><span class="p">,</span>
+<span class="w">             </span><span class="nx">weak</span><span class="o">:</span><span class="s1">'var(--brand-weak)'</span><span class="p">,</span><span class="w"> </span><span class="nx">text</span><span class="o">:</span><span class="s1">'var(--brand-text)'</span><span class="w"> </span><span class="p">},</span>
+<span class="w">  </span><span class="nx">money</span><span class="o">:</span><span class="w">   </span><span class="p">{</span><span class="w"> </span><span class="nx">DEFAULT</span><span class="o">:</span><span class="s1">'var(--money)'</span><span class="p">,</span><span class="w"> </span><span class="nx">strong</span><span class="o">:</span><span class="s1">'var(--money-strong)'</span><span class="p">,</span><span class="w"> </span><span class="nx">weak</span><span class="o">:</span><span class="s1">'var(--money-weak)'</span><span class="w"> </span><span class="p">},</span>
+<span class="w">  </span><span class="nx">cost</span><span class="o">:</span><span class="s1">'var(--cost)'</span><span class="p">,</span><span class="w"> </span><span class="nx">danger</span><span class="o">:</span><span class="s1">'var(--danger)'</span><span class="p">,</span>
+<span class="w">  </span><span class="nx">canvas</span><span class="o">:</span><span class="s1">'var(--canvas)'</span><span class="p">,</span><span class="w"> </span><span class="nx">surface</span><span class="o">:</span><span class="s1">'var(--surface)'</span><span class="p">,</span><span class="w"> </span><span class="s1">'surface-2'</span><span class="o">:</span><span class="s1">'var(--surface-2)'</span><span class="p">,</span>
+<span class="w">  </span><span class="nx">border</span><span class="o">:</span><span class="s1">'var(--border)'</span><span class="p">,</span><span class="w"> </span><span class="nx">text</span><span class="o">:</span><span class="p">{</span><span class="w"> </span><span class="nx">DEFAULT</span><span class="o">:</span><span class="s1">'var(--text)'</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="o">:</span><span class="s1">'var(--text-2)'</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="o">:</span><span class="s1">'var(--text-3)'</span><span class="w"> </span><span class="p">},</span>
+<span class="p">},</span>
+<span class="nx">borderRadius</span><span class="o">:</span><span class="p">{</span><span class="w"> </span><span class="nx">xs</span><span class="o">:</span><span class="s1">'8px'</span><span class="p">,</span><span class="w"> </span><span class="nx">sm</span><span class="o">:</span><span class="s1">'11px'</span><span class="p">,</span><span class="w"> </span><span class="nx">md</span><span class="o">:</span><span class="s1">'16px'</span><span class="p">,</span><span class="w"> </span><span class="nx">lg</span><span class="o">:</span><span class="s1">'20px'</span><span class="w"> </span><span class="p">},</span>
+<span class="nx">boxShadow</span><span class="o">:</span><span class="p">{</span><span class="w"> </span><span class="nx">sm</span><span class="o">:</span><span class="s1">'var(--shadow-sm)'</span><span class="p">,</span><span class="w"> </span><span class="nx">md</span><span class="o">:</span><span class="s1">'var(--shadow-md)'</span><span class="p">,</span><span class="w"> </span><span class="nx">lg</span><span class="o">:</span><span class="s1">'var(--shadow-lg)'</span><span class="w"> </span><span class="p">},</span>
+</pre></div>
+</div>
+</section>
+<section id="do-don-t">
+<h2>12. Do / Don’t<a class="headerlink" href="#do-don-t" title="Link to this heading"></a></h2>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Do</p></th>
+<th class="head"><p>Don’t</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Reserve green for positive money only</p></td>
+<td><p>Use green as a brand/decorative color</p></td>
+</tr>
+<tr class="row-odd"><td><p>Use indigo for brand, actions, links, route</p></td>
+<td><p>Introduce a second accent hue</p></td>
+</tr>
+<tr class="row-even"><td><p>Show the arithmetic behind every verdict</p></td>
+<td><p>Ship a bare “Worth it ✓” with no numbers</p></td>
+</tr>
+<tr class="row-odd"><td><p>Reference tokens (<code class="docutils literal notranslate"><span class="pre">var(--…)</span></code>)</p></td>
+<td><p>Hard-code hex in components</p></td>
+</tr>
+<tr class="row-even"><td><p>Tabular numerics for all money</p></td>
+<td><p>Let figures jitter/misalign as they update</p></td>
+</tr>
+<tr class="row-odd"><td><p>Amber for detour <em>cost</em></p></td>
+<td><p>Use red for cost (red = skip/error only)</p></td>
+</tr>
+<tr class="row-even"><td><p>One primary button per view</p></td>
+<td><p>Compete two filled CTAs</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="files-in-this-system">
+<h2>13. Files in this system<a class="headerlink" href="#files-in-this-system" title="Link to this heading"></a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>smartsaver/
+├─ STYLE_GUIDE.md              ← this document (canonical spec)
+└─ style-guide/
+   ├─ tokens.mjs               ← CANONICAL tokens (platform-neutral; web + RN)
+   ├─ build-tokens.mjs         ← generator: tokens.mjs → tokens.css (node)
+   ├─ tokens.css               ← GENERATED design tokens (light + dark); do not edit
+   ├─ style-guide.html         ← living reference; light/dark toggle
+   ├─ index.html               ← accent-scheme comparison (decision record)
+   ├─ logo-options.html         ← logo/mark comparison (decision record; §14)
+   ├─ accent-green.html        ← rejected option A
+   ├─ accent-indigo.html       ← chosen option B (basis for this guide)
+   └─ accent-coral.html        ← rejected option C
+</pre></div>
+</div>
+</section>
+<section id="open-follow-ups-not-yet-decided">
+<h2>14. Open follow-ups (not yet decided)<a class="headerlink" href="#open-follow-ups-not-yet-decided" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>Brand typeface</strong> — <em>decided: <strong>Inter</strong></em> (§5). Adopted over Geist and the
+system stack for proven cross-platform tabular figures (the §15 Android risk)
+and small-size UI legibility. Still to do: bundle/self-host the weights.</p></li>
+<li><p><strong>Logo/mark</strong> — the current route-glyph in a rounded indigo tile is a
+placeholder, not a finalised logo. Candidate marks are drafted in
+<code class="docutils literal notranslate"><span class="pre">style-guide/logo-options.html</span></code> (route-S monogram recommended); pick one to close this.</p></li>
+<li><p><strong>Empty / error / loading states</strong> — <em>defined: §16.</em> Layout, timing, tokens, and
+copy tone are locked. Still deferred: the bespoke <strong>illustration</strong> art for
+zero-states (§16.2 uses a stroke-icon placeholder until then).</p></li>
+</ul>
+</section>
+<section id="cross-platform-notes-web-react-native">
+<h2>15. Cross-platform notes (web ↔ React Native)<a class="headerlink" href="#cross-platform-notes-web-react-native" title="Link to this heading"></a></h2>
+<p>Per <code class="docutils literal notranslate"><span class="pre">ARCHITECTURE.md</span> <span class="pre">§2</span></code> (web now, React Native later), the token <em>values</em> are
+platform-neutral, but several <em>mechanisms</em> in this guide are web-only. <code class="docutils literal notranslate"><span class="pre">tokens.mjs</span></code>
+is the shared source (§11); this section is the porting contract for everything
+CSS can express that RN cannot. <strong>Rule of thumb:</strong> anything that is a value
+(color, size, weight, duration) ports 1:1; anything that is a <em>CSS feature</em>
+(cascade, <code class="docutils literal notranslate"><span class="pre">var()</span></code>, <code class="docutils literal notranslate"><span class="pre">&#64;media</span></code>, <code class="docutils literal notranslate"><span class="pre">box-shadow</span></code>, <code class="docutils literal notranslate"><span class="pre">:focus</span></code>, <code class="docutils literal notranslate"><span class="pre">:hover</span></code>, gradients) needs a
+native equivalent below.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Concern</p></th>
+<th class="head"><p>Web</p></th>
+<th class="head"><p>React Native</p></th>
+<th class="head"><p>Notes</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Token access</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">var(--brand)</span></code> (from generated <code class="docutils literal notranslate"><span class="pre">tokens.css</span></code>)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">import</span></code>, read <code class="docutils literal notranslate"><span class="pre">color.…[theme]</span></code> from <code class="docutils literal notranslate"><span class="pre">tokens.mjs</span></code></p></td>
+<td><p>Same values; RN has no cascade/<code class="docutils literal notranslate"><span class="pre">var()</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Units</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">px</span></code> in <code class="docutils literal notranslate"><span class="pre">tokens.css</span></code></p></td>
+<td><p>unitless numbers from <code class="docutils literal notranslate"><span class="pre">tokens.mjs</span></code></p></td>
+<td><p>1:1 (px ↔ density-independent points). No <code class="docutils literal notranslate"><span class="pre">rem</span></code>/<code class="docutils literal notranslate"><span class="pre">em</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p>Theming</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">prefers-color-scheme</span></code> + <code class="docutils literal notranslate"><span class="pre">data-theme</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">useColorScheme()</span></code> → pick <code class="docutils literal notranslate"><span class="pre">.light</span></code>/<code class="docutils literal notranslate"><span class="pre">.dark</span></code></p></td>
+<td><p>User-override story is app-level state, not an attribute.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Breakpoints (§10)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&#64;media</span></code> on <code class="docutils literal notranslate"><span class="pre">--bp-*</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">useWindowDimensions()</span></code> vs <code class="docutils literal notranslate"><span class="pre">breakpoint.*</span></code></p></td>
+<td><p>Same values; no media queries on native.</p></td>
+</tr>
+<tr class="row-even"><td><p>Elevation (§6)</p></td>
+<td><p>multi-layer <code class="docutils literal notranslate"><span class="pre">box-shadow</span></code></p></td>
+<td><p>iOS <code class="docutils literal notranslate"><span class="pre">shadow*</span></code>; Android single <code class="docutils literal notranslate"><span class="pre">elevation</span></code> int</p></td>
+<td><p><strong>Approximation, not conversion</strong> — see below.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Focus ring (§8)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">--focus-ring</span></code> box-shadow on <code class="docutils literal notranslate"><span class="pre">:focus-visible</span></code></p></td>
+<td><p><em>n/a</em> — OS drives accessibility focus</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">focusRing</span></code> in <code class="docutils literal notranslate"><span class="pre">tokens.mjs</span></code> is web-only; ignore on native.</p></td>
+</tr>
+<tr class="row-even"><td><p>Hover (§7)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">:hover</span></code> lifts/tints</p></td>
+<td><p><em>does not exist on touch</em></p></td>
+<td><p>Use <strong>press</strong> states instead — see below.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Gradient (§7, Worth-It)</p></td>
+<td><p>CSS <code class="docutils literal notranslate"><span class="pre">linear-gradient</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">expo-linear-gradient</span></code> / <code class="docutils literal notranslate"><span class="pre">react-native-linear-gradient</span></code></p></td>
+<td><p>Endpoints = <code class="docutils literal notranslate"><span class="pre">surface</span></code> → <code class="docutils literal notranslate"><span class="pre">surface-2</span></code> for the current theme.</p></td>
+</tr>
+<tr class="row-even"><td><p>Fonts (§5)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;Inter&quot;</span></code> + system-stack fallback</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">fontFamily.{ios,android}</span></code> = <code class="docutils literal notranslate"><span class="pre">Inter</span></code></p></td>
+<td><p>Bundle/self-host the face; RN ignores CSS font stacks, name it explicitly.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Tabular numerics (§5)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">font-variant-numeric:</span> <span class="pre">tabular-nums</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">fontVariant:</span> <span class="pre">['tabular-nums']</span></code></p></td>
+<td><p>Reliable everywhere now that <strong>Inter is bundled</strong> (§5) — see below.</p></td>
+</tr>
+<tr class="row-even"><td><p>Letter-spacing (§5 overline)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.06em</span></code> (relative)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">letterSpacing</span></code> in <strong>points</strong> (absolute)</p></td>
+<td><p>Use <code class="docutils literal notranslate"><span class="pre">letterSpacing.overlinePx</span></code> (≈<code class="docutils literal notranslate"><span class="pre">0.06</span> <span class="pre">×</span> <span class="pre">fontSize</span></code>), not the em value.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Motion (§9)</p></td>
+<td><p>CSS <code class="docutils literal notranslate"><span class="pre">transition</span></code> + <code class="docutils literal notranslate"><span class="pre">cubic-bezier</span></code></p></td>
+<td><p>Reanimated/<code class="docutils literal notranslate"><span class="pre">Animated</span></code> with <code class="docutils literal notranslate"><span class="pre">easing.bezier</span></code></p></td>
+<td><p>Same curve; native needs the raw control points.</p></td>
+</tr>
+<tr class="row-even"><td><p>Reduced motion (§8/§9)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&#64;media</span> <span class="pre">(prefers-reduced-motion)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">AccessibilityInfo.isReduceMotionEnabled()</span></code></p></td>
+<td><p>Both collapse durations to 0.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Hit target (§8)</p></td>
+<td><p>40px</p></td>
+<td><p><strong>44px</strong></p></td>
+<td><p>Bumped — 44px satisfies Apple HIG <em>and</em> Android; use it on both.</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Elevation is an approximation on native.</strong> Our soft, diffuse look (§6) uses
+<em>two</em> stacked shadow layers — CSS only. iOS accepts a single <code class="docutils literal notranslate"><span class="pre">shadow*</span></code> set (the
+<code class="docutils literal notranslate"><span class="pre">ios</span></code> field in <code class="docutils literal notranslate"><span class="pre">elevation</span></code>), and Android reduces the whole thing to one
+<code class="docutils literal notranslate"><span class="pre">elevation</span></code> integer with no color or spread control. Treat the native values as a
+faithful <em>impression</em> of the web card, not a pixel match; don’t try to recreate
+the double-layer softness natively.</p>
+<p><strong><code class="docutils literal notranslate"><span class="pre">tabular-nums</span></code> on Android — resolved by bundling Inter.</strong> “Green = you saved”
+is the trust anchor of the product, and misaligned figures undercut it. iOS renders
+tabular figures reliably; on Android it only works if the shipped font provides
+them, and the platform default does not guarantee it. This drove the §14
+brand-typeface decision: we ship <strong>Inter</strong> (proven tabular figures) rather than
+relying on the platform default, so the risk is closed on both platforms — as long
+as the face is actually bundled (§5), not left to a fallback.</p>
+<p><strong>Press replaces hover — and needs specifying.</strong> The guide leans on <code class="docutils literal notranslate"><span class="pre">:hover</span></code>
+(cards lift to <code class="docutils literal notranslate"><span class="pre">--shadow-md</span></code> + <code class="docutils literal notranslate"><span class="pre">translateY(-1px)</span></code>; buttons go to <code class="docutils literal notranslate"><span class="pre">--brand-strong</span></code>),
+none of which fires on touch. Define the <strong>pressed</strong> state as the primary
+interactive feedback on both platforms (it’s currently a spec hole even for mobile
+web):</p>
+<ul class="simple">
+<li><p><strong>Primary button</strong> — pressed: fill <code class="docutils literal notranslate"><span class="pre">--brand-strong</span></code>, no lift.</p></li>
+<li><p><strong>Secondary / ghost</strong> — pressed: fill <code class="docutils literal notranslate"><span class="pre">--surface-3</span></code>.</p></li>
+<li><p><strong>Card / stop row</strong> — pressed: fill <code class="docutils literal notranslate"><span class="pre">--surface-2</span></code>, <strong>no</strong> <code class="docutils literal notranslate"><span class="pre">translateY</span></code> on touch
+(reserve the lift for hover-capable pointers via <code class="docutils literal notranslate"><span class="pre">&#64;media</span> <span class="pre">(hover:</span> <span class="pre">hover)</span></code> on web).</p></li>
+<li><p><strong>“Add stop” chip</strong> — pressed: fill <code class="docutils literal notranslate"><span class="pre">--brand-weak</span></code>.</p></li>
+</ul>
+<p>Keep hover effects behind <code class="docutils literal notranslate"><span class="pre">&#64;media</span> <span class="pre">(hover:</span> <span class="pre">hover)</span></code> on web so touch devices don’t get
+sticky hover states, and map the pressed styles above to RN <code class="docutils literal notranslate"><span class="pre">Pressable</span></code>’s
+<code class="docutils literal notranslate"><span class="pre">pressed</span></code> state.</p>
+</section>
+<section id="empty-error-loading-states">
+<h2>16. Empty, error &amp; loading states<a class="headerlink" href="#empty-error-loading-states" title="Link to this heading"></a></h2>
+<p>The three states every async surface must specify. They hang off the Trip status
+machine (<code class="docutils literal notranslate"><span class="pre">ARCHITECTURE</span> <span class="pre">§5</span></code>: <code class="docutils literal notranslate"><span class="pre">idle</span> <span class="pre">|</span> <span class="pre">searching</span> <span class="pre">|</span> <span class="pre">routing</span> <span class="pre">|</span> <span class="pre">ready</span> <span class="pre">|</span> <span class="pre">error</span></code>) and the
+DEFENSIVE contract (<em>no silent failure</em>; one success path + one error path per
+operation). Built entirely from existing tokens — no new tokens.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Trip status</p></th>
+<th class="head"><p>What the user sees</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">idle</span></code></p></td>
+<td><p>first-run / prompt empty state (§16.2)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">searching</span></code></p></td>
+<td><p>destination-lookup skeleton (§16.1)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">routing</span></code></p></td>
+<td><p>recompute-in-place — inline progress, map + prior result stay (§16.1)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ready</span></code></p></td>
+<td><p>content</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">error</span></code></p></td>
+<td><p>blocking error block on the affected surface (§16.3)</p></td>
+</tr>
+</tbody>
+</table>
+<section id="loading-skeletons-not-spinners">
+<h3>16.1 Loading — skeletons, not spinners<a class="headerlink" href="#loading-skeletons-not-spinners" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Prefer <strong>skeletons</strong> that mirror the silhouette of the incoming content (deal
+cards, nearby-store rows, grocery rows). The calm, card-driven look (§1) reads
+better as a settling layout than a spinning glyph.</p></li>
+<li><p>Skeleton fill <code class="docutils literal notranslate"><span class="pre">--surface-3</span></code>; shimmer sweeps left→right to <code class="docutils literal notranslate"><span class="pre">--border-strong</span></code> on a
+<code class="docutils literal notranslate"><span class="pre">--dur-slow</span></code> loop with <code class="docutils literal notranslate"><span class="pre">--ease</span></code>. Match the element’s radius (§6). <strong>Reduced
+motion</strong> (§8): drop the sweep, show static <code class="docutils literal notranslate"><span class="pre">--surface-3</span></code> blocks.</p></li>
+<li><p><strong>Anti-flash timing:</strong> show a skeleton only if the wait is likely &gt; ~250ms; once
+shown, hold it ≥ 400ms so a fast resolve doesn’t flicker. Sub-250ms → show nothing.</p></li>
+<li><p><strong>Recompute-in-place</strong> (<code class="docutils literal notranslate"><span class="pre">routing</span></code> after a stop changes): don’t clear to skeleton.
+Keep the last RouteSummary / Worth-It visible at ~60% opacity with a 2px
+indeterminate <code class="docutils literal notranslate"><span class="pre">--brand</span></code> bar across the top of the panel; the map keeps the old
+route until the new one draws (<code class="docutils literal notranslate"><span class="pre">--dur-slow</span></code>). Never blank the map or float a
+full-screen spinner over it.</p></li>
+<li><p><strong>Persist is not a loading state:</strong> keep the editor rule (<code class="docutils literal notranslate"><span class="pre">GROCERY_EDITOR</span> <span class="pre">§7</span></code>) —
+no spinner, a subtle “Saved” tick.</p></li>
+<li><p><strong>Spinner</strong> is the exception, only where no silhouette is knowable (e.g. the
+“Open in Maps” hand-off): 18px, 2px stroke, arc in <code class="docutils literal notranslate"><span class="pre">--brand</span></code>, track <code class="docutils literal notranslate"><span class="pre">--border</span></code>;
+under reduced motion show a static ring + label instead.</p></li>
+</ul>
+</section>
+<section id="empty-two-tiers-and-never-dishonest">
+<h3>16.2 Empty — two tiers, and never dishonest<a class="headerlink" href="#empty-two-tiers-and-never-dishonest" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>Zero-state</strong> (a whole surface has no content — empty list, no nearby stores, no
+deals this week): a centered block ~max 320px — a 32px stroke icon in <code class="docutils literal notranslate"><span class="pre">--text-3</span></code>
+(placeholder until the §14 illustration style lands), title <code class="docutils literal notranslate"><span class="pre">body-lg</span></code>/600
+<code class="docutils literal notranslate"><span class="pre">--text</span></code>, one <code class="docutils literal notranslate"><span class="pre">body</span></code> <code class="docutils literal notranslate"><span class="pre">--text-2</span></code> line saying <em>why</em> and <em>what next</em>, then <strong>one</strong>
+primary action (§7). Reserve <code class="docutils literal notranslate"><span class="pre">display</span></code> type (§5) for the first-run / marketing
+hero only, not routine empties.</p></li>
+<li><p><strong>Inline empty</strong> (an empty section inside a populated surface, e.g. an empty
+category): a single quiet row, <code class="docutils literal notranslate"><span class="pre">body-sm</span></code> in <code class="docutils literal notranslate"><span class="pre">--text-3</span></code> (“Nothing here yet”).
+Matches <code class="docutils literal notranslate"><span class="pre">GROCERY_EDITOR</span> <span class="pre">§7</span></code>.</p></li>
+<li><p><strong>Partial ≠ empty (honesty rule).</strong> “3 of your items on sale here”
+(<code class="docutils literal notranslate"><span class="pre">GROCERY_LIST</span> <span class="pre">§9</span></code>) is a <em>result</em>, not an empty state — show the matches plainly;
+never dress a partial match as “nothing found.”</p></li>
+<li><p><strong>Geolocation denied is not an empty/error state</strong> (<code class="docutils literal notranslate"><span class="pre">LOCATION</span> <span class="pre">§10</span></code>): fall through
+to the manual address / postal path as a first-class input — no scolding.</p></li>
+<li><p>Copy is warm, specific, actionable: “No deals near this postal code this week —
+try a wider search or another store,” not “No results.”</p></li>
+</ul>
+</section>
+<section id="error-one-path-plain-language-a-way-forward">
+<h3>16.3 Error — one path, plain language, a way forward<a class="headerlink" href="#error-one-path-plain-language-a-way-forward" title="Link to this heading"></a></h3>
+<p>Per DEFENSIVE (<em>one clear success path and one error path</em>; typed, validated
+results at every <code class="docutils literal notranslate"><span class="pre">lib/</span></code> boundary):</p>
+<ul class="simple">
+<li><p><strong>Blocking error</strong> (the surface’s core op failed — OSRM <code class="docutils literal notranslate"><span class="pre">code</span> <span class="pre">!==</span> <span class="pre">'Ok'</span></code>, empty
+route, or missing geometry per DEFENSIVE, or a deals/stores fetch failure): an
+inline error block on the affected surface — never a modal, never a raw
+string/stack, and <strong>never a broken map</strong> (DEFENSIVE: surface as <code class="docutils literal notranslate"><span class="pre">status:</span> <span class="pre">error</span></code>,
+don’t render broken geometry). <code class="docutils literal notranslate"><span class="pre">--danger</span></code> icon + title <code class="docutils literal notranslate"><span class="pre">body</span></code>/600 <code class="docutils literal notranslate"><span class="pre">--text</span></code> + one
+<code class="docutils literal notranslate"><span class="pre">body-sm</span></code> <code class="docutils literal notranslate"><span class="pre">--text-2</span></code> line naming the cause in plain terms + a <strong>secondary</strong> “Try
+again” button (§7) that re-runs the op. Retry is bounded — fixed count + backoff,
+never a loop (DEFENSIVE).</p></li>
+<li><p><strong>Transient / action error</strong> (a save, undo, or single request blipped): a
+<code class="docutils literal notranslate"><span class="pre">--danger</span></code>-accented snackbar (same family as the editor <code class="docutils literal notranslate"><span class="pre">UndoSnackbar</span></code>, §8),
+<code class="docutils literal notranslate"><span class="pre">--danger-weak</span></code> bg / <code class="docutils literal notranslate"><span class="pre">--danger</span></code> text + icon, auto-dismiss ~6s, with a “Retry”
+action where the op is safe to repeat.</p></li>
+<li><p><strong>Color discipline:</strong> errors use <code class="docutils literal notranslate"><span class="pre">--danger</span></code> / <code class="docutils literal notranslate"><span class="pre">--danger-weak</span></code> only — distinct
+from <code class="docutils literal notranslate"><span class="pre">--cost</span></code> amber (an honest debit, §4.2) and from the “Skip ✕” verdict (a real
+recommendation that merely shares <code class="docutils literal notranslate"><span class="pre">--danger</span></code>, not a failure).</p></li>
+<li><p><strong>Tone:</strong> name what happened + the next step; no blame, no error codes in the UI
+(log codes, don’t show them). e.g. “Couldn’t build a route between these stops.
+Try removing or changing the last one.”</p></li>
+<li><p>Pair color with a glyph + word (§8): an error is never signalled by red alone.</p></li>
+</ul>
+</section>
+<section id="cross-platform-extends-15">
+<h3>16.4 Cross-platform (extends §15)<a class="headerlink" href="#cross-platform-extends-15" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Concern</p></th>
+<th class="head"><p>Web</p></th>
+<th class="head"><p>React Native</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Skeleton shimmer</p></td>
+<td><p>CSS gradient + <code class="docutils literal notranslate"><span class="pre">&#64;keyframes</span></code> sweep</p></td>
+<td><p>looped opacity via Reanimated (no gradient); same <code class="docutils literal notranslate"><span class="pre">--dur-slow</span></code> / easing</p></td>
+</tr>
+<tr class="row-odd"><td><p>Indeterminate bar</p></td>
+<td><p>animated <code class="docutils literal notranslate"><span class="pre">--brand</span></code> bar</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ActivityIndicator</span></code> or Reanimated bar in <code class="docutils literal notranslate"><span class="pre">--brand</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Snackbar</p></td>
+<td><p>fixed-position toast</p></td>
+<td><p>same <code class="docutils literal notranslate"><span class="pre">UndoSnackbar</span></code>, respecting safe-area inset</p></td>
+</tr>
+<tr class="row-odd"><td><p>Reduced motion</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">prefers-reduced-motion</span></code> → static skeleton</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">AccessibilityInfo.isReduceMotionEnabled()</span></code> → same</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="MOBILE.html" class="btn btn-neutral float-left" title="SmartSaver — Mobile App Build Plan (apps/mobile)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="USER_STATES.html" class="btn btn-neutral float-right" title="User States" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

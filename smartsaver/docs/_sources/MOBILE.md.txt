@@ -1,0 +1,115 @@
+# SmartSaver — Mobile App Build Plan (`apps/mobile`)
+> **Implemented in:** the [Packages](PACKAGES.md#appsmobile) and [Getting Started](GETTING_STARTED.md#mobile-expo) guide pages.
+
+> Build document, mirroring `WEBAPP.md`'s role for the web app. Promoted from
+> the original repo's `MOBILE.md` **stub** — mobile is no longer a "later"
+> concern (`ARCHITECTURE.md §2`: one backend, three front ends from day one).
+> Read alongside `ARCHITECTURE.md` §§4,6,7 (reuse contract, folder shape) and
+> every feature addendum (`DEALS`, `GROCERY_LIST`, `LOCATION`, `WORTH_IT`,
+> `REWARDS`, `SETTINGS`) — none of their contracts change for mobile.
+
+## 1. What we are building
+
+The same planner experience as `apps/web`, native on iOS and Android from one
+React Native codebase: map, multi-stop list, OSRM routing, deals, Worth-It
+verdict, "Open in Maps" handoff — reusing `packages/core` unchanged and talking
+to the same `packages/api` backend as the web app.
+
+## 2. Stack
+
+**Expo (managed React Native) + TypeScript + `@maplibre/maplibre-react-native`
++ the shared `packages/core` (Zustand store, all `lib/*`).**
+
+| Choice | Why |
+|---|---|
+| **Expo, not bare RN** | OTA updates for JS-only changes (skip store review for most fixes); simpler build/signing via EAS; drop to bare only if a native module Expo doesn't support turns out to be required (none identified yet). |
+| **`@maplibre/maplibre-react-native`** | Same MapLibre/OSM tile stack as web — no separate map vendor, no separate style story. |
+| **`packages/core` unchanged** | `ARCHITECTURE.md §6` — logic, types, and the Zustand store are pure TS and run as-is in RN. |
+
+## 3. Folder shape
+
+```
+apps/mobile/
+├─ app.json  eas.json  package.json  tsconfig.json
+├─ App.tsx
+└─ src/
+   ├─ screens/            ← Planner, ListEditor, Settings (mirrors web's top-level layout)
+   ├─ components/         ← RN re-implementations: Map, SearchBox, StopList,
+   │                         DealList, WorthItCard, RouteSummary, OpenInMaps,
+   │                         UseMyLocation — same names/behavior as apps/web,
+   │                         no shared code (React DOM vs RN primitives differ)
+   └─ platform/
+      ├─ maplinks.native.ts   ← comgooglemaps:// / waze:// / maps:// + https fallback
+      ├─ location.native.ts   ← expo-location + permission flow
+      └─ storage.native.ts    ← AsyncStorage, implements packages/core's storage adapter
+```
+
+## 4. What's genuinely mobile-specific (the only new design surface)
+
+Everything else is answered by `ARCHITECTURE.md` / the feature addenda.
+Mobile-only concerns:
+
+- **`platform/maplinks.native.ts`** — deep-link scheme + fallback matrix:
+  `comgooglemaps://`, `waze://`, `maps://` (Apple), falling back to the same
+  `https://` URLs as web when the target app isn't installed. Implements the
+  same exported contract as web's `lib/maplinks` (`ARCHITECTURE.md §6`).
+- **`platform/location.native.ts`** — `expo-location` + iOS/Android permission
+  prompts (foreground-only; no background location needed — this is a
+  plan-a-trip tool, not a tracker). Implements the same contract as web's
+  `lib/location`.
+- **`platform/storage.native.ts`** — `AsyncStorage` behind the storage adapter
+  interface `packages/core` already expects (`GROCERY_LIST.md §8`); same key
+  names as web's `localStorage` so a future account-sync feature has one
+  schema, not two.
+- **Map tile/style parity** — reuse the same style JSON/tokens as
+  `apps/web`'s MapLibre instance; verify marker/route-line rendering matches.
+- **Offline behaviour** — what degrades gracefully with no connectivity: cached
+  last-known route/deals render read-only; new searches/routing show a clear
+  "offline" state rather than a spinner that never resolves.
+- **Build & distribution** — Expo EAS Build + Submit for iOS (App Store
+  Connect) and Android (Play Console); app icons, splash, permissions strings
+  (location usage description required by both stores); OTA update channel
+  strategy (JS-only fixes ship without a store review).
+
+## 5. Build order
+
+1. **Scaffold** — `expo init` inside `apps/mobile`, wire `packages/core` as a
+   workspace dependency, confirm the Zustand `trip` store imports and runs.
+2. **Map + shell** — MapLibre RN view with the shared style; bottom-tab or
+   stack nav matching the web layout's sections (planner / list / settings).
+3. **Platform shims** — `location.native.ts`, `storage.native.ts` first (needed
+   by everything downstream); `maplinks.native.ts` can wait until handoff.
+4. **Origin + search + stops** — RN `SearchBox`/`StopList`, backed by the
+   already-shared `lib/geocode`/`lib/location` contracts.
+5. **Routing + estimate** — draw the route line, `RouteSummary`, using the
+   shared `lib/route`/`lib/estimate` — identical math to web, different render.
+6. **Handoff** — `maplinks.native.ts` + `OpenInMaps`, native scheme first,
+   https fallback verified on a device without the target app installed.
+7. **Deals + list + Worth-It** — wire the already-shared `lib/deals`,
+   `lib/list`, `lib/match`, `lib/worthit`, `lib/rewards`; this is the step
+   that proves the reuse contract — verdicts must match web bit-for-bit for
+   the same inputs.
+8. **Store prep** — icons, permission strings, privacy policy copy (location +
+   deal data usage), EAS build profiles, TestFlight/internal-testing rollout.
+
+## 6. Verification (end-to-end, mirrors `WEBAPP.md §9`)
+
+Same checklist as the web app's §9, run on an iOS simulator/device and an
+Android emulator/device, plus:
+
+- Web and mobile given the same list + location produce the **same Worth-It
+  verdict** (shared-core parity — the whole point of this architecture).
+- Deep-link handoff opens the native app when installed, falls back to
+  `https://` when it isn't, on both platforms.
+- Airplane mode: last route/deals still render; new actions show an offline
+  state, not a hang.
+
+## 7. Out of scope (explicit follow-ups, not built now)
+
+Same exclusions as `WEBAPP.md §8` (full list editor, saved trips/Postgres, v2
+catalog matching) plus:
+
+- Push notifications, background location, widgets/App Clips — none of the
+  current design calls for them.
+- Android tablet / iPad-specific layouts — phone-first, same as web's
+  mobile-breakpoint-first responsive design.
