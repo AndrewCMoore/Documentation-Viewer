@@ -4,9 +4,9 @@ npm workspaces: `packages/*`, `apps/*`. All packages are `private`.
 
 | Package | Name | Status |
 |---|---|---|
-| `packages/core` | `@smartsaver/core` | Skeleton |
+| `packages/core` | `@smartsaver/core` | Geocode, location, route, estimate, maplinks, deals, stores, list (incl. editor CRUD), match, suggestions, table, worthit, rewards, settings, trip store |
 | `packages/api` | `@smartsaver/api` | Deals, categorization and nearby stores implemented |
-| `apps/web` | `@smartsaver/web` | Panel + deals search + map (no routing yet) |
+| `apps/web` | `@smartsaver/web` | v1 look and feel; panel + routing + deals + grocery list editor + Worth-It + settings |
 | `apps/mobile` | `@smartsaver/mobile` | Blank shell |
 
 ## packages/core
@@ -26,12 +26,19 @@ Framework-agnostic logic shared by clients. Builds with `tsc` to `dist/`; rebuil
 | `tripStore`, `DEFAULT_COST_MODEL` | `src/store/trip.ts` | Zustand vanilla store: `stops` (index 0 is the origin), `optimize`, `roundTrip` (both default on), `route`, `estimate`, `status`, `error`, `list`. Actions `toggleItem` (persists the list), `setOrigin`, `addStop` (dedupes, max 25), `removeStop`, `moveStop`, `reorderStop`, `setOptimize`, `setRoundTrip`, `computeRoute`. Every stop change recomputes the route; a superseded request is aborted and its result dropped |
 | `deals({ postalCode, q? }, signal?)` | `src/deals.ts` | `/api/deals` client. Returns `Result`; keeps at most 100 rows and drops rows without a string `id`/`name`/`merchant`, a finite `price` (and `wasPrice` if present), or a 3-letter currency code |
 | `nearby(point, signal?)`, `findStore(merchant, candidates)` | `src/stores.ts` | `/api/stores` client (validates rows, returns `Result`); nearest candidate whose name matches a merchant, ignoring case, accents and punctuation |
-| `seedList`, `loadList(storage?)`, `saveList(list, storage?)`, `toggleNeeded`, `CATEGORIES`, `categoryId` | `src/list.ts` | Seeded "My Staples" list (11 categories, ~65 items, each with `matchTerms`, none needed by default), persisted under `smartsaver.list.v2`; corrupted storage reseeds |
+| `seedList`, `loadList(storage?)`, `saveList(list, storage?)`, `toggleNeeded`, `CATEGORIES`, `categoryId`, `addItem`, `updateItem`, `removeItem`, `restoreItem`, `addCategory`, `renameCategory`, `moveCategory`, `deleteCategory`, `toggleCollapsed`, `suggestCategory`, `loadOverrides`, `rememberOverride`, `normalizeName` | `src/list.ts` | Seeded "My Staples" list (11 categories, ~65 items, each with `matchTerms`, none needed by default), persisted under `smartsaver.list.v2`; corrupted storage reseeds. Plus the editor CRUD ([](GROCERY_EDITOR.md)): add/update/remove/restore items, add/rename/move/delete categories, collapse state, and category-suggestion with a remembered-override map |
 | `match(items, deals)` | `src/match.ts` | Map of item id to matching deals, cheapest first. Keyword match with plural, diacritic, descriptor and store-brand normalization; rejects derived products ("chicken broth" is not chicken) unless asked for |
+| `REGISTRY`, `variantsFor(name)`, `termsForSelection(entry, selected)` | `src/suggestions.ts` | Per-food variant chips (e.g. "2%", "whole", "skim" for milk), data-driven from `src/data/suggestions/*.json`; selected variants narrow an item's `matchTerms` |
+| `table(points, signal?)`, `matrixKey`, `matrixIndex`, `MAX_TABLE_POINTS`, `DistanceMatrix` | `src/table.ts` | OSRM `/table` all-pairs road distance/duration matrix, used for real (not haversine-approximated) Worth-It detour deltas |
+| `decide(inputs)`, `insertionDelta`, `haversineM`, `WorthItInputs` | `src/worthit.ts` | [](WORTH_IT.md): cheapest-insertion detour cost, greedy per-store selection against `minWorthItThreshold`, itemized savings/detour/fuel/rewards, and the priced grocery bill |
+| `PROGRAMS`, `programFor(merchant)`, `rewardsValue(merchant, spend, prefs)`, `defaultRewardsPrefs()`, `LoyaltyProgram` | `src/rewards.ts` | [](REWARDS.md): static merchant→loyalty-program map (PC Optimum, Scene+, Moi), $0 by default, additive to Worth-It's net benefit |
+| `toDisplay`, `fuelPriceToCanonical`, `efficiencyToCanonical`, `VEHICLE_PRESETS`, `closestVehiclePreset`, `REGION_FUEL_DEFAULTS` | `src/settings.ts` | [](SETTINGS.md): metric/imperial display conversion for the cost model, vehicle-efficiency presets, and seeded regional fuel-price defaults |
 | `safeStorage()`, `StorageLike` | `src/storage.ts` | `localStorage` when available, else an in-memory fallback. List functions take a `StorageLike`, so mobile can pass its own adapter |
 | `assert`, `assertLatLng`, `isFiniteNumber` | `src/assert.ts` | Invariant helpers ([](DEFENSIVE.md)) |
 
-Ported from the original `smartsaver` repo's `lib/` and `store/trip.ts`, trimmed to what exists so far. Nominatim and OSRM use the public demo servers (constants in `geocode.ts` and `route.ts`; not yet env-configurable). Tests are colocated `src/*.test.ts` (Vitest, fetch mocked).
+`tripStore`'s `store/trip.ts` entry (above) also holds `candidates`, `deals`, `worthIt`, `dismissed`, `listEditorOpen`, `settingsOpen` and `lastRemoved` (the undo buffer), with actions `setCandidates`/`setDeals` (each recompute the verdict), `dismissStore`/`restoreDismissed`, `computeWorthIt`, `setCostModel` (persists, recomputes), and the list-editor actions (`addListItem`, `updateListItem`, `removeListItem`, `undoRemove`, `addListCategory`, `renameListCategory`, `moveListCategory`, `deleteListCategory`, `toggleCategoryCollapsed`, `suggestItemCategory`, `restoreStarter`).
+
+Ported from the original `smartsaver` repo's `lib/` and `store/trip.ts`. Nominatim and OSRM use the public demo servers (constants in `geocode.ts`, `route.ts` and `table.ts`; not yet env-configurable). Tests are colocated `src/*.test.ts` (Vitest, fetch mocked).
 
 ## packages/api
 
@@ -53,25 +60,28 @@ Not implemented: persistent cache. Details: [](API.md); planned design: [](DEALS
 
 ## apps/web
 
-React 18 + Vite 5 SPA. Vite dev server proxies `/api` to `localhost:8787`. Zustand (via `packages/core`) holds trip state; Vitest is installed but has no web tests yet. Build steps 1–7 of [](WEBAPP.md) are implemented: a 404px side panel (bottom sheet below 860px) beside a MapLibre map on OpenFreeMap tiles. The panel has "Use my location", a place search (Nominatim, debounced 400 ms, 3+ characters) that adds stops, a stop list (up/down buttons or drag to reorder, remove; the first stop is the origin, shown as `A` and kept first), a route summary (distance, time, fuel, with round-trip and optimize toggles), an "Open in Google Maps" button (Apple Maps and Waze as secondary) that hands off the stops in optimized order, a collapsible "My Staples" grocery list (tap items to mark them needed), and a postal-code/query search that calls `GET /api/deals` (through the core `deals` client) and lists the results. Each deal has an "Add stop" button: deals carry only a merchant name, so the app asks `/api/stores` for grocers near the origin (or near the searched postal code, resolved with `postalPlace`, when there is no origin) and adds the nearest one whose name matches the merchant. If none match, it falls back to geocoding the merchant name within ~30 km. Above the deals, "On sale from your list" shows each needed item found in the loaded deals with its cheapest deal, and counts the misses ("2 of 3"). If nothing matches, the card says so and points to the stop search. The map shows a marker per stop, the route polyline, and fits its view to the stops (Toronto until the first stop). The tile style is set by `VITE_MAP_STYLE_URL` (see `.env.example`). `vite.config.ts` excludes `maplibre-gl` from dependency pre-bundling so its worker loads in dev. Screens: [](USER_STATES.md).
+React 18 + Vite 5 SPA, restyled to the original `smartsaver` (v1) look and feel — tokens, layout and component markup from [](STYLE_GUIDE.md) — while keeping this app's own data flow (API-backed deals, `nearby`/`findStore` stop resolution, `PlaceSearch`, `ListMatches`). Vite dev server proxies `/api` to `localhost:8787`. Zustand (via `packages/core`'s `tripStore`) holds trip state; Vitest + Testing Library cover the ported v1-only components. Build steps 1–8 of [](WEBAPP.md) are implemented: a 404px side panel (bottom sheet below 860px) beside a MapLibre map on OpenFreeMap tiles. The panel has "Use my location", a place search (Nominatim, debounced 400 ms, 3+ characters) that adds stops, a stop list (up/down buttons or drag to reorder, remove; the first stop is the origin, shown as `A` and kept first), a route summary (distance, time, fuel, with round-trip and optimize toggles) with an inline cost-model panel underneath it, an "Open in Google Maps" button (Apple Maps and Waze as secondary) that hands off the stops in optimized order, a compact "My Staples" summary that opens the full grocery list editor ([](GROCERY_EDITOR.md): shop/edit modes, categories, add/rename/reorder/delete, undo), and a postal-code/query search that calls `GET /api/deals` (through the core `deals` client) and lists the results. Each deal has an "Add stop" button: deals carry only a merchant name, so the app asks `/api/stores` for grocers near the origin (or near the searched postal code, resolved with `postalPlace`, when there is no origin) and adds the nearest one whose name matches the merchant. If none match, it falls back to geocoding the merchant name within ~30 km. A successful deals search also feeds the trip store's `deals`/`candidates` (via the same `nearby` lookup), which drives the Worth-It card ([](WORTH_IT.md)): itemized savings, detour and fuel cost per candidate store, a net-benefit verdict, an estimated grocery bill, and grocer pins/popup plus a "Saving $x" chip on the map. Above the deals, "On sale from your list" shows each needed item found in the loaded deals with its cheapest deal, and counts the misses ("2 of 3"). If nothing matches, the card says so and points to the stop search. The map shows a marker per stop and per nearby grocer, the route polyline, and fits its view to the stops (Toronto until the first stop). The tile style is set by `VITE_MAP_STYLE_URL` (see `.env.example`). `vite.config.ts` excludes `maplibre-gl` from dependency pre-bundling so its worker loads in dev. Screens: [](USER_STATES.md).
 
 | File | Role |
 |---|---|
-| `src/App.tsx` | Layout and search state (`idle`, `searching`, `ready`, `error`) |
-| `src/components/GroceryList.tsx` | Collapsible staples list by category; toggles `needed` |
+| `src/App.tsx` | Layout and search state (`idle`, `searching`, `ready`, `error`); feeds deals/candidates into the trip store |
+| `src/components/StaplesChips.tsx` | Compact staples summary; opens `GroceryListEditor` (auto-opens once on an empty first run) |
+| `src/components/GroceryListEditor.tsx`, `CategorySection.tsx`, `ItemRow.tsx`, `ItemEditor.tsx`, `AddItemBar.tsx`, `UndoSnackbar.tsx` | Full list editor overlay ([](GROCERY_EDITOR.md)): shop/edit modes, category sections, per-item inline editor and variant chips, add bar with category-guess chip, and a 6 s undo snackbar for deletes |
+| `src/components/WorthItCard.tsx` | Per-store savings/detour/fuel/rewards breakdown, net-benefit verdict, estimated bill, skip/restore ([](WORTH_IT.md)) |
+| `src/components/CostModelPanel.tsx`, `SettingsScreen.tsx`, `RewardsEditor.tsx` | Inline (within `RouteSummary`) and full-screen cost-model editors ([](SETTINGS.md)), plus the shared rewards-program editor ([](REWARDS.md)) |
 | `src/components/ListMatches.tsx` | Needed items on sale in the loaded deals, cheapest deal each |
-| `src/components/Map.tsx` | `react-map-gl` map with zoom controls, OpenFreeMap style, stop markers, fit-to-stops |
+| `src/components/Map.tsx` | `react-map-gl` map with zoom controls, OpenFreeMap style, stop + grocer markers, popup, "Saving $x" chip, fit-to-stops |
 | `src/components/PlaceSearch.tsx` | Debounced place search; a chosen result is added as a stop |
 | `src/components/StopList.tsx` | Ordered stops with up/down, remove and drag-to-reorder |
 | `src/components/OpenInMaps.tsx` | Nav-app handoff; orders stops by `route.order` and adds the return leg on round trips; opens in a new tab |
-| `src/components/RouteSummary.tsx` | Round-trip and optimize toggles; distance, time and fuel; route error block |
+| `src/components/RouteSummary.tsx` | Round-trip and optimize toggles; distance, time and fuel; route error block; mounts `CostModelPanel` |
 | `src/components/UseMyLocation.tsx` | Sets the origin from browser geolocation; falls back to a hint to search |
 | `src/components/SearchBox.tsx` | Postal code (`^[A-Z0-9]{3,10}$`) + optional query form |
 | `src/components/DealList.tsx` | Deal cards: sale price (green), struck was-price, "Add stop" with adding/added/failed states |
 | `src/styles/tokens.css` | Light/dark design tokens from [](STYLE_GUIDE.md) |
 | `src/styles/app.css` | Layout and component styles (tokens only) |
 
-Not implemented: grocery list editor (add/rename items and categories; out of scope per [](WEBAPP.md)), catalog aliases in matching, Worth-It, grocer pins on the map, skeleton loading, imperial units, editable cost model.
+Not implemented: catalog aliases in matching (suggestions data drives per-item variant chips instead), skeleton loading. Tests: colocated `src/components/*.test.tsx` (Vitest + Testing Library, jsdom) for the components v1 tested (`WorthItCard`, `CostModelPanel`, `SettingsScreen`) plus adapted coverage for `DealList` and `PlaceSearch`'s own (props-driven) shape.
 
 ## apps/mobile
 

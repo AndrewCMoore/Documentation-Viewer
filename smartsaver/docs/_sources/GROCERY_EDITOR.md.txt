@@ -1,11 +1,12 @@
 # SmartSaver — Grocery List Editor UI (Addendum to GROCERY_LIST.md)
 
-> Planning document. No application code yet — this designs the **editor UI +
-> category management** that `WEBAPP.md §8` deferred ("seed a starter list; defer
-> the editor — `GROCERY_LIST §11`"). Read alongside `GROCERY_LIST.md` (the model
-> and matching layer), `STYLE_GUIDE.md` (tokens + component specs), and
-> `WEBAPP.md` (where it lives in the app shell). This doc turns `GROCERY_LIST`'s
-> paper model into a concrete screen; it does **not** change the matching layer.
+> Design document — this designs the **editor UI + category management**
+> `WEBAPP.md §8` originally deferred. **Implemented**: `GroceryListEditor` and
+> its subcomponents in `apps/web` (`PACKAGES.md`); screen: `USER_STATES.md`.
+> Read alongside `GROCERY_LIST.md` (the model and matching layer),
+> `STYLE_GUIDE.md` (tokens + component specs), and `WEBAPP.md` (where it lives
+> in the app shell). This doc turns `GROCERY_LIST`'s paper model into a
+> concrete screen; it does **not** change the matching layer.
 
 ## 1. What the editor is
 

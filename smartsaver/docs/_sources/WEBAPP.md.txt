@@ -121,15 +121,17 @@ graph TB
    per-store `matchedItems`.
 8. **Worth-It + rewards** — `worthit` (`decide`), `rewards` (`rewardsValue`),
    `WorthItCard` (itemized savings/detour/fuel/rewards → net + "✓ Worth it"),
-   savings chip on map.
+   savings chip on map. **Built**, ported from the original `smartsaver` repo
+   along with the rest of its UI ([](STYLE_GUIDE.md)): the full grocery-list
+   **editor** (`GroceryListEditor` + category management — `GROCERY_EDITOR.md`)
+   and the cost-model **settings panel** (inline `CostModelPanel` + full
+   `SettingsScreen` — `SETTINGS.md`), both deferred by this step's original
+   plan, are implemented too.
 9. **Responsive + polish** — panel → bottom sheet <860px; loading/error
    states; endpoint env swap.
 
 ## 7. Out of scope (explicit follow-ups, not built now)
 
-- Full grocery-list **editor** UI + category management (seed a starter list;
-  defer the editor — `GROCERY_EDITOR.md`).
-- Cost-model **settings panel** beyond `SETTINGS.md`'s scope.
 - **Saved trips / Postgres** — `DATABASE.md` is explicitly *production-only*.
 - v2 catalog/embedding matching; self-hosted OSRM/Nominatim/Overpass.
 

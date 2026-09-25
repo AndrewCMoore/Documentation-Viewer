@@ -31,9 +31,27 @@ Results for a postal code from `/api/deals`. Screenshot uses mocked data.
 
 ## List matches
 
-Milk, Eggs and Bread marked needed in "My Staples", then a deals search: the two items on sale show with their cheapest deal; Bread is counted as a miss ("2 of 3"). Screenshot uses mocked deals.
+Milk, Eggs and Bread marked needed in "My Staples" through the grocery list editor ([](GROCERY_EDITOR.md)), then a deals search: the two items on sale show with their cheapest deal; Bread is counted as a miss ("2 of 3"). Screenshot uses mocked deals.
 
 ![List matches](_static/screenshots/list-matches.png)
+
+## Grocery list editor
+
+The full "My Staples" editor, opened from the compact staples summary: seeded staples grouped by category, tap to mark needed, filter, add items, and per-item "kind" variants. Milk and Eggs are ticked.
+
+![Grocery list editor](_static/screenshots/grocery-editor.png)
+
+## Worth it
+
+A needed item ("Milk") matches a deal at a nearby candidate store ("Metro"); the Worth-It card ([](WORTH_IT.md)) shows the itemized savings, detour and fuel cost against the net benefit, plus the estimated grocery bill above it. Screenshot uses mocked deals, stores and OSRM data.
+
+![Worth it](_static/screenshots/worth-it.png)
+
+## Settings
+
+The full cost-model settings screen ([](SETTINGS.md)), opened from the inline cost-model panel's "All settings" link: vehicle and region-fuel presets, the fuel/efficiency/units inputs, and rewards ([](REWARDS.md)).
+
+![Settings](_static/screenshots/settings.png)
 
 ## Deal added as a stop
 

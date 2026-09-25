@@ -642,7 +642,12 @@ pre-ordered stops.</p></li>
 per-store <code class="docutils literal notranslate"><span class="pre">matchedItems</span></code>.</p></li>
 <li><p><strong>Worth-It + rewards</strong> — <code class="docutils literal notranslate"><span class="pre">worthit</span></code> (<code class="docutils literal notranslate"><span class="pre">decide</span></code>), <code class="docutils literal notranslate"><span class="pre">rewards</span></code> (<code class="docutils literal notranslate"><span class="pre">rewardsValue</span></code>),
 <code class="docutils literal notranslate"><span class="pre">WorthItCard</span></code> (itemized savings/detour/fuel/rewards → net + “✓ Worth it”),
-savings chip on map.</p></li>
+savings chip on map. <strong>Built</strong>, ported from the original <code class="docutils literal notranslate"><span class="pre">smartsaver</span></code> repo
+along with the rest of its UI (<a class="reference internal" href="STYLE_GUIDE.html"><span class="std std-doc">SmartSaver — Style Guide (Addendum to ARCHITECTURE.md)</span></a>): the full grocery-list
+<strong>editor</strong> (<code class="docutils literal notranslate"><span class="pre">GroceryListEditor</span></code> + category management — <code class="docutils literal notranslate"><span class="pre">GROCERY_EDITOR.md</span></code>)
+and the cost-model <strong>settings panel</strong> (inline <code class="docutils literal notranslate"><span class="pre">CostModelPanel</span></code> + full
+<code class="docutils literal notranslate"><span class="pre">SettingsScreen</span></code> — <code class="docutils literal notranslate"><span class="pre">SETTINGS.md</span></code>), both deferred by this step’s original
+plan, are implemented too.</p></li>
 <li><p><strong>Responsive + polish</strong> — panel → bottom sheet &lt;860px; loading/error
 states; endpoint env swap.</p></li>
 </ol>
@@ -650,9 +655,6 @@ states; endpoint env swap.</p></li>
 <section id="out-of-scope-explicit-follow-ups-not-built-now">
 <h2>7. Out of scope (explicit follow-ups, not built now)<a class="headerlink" href="#out-of-scope-explicit-follow-ups-not-built-now" title="Link to this heading"></a></h2>
 <ul class="simple">
-<li><p>Full grocery-list <strong>editor</strong> UI + category management (seed a starter list;
-defer the editor — <code class="docutils literal notranslate"><span class="pre">GROCERY_EDITOR.md</span></code>).</p></li>
-<li><p>Cost-model <strong>settings panel</strong> beyond <code class="docutils literal notranslate"><span class="pre">SETTINGS.md</span></code>’s scope.</p></li>
 <li><p><strong>Saved trips / Postgres</strong> — <code class="docutils literal notranslate"><span class="pre">DATABASE.md</span></code> is explicitly <em>production-only</em>.</p></li>
 <li><p>v2 catalog/embedding matching; self-hosted OSRM/Nominatim/Overpass.</p></li>
 </ul>

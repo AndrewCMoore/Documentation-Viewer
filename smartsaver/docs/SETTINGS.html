@@ -468,13 +468,15 @@ window.runMermaid = runMermaid;</script>
   <section id="smartsaver-cost-model-settings-addendum-to-worth-it-md">
 <h1>SmartSaver — Cost-Model Settings (Addendum to WORTH_IT.md)<a class="headerlink" href="#smartsaver-cost-model-settings-addendum-to-worth-it-md" title="Link to this heading"></a></h1>
 <blockquote>
-<div><p>Planning document. No application code yet — this captures the design for the
-<strong>cost-model settings panel</strong>, promoting the deferred follow-up in <code class="docutils literal notranslate"><span class="pre">WEBAPP.md</span> <span class="pre">§8</span></code>
-(“ship defaults + minimal inline controls; full screen later”) into a real spec.
-Read alongside <code class="docutils literal notranslate"><span class="pre">WORTH_IT.md</span></code> (§5 fuel/time model, §8 <code class="docutils literal notranslate"><span class="pre">costModel</span></code>), <code class="docutils literal notranslate"><span class="pre">REWARDS.md</span></code>
-(§5 rewards settings), and <code class="docutils literal notranslate"><span class="pre">GROCERY_EDITOR.md</span></code> (panel + auto-persist patterns).
-This is the layer that turns the Worth-It engine’s <strong>hidden constants into
-user-visible, editable inputs</strong> — the “garbage in, garbage out” defence (<code class="docutils literal notranslate"><span class="pre">WORTH_IT</span> <span class="pre">§10</span></code>).</p>
+<div><p>Design document — this captures the design for the <strong>cost-model settings
+panel</strong>, promoting the deferred follow-up in <code class="docutils literal notranslate"><span class="pre">WEBAPP.md</span> <span class="pre">§8</span></code> (“ship defaults +
+minimal inline controls; full screen later”) into a real spec. <strong>Implemented</strong>:
+<code class="docutils literal notranslate"><span class="pre">CostModelPanel</span></code> and <code class="docutils literal notranslate"><span class="pre">SettingsScreen</span></code> in <code class="docutils literal notranslate"><span class="pre">apps/web</span></code> (<code class="docutils literal notranslate"><span class="pre">PACKAGES.md</span></code>); screen:
+<code class="docutils literal notranslate"><span class="pre">USER_STATES.md</span></code>. Read alongside <code class="docutils literal notranslate"><span class="pre">WORTH_IT.md</span></code> (§5 fuel/time model, §8
+<code class="docutils literal notranslate"><span class="pre">costModel</span></code>), <code class="docutils literal notranslate"><span class="pre">REWARDS.md</span></code> (§5 rewards settings), and <code class="docutils literal notranslate"><span class="pre">GROCERY_EDITOR.md</span></code>
+(panel + auto-persist patterns). This is the layer that turns the Worth-It
+engine’s <strong>hidden constants into user-visible, editable inputs</strong> — the
+“garbage in, garbage out” defence (<code class="docutils literal notranslate"><span class="pre">WORTH_IT</span> <span class="pre">§10</span></code>).</p>
 </div></blockquote>
 <section id="what-the-settings-layer-is">
 <h2>1. What the settings layer is<a class="headerlink" href="#what-the-settings-layer-is" title="Link to this heading"></a></h2>

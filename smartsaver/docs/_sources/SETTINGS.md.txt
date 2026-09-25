@@ -1,12 +1,14 @@
 # SmartSaver — Cost-Model Settings (Addendum to WORTH_IT.md)
 
-> Planning document. No application code yet — this captures the design for the
-> **cost-model settings panel**, promoting the deferred follow-up in `WEBAPP.md §8`
-> ("ship defaults + minimal inline controls; full screen later") into a real spec.
-> Read alongside `WORTH_IT.md` (§5 fuel/time model, §8 `costModel`), `REWARDS.md`
-> (§5 rewards settings), and `GROCERY_EDITOR.md` (panel + auto-persist patterns).
-> This is the layer that turns the Worth-It engine's **hidden constants into
-> user-visible, editable inputs** — the "garbage in, garbage out" defence (`WORTH_IT §10`).
+> Design document — this captures the design for the **cost-model settings
+> panel**, promoting the deferred follow-up in `WEBAPP.md §8` ("ship defaults +
+> minimal inline controls; full screen later") into a real spec. **Implemented**:
+> `CostModelPanel` and `SettingsScreen` in `apps/web` (`PACKAGES.md`); screen:
+> `USER_STATES.md`. Read alongside `WORTH_IT.md` (§5 fuel/time model, §8
+> `costModel`), `REWARDS.md` (§5 rewards settings), and `GROCERY_EDITOR.md`
+> (panel + auto-persist patterns). This is the layer that turns the Worth-It
+> engine's **hidden constants into user-visible, editable inputs** — the
+> "garbage in, garbage out" defence (`WORTH_IT §10`).
 
 ## 1. What the settings layer is
 

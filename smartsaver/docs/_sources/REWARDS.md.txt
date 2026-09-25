@@ -1,8 +1,9 @@
 # SmartSaver — Rewards & Grocer Preference (Addendum to ARCHITECTURE.md)
 
-> Planning document. No application code yet — this captures the design for
-> letting users **prefer different grocers based on rewards points** so we can
-> build against it later. Read alongside `ARCHITECTURE.md`, `DEALS.md`,
+> Design document — this captures the design for letting users **prefer
+> different grocers based on rewards points**. **Implemented**: `rewards.ts`
+> in `packages/core` and `RewardsEditor` in `apps/web` (`PACKAGES.md`); screen:
+> `USER_STATES.md` (Settings). Read alongside `ARCHITECTURE.md`, `DEALS.md`,
 > `GROCERY_LIST.md`, and especially `WORTH_IT.md` — this layer extends the
 > Worth-It net-benefit decision, it does not replace it.
 

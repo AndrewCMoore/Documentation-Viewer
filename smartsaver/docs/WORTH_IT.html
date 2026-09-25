@@ -470,10 +470,12 @@ window.runMermaid = runMermaid;</script>
   <section id="smartsaver-worth-it-engine-addendum-to-architecture-md">
 <h1>SmartSaver — Worth-It Engine (Addendum to ARCHITECTURE.md)<a class="headerlink" href="#smartsaver-worth-it-engine-addendum-to-architecture-md" title="Link to this heading"></a></h1>
 <blockquote>
-<div><p>Planning document. No application code yet — this captures the design for the
-“is this store worth the trip?” decision layer so we can build against it
-later. Read alongside <code class="docutils literal notranslate"><span class="pre">ARCHITECTURE.md</span></code>, <code class="docutils literal notranslate"><span class="pre">DEALS.md</span></code>, and <code class="docutils literal notranslate"><span class="pre">GROCERY_LIST.md</span></code>.
-This is the layer that turns <em>matched savings</em> into a <em>keep-or-skip</em> decision.</p>
+<div><p>Design document — this captures the design for the “is this store worth the
+trip?” decision layer. <strong>Implemented</strong>: <code class="docutils literal notranslate"><span class="pre">worthit.ts</span></code>/<code class="docutils literal notranslate"><span class="pre">table.ts</span></code> in
+<code class="docutils literal notranslate"><span class="pre">packages/core</span></code> and <code class="docutils literal notranslate"><span class="pre">WorthItCard</span></code> in <code class="docutils literal notranslate"><span class="pre">apps/web</span></code> (<code class="docutils literal notranslate"><span class="pre">PACKAGES.md</span></code>); screen:
+<code class="docutils literal notranslate"><span class="pre">USER_STATES.md</span></code> (Worth it). Read alongside <code class="docutils literal notranslate"><span class="pre">ARCHITECTURE.md</span></code>, <code class="docutils literal notranslate"><span class="pre">DEALS.md</span></code>,
+and <code class="docutils literal notranslate"><span class="pre">GROCERY_LIST.md</span></code>. This is the layer that turns <em>matched savings</em> into a
+<em>keep-or-skip</em> decision.</p>
 </div></blockquote>
 <section id="what-the-worth-it-engine-is">
 <h2>1. What the Worth-It Engine is<a class="headerlink" href="#what-the-worth-it-engine-is" title="Link to this heading"></a></h2>

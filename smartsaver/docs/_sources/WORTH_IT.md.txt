@@ -1,9 +1,11 @@
 # SmartSaver — Worth-It Engine (Addendum to ARCHITECTURE.md)
 
-> Planning document. No application code yet — this captures the design for the
-> "is this store worth the trip?" decision layer so we can build against it
-> later. Read alongside `ARCHITECTURE.md`, `DEALS.md`, and `GROCERY_LIST.md`.
-> This is the layer that turns *matched savings* into a *keep-or-skip* decision.
+> Design document — this captures the design for the "is this store worth the
+> trip?" decision layer. **Implemented**: `worthit.ts`/`table.ts` in
+> `packages/core` and `WorthItCard` in `apps/web` (`PACKAGES.md`); screen:
+> `USER_STATES.md` (Worth it). Read alongside `ARCHITECTURE.md`, `DEALS.md`,
+> and `GROCERY_LIST.md`. This is the layer that turns *matched savings* into a
+> *keep-or-skip* decision.
 
 ## 1. What the Worth-It Engine is
 
